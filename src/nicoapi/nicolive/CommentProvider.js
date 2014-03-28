@@ -77,14 +77,14 @@ define(function (require, exports, module) {
                     // 接続要求を送信する
                     self.conn.write(commands.connect(svinfo) + '\0');
                 })
-                    .on('readable', function() {
+                    .on('data', function(data) {
                         // コメント受信
-                        self.trigger("receive", self.conn.read().toString());
+                        self.trigger("receive", data.toString());
                     });
         },
         
         _nicoApiLogout: function () {
-            this.conn.close();
+            this.conn.end();
             this.conn = null;
             this.trigger("closed", this);
             this.off();
