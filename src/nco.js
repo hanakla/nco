@@ -35,6 +35,10 @@ define(function (require, exports, module) {
         .fail(function () {
             LoginModalView.requestLogin();
         });
+    
+    NicoApi.on("logout", function () {
+        LoginModalView.requestLogin();
+    });
 //        .then(function () {
 //            return NicoLiveApi.getPlayerStatus("nsen/toho");
 //        })
@@ -43,5 +47,5 @@ define(function (require, exports, module) {
 //            console.log(provider);
 //        });
     
-    window.onbeforeunload = function () { return !1;};
+//    window.onbeforeunload = function () { return !1;};
 });
