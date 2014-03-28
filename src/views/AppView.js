@@ -7,6 +7,7 @@ define(function (require, exports, module) {
         Backbone    = require("thirdparty/backbone"),
         
         AppModel    = require("models/AppModel"),
+        NicoApi     = require("nicoapi/NicoApi"),
         NicoLiveApi = require("nicoapi/NicoLiveApi"),
         
         nsenChannels = require("text!nicoapi/NsenChannels.json"),
@@ -40,9 +41,21 @@ define(function (require, exports, module) {
         },
         
         initialize: function () {
-            _.bindAll(this, "formFocus", "channelChange", "postComment");
-            this.render();
+            var self = this;
             
+            _.bindAll(this, "formFocus", "channelChange", "postComment");
+            
+            
+            NicoApi.on("login", function () {
+                if (AppModel.get("currentCh") === null) {
+                    self.$el.find("[data-ch-selecter] > a")
+                        .one("hidden.bs.tooltip", function () { $(this).tooltip('destroy'); })
+                        .tooltip({title: "チャンネルを選択しましょう"})
+                        .tooltip("show");
+                }
+            });
+            
+            this.render();
             AppInit._triggerHtmlReady();
         },
         
@@ -57,6 +70,10 @@ define(function (require, exports, module) {
                         }
                     });
             }
+        },
+        
+        onlogin: function () {
+            
         },
         
         formFocus: function () {
