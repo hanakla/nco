@@ -1,0 +1,35 @@
+{
+    "name": "Nco",
+    "version": "0.0.1",
+    "description": "ニコニコ動画 Nsen用コメントビューワ",
+    "homepage": "https://github.com/0674272bac/nco",
+    
+    "author": "0674272bac (https://github.com/0674272bac/)",
+    
+    "issues": {
+        "url": "https://github.com/0674272bac/nco/issues"
+    },
+    
+    "licenses": [
+        {
+          "type": "MIT",
+          "url": "https://github.com/0674272bac/nco/blob/master/LICENSE"
+        }
+    ],
+    
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/0674272bac/nco.git"
+    },
+    
+    
+    "main": "bootstrap.html",
+
+    "devDependencies": {
+        "Cheerio": "0.13.1"
+    },
+    
+    "window": {
+        "title": "Nco"
+    }
+}
