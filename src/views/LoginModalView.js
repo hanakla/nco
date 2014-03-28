@@ -40,7 +40,7 @@ define(function (require, exports, module) {
                     .text(msg)
                     .show();
             });
-        console.log("hi");
+        
         return !1;
     }
     
