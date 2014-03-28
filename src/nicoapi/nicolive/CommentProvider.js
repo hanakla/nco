@@ -9,6 +9,7 @@ define(function (require, exports, module) {
         Backbone    = require("thirdparty/backbone"),
         Global      = require("utils/Global"),
         LiveComment = require("./LiveComment"),
+        NicoApi     = require("../NicoApi"),
         NicoLiveInfo = require("./NicoLiveInfo"),
         StringUtil  = require("utils/StringUtil"),
         
@@ -58,8 +59,10 @@ define(function (require, exports, module) {
                 return;
             }
             
-            _.bindAll(this, "_parseComment", "_parseThreadInfo", "_fetchPostKey");
-            
+            _.bindAll(this, "_nicoApiLogout", "_parseComment",
+                            "_parseThreadInfo", "_fetchPostKey");
+        
+            NicoApi.once("logout", this._nicoApiLogout);
             this.once("receive", this._parseThreadInfo);
             this.on("receive", this._parseComment);
             
@@ -78,6 +81,13 @@ define(function (require, exports, module) {
                         // コメント受信
                         self.trigger("receive", self.conn.read().toString());
                     });
+        },
+        
+        _nicoApiLogout: function () {
+            this.conn.close();
+            this.conn = null;
+            this.trigger("closed", this);
+            this.off();
         },
         
         _parseThreadInfo: function (res) {
@@ -166,6 +176,10 @@ define(function (require, exports, module) {
                 });
             
             return deferred;
+        },
+        
+        getLiveInfo: function () {
+            return _.clone(this.live);
         },
         
         fetch: function () {},

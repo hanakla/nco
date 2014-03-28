@@ -17,8 +17,8 @@ define(function (require, exports, module) {
         
         nsenChannels = require("text!nicoapi/nsenChannels.json");
     
-    var sessionId = null,
-        nicoLiveApi = null;
+    var nicoLiveApi = null,
+        loginState = null;
     
     try {
         nsenChannels = JSON.parse(nsenChannels);
@@ -73,7 +73,11 @@ define(function (require, exports, module) {
                 }
             );
         
-        deferred.done(function () { exports.trigger("login"); });
+        // ログイン完了イベント
+        deferred.done(function () {
+            loginState = true;
+            exports.trigger("login");
+        });
         
         return deferred;
     }
@@ -91,17 +95,25 @@ define(function (require, exports, module) {
                 function () { deferred.reject(); }
             );
         
-        deferred.done(function () { exports.trigger("logout"); });
+        deferred.done(function () {
+            loginState = false;
+            exports.trigger("logout");
+        });
         
         return deferred;
     }
     
     /**
      * ニコニコ動画へログインしているかチェックします。
-     * @return {$.Deferred}
+     * @return {$.Deferred} ログインしている時にresolveを、そうでなければrejectします。
      */
     function _isLogin() {
         var deferred = $.Deferred();
+        
+        // ログイン状態のキャッシュがあればそれを返す
+        if (loginState !== null) {
+            return deferred.resolve(loginState).promise();
+        }
         
         $.ajax({
             url: NICO_URL_TESTLOGIN
@@ -112,15 +124,19 @@ define(function (require, exports, module) {
                     
                     // エラー状態が付加されていれば未ログインとしておこう
                     if (err !== "") {
-                        deferred.reject();
+                        loginState = false;
+                        deferred.reject(loginState);
                     } else {
-                        deferred.resolve();
+                        loginState = true;
+                        deferred.resolve(loginState);
                     }
                 })
             .fail(function () {
                 // 通信エラーは論外。堕ちたな（現象論）
-                deferred.reject();
+                loginState = false;
+                deferred.reject(loginState);
             });
+        
         
         return deferred.promise();
     }
