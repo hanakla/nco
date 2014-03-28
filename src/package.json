@@ -30,6 +30,11 @@
     },
     
     "window": {
-        "title": "Nco"
+        "title": "Nco",
+        "width": 800,
+        "height": 500,
+        "min_width": 300,
+        "min_height": 400,
+        "toolbar": false
     }
 }
