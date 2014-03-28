@@ -1,0 +1,39 @@
+<div id="main-view">
+    <div id="content">
+        <table id="comment-view" class="table table-condensed">
+
+        </table>
+    </div>
+    
+    <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-bottom">
+        <ul class="nav navbar-nav navbar-left">
+            <li class="dropdown">
+                <a href="#" data-toggle="dropdown">チャンネル <b class="caret"></b></a>
+                
+                <ul id="channel-switcher" class="dropdown-menu">
+                    <% _.each(nsenChannels, function (ch) { %>
+                    <li>
+                        <a href="#" data-ch="<%= ch.id %>"><%= ch.name %></a>
+                    </li>
+                    <% }) %>
+                </ul>
+            </li>
+        </ul>
+        
+        <form id="comment-poster" class="navbar-form navbar-left">
+            <div class="input-group nco-comment-group">
+                <input type="text" class="form-control" name="comment" placeholder="コメントを入力...">
+                
+                <span class="input-group-btn">
+                    <button class="btn btn-default">
+                        投稿
+                    </button>
+                </span>
+            </div>
+        </form>
+        
+        <p id="nsen-meta" class="navbar-text">
+            <!-- 放送中の動画情報とか -->
+        </p>
+    </nav>
+</div>

@@ -1,0 +1,191 @@
+@import url("bootstrap/bootstrap.less");
+
+@base-color: #fff;
+@main-color: #2c3e50;
+
+/**
+ * WebFonts
+ */
+@font-face {
+    font-family: mplus-2p-regular;
+    src: url('../fonts/mplus-2p-regular.ttf')
+         format("truetype");
+}
+
+@font-face {
+    font-family: mplus-1p-regular;
+    src: url('../fonts/mplus-1p-regular.ttf')
+         format("truetype");
+}
+
+@font-face {
+    font-family: mplus-1p-light;
+    src: url('../fonts/mplus-1p-light.ttf')
+        format("truetype");
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    
+    background-color: @base-color;
+    
+    font-family: 'ヒラギノ角ゴ Pro W3',
+                 'Hiragino Kaku Gothic Pro',
+                 'メイリオ',
+                 Meiryo,
+                 mplus-1p-regular
+                 'ＭＳ Ｐゴシック',
+                 sans-serif;
+}
+
+#main-view {
+    display: -webkit-box;
+    display: box;
+    -webkit-box-orient: vertical;
+    box-orient: vertical;
+    
+    width: 100%;
+    height: 100%;
+}
+
+/**
+ * ナビゲーション
+ */
+#main-nav {
+    order: 2;
+    position: relative;
+    border: none;
+    
+    font-family: mplus-1p-light;
+    
+    color: @base-color;
+    background-color: @main-color;
+    
+    .navbar-nav > li > a {
+        color: #fff;
+    }
+    
+    .navbar-nav {
+        padding: 0 5px;
+    }
+    
+    .navbar-nav > .open > a,
+    .navbar-nav > .open > a:hover,
+    .navbar-nav > .open > a:focus {
+        background-color: darken(@main-color, 10%);
+    }
+    
+    .dropdown-menu > li > a:hover,
+    .dropdown-menu > li > a:focus {
+        background-color: lighten(@main-color, 60%);
+    }
+    
+    .dropdown-menu > .active {
+        position: relative;
+        
+        &::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            z-index: 10;
+            border: 5px solid white;
+            border-color: transparent transparent transparent white;
+        }
+        
+        & > a {
+            background-color: lighten(@main-color, 10%);
+        }
+    }
+}
+
+.nco-comment-group {
+    width: 100%;
+    padding: 0 5px;
+    transition: width .2s ease-out;
+    
+    input {
+        font-size: 0.85em;
+        
+        color: #fff;
+        background-color: transparent;
+        background-color: lighten(@main-color, 10%);
+        border-color: transparent !important;
+        box-shadow: none;
+        border-radius: 0;
+        
+        transition: .2s ease-out;
+        transition-property: background-color, color;
+        
+        &::-webkit-input-placeholder {
+            color: #ccc;
+        }
+    }
+    
+    .btn-default {
+        display: none;
+        margin-left: -4em;
+        
+        background-color: transparent;
+        border-color: transparent;
+        
+        transition: .2s ease-out;
+        transition-property: background-color, margin-left;
+    }
+    
+    &.focus {
+        
+        input {
+            color: #000;
+            background-color: #fff;
+            
+            &::-webkit-input-placeholder {
+                color: #999;
+            }
+        }
+        
+        .btn-default {
+            display: inline-block;
+            margin-left: 0;
+            background-color: #fff;
+            
+            &:hover, &:active, &:hover {
+                background-color: lighten(@main-color, 60%);
+            }
+        }
+    }
+}
+
+ @media (min-width: @screen-sm-min) {
+     .nco-comment-group {
+        width: 16em;
+        margin: 0;
+
+        &.focus {
+            width: 25em !important;
+        }
+    }
+ }
+
+/**
+ * コンテンツ
+ */
+#content {
+    order: 1;
+    -webkit-box-flex: 1.0;
+    overflow: auto;
+}
+
+#comment-view {
+    padding-bottom: 20px;
+    
+    [data-mypost] {
+        background-color: #ffa;
+    }
+}
+
