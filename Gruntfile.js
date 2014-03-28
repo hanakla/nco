@@ -45,7 +45,7 @@ module.exports = function(grunt) {
         }
         
         if (bin) {
-            proc = spawn(bin, ["src" + ds]);
+            proc = spawn(bin, ["--debug", "src" + ds], {detached: true});
         }
     });
     
