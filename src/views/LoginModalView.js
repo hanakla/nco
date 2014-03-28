@@ -10,7 +10,7 @@ define(function (require, exports, module) {
     
     // モーダルウィンドウを初期化
     $modal = $(modalLogin);
-    $alert = $modal.find(".alert").alert();
+    $alert = $modal.find("[data-login-alert]").alert();
     
     $modal
         .filter("#modal-login")
@@ -25,13 +25,25 @@ define(function (require, exports, module) {
         var mail = $modal.find("[name='mail']").val(),
             password = $modal.find("[name='password']").val();
         
+        $alert
+            .removeClass("alert-danger")
+            .addClass("alert-info")
+            .text("ログイン中です...");
+        
         NicoApi.login(mail, password)
             .done(function () {
+                $alert
+                    .removeClass("alert-danger alert-info")
+                    .addClass("alert-success")
+                    .text("ログインしました。")
+                    .fadeOut(1000);
                 $modal.modal("hide");
-                $alert.hide();
             })
             .fail(function (msg) {
-                $alert.text(msg).show();
+                $alert
+                    .addClass("alert-danger")
+                    .text(msg)
+                    .show();
             });
         
         return !1;
