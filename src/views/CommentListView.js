@@ -8,6 +8,7 @@ define(function (require, exports, module) {
         Global      = require("utils/Global"),
         AppModel    = require("models/AppModel"),
         
+        NicoApi     = require("nicoapi/NicoApi"),
         NicoLiveApi = require("nicoapi/NicoLiveApi");
     
     function heredoc(fn) {
@@ -23,6 +24,10 @@ define(function (require, exports, module) {
             </tr>
         */
         })),
+        
+        initialize: function () {
+            this.render();
+        },
         
         render: function () {
             var content = _.clone(this.model.toJSON());
@@ -46,8 +51,19 @@ define(function (require, exports, module) {
             
             this.listenTo(AppModel, "change:currentCh", this.chChange);
             
-            this.changeProvider(AppModel.get("currentCh") || "nsen/toho");
-            this.render();
+            if (!AppModel.get("currentCh")) {
+                return;
+            }
+            
+            NicoApi.isLogin()
+                .done(function () {
+                    self.changeProvider(AppModel.get("currentCh"));
+                })
+                .fail(function () {
+                    NicoApi.once("login", function () {
+                        self.changeProvider(AppModel.get("currentCh"));
+                    });
+                })
         },
         
         render: function () {
@@ -107,7 +123,7 @@ define(function (require, exports, module) {
             }
             
             var view = new CommentView({model: model});
-            this.$el.append(view.render().$el);
+            this.$el.append(view.$el);
             
             options.noAnim || view.$el.hide().fadeIn(200);
             // ページ最下部にいる時だけ自動スクロールする
