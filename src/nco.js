@@ -5,6 +5,7 @@ define(function (require, exports, module) {
         Global      = require("utils/Global"),
         NicoApi     = require("nicoapi/NicoApi"),
         NicoLiveApi = require("nicoapi/NicoLiveApi"),
+        NodeWebkit  = Global.require("nw.gui"),
         
         AppView     = require("views/AppView"),
         CommentListView = require("views/CommentListView"),
@@ -12,7 +13,20 @@ define(function (require, exports, module) {
         
     require("widgets/bootstrap"); // モジュールじゃないけど必要
     
-    AppInit.htmlReady(function () { console.log("App: HTML Ready"); });
+    AppInit.htmlReady(function () {
+        if (Global.nco.debugMode === true) {
+            // デバッグモード時に開発者ツールを開く
+            var win = NodeWebkit.Window.get();
+            
+            win.on("devtools-closed", function () {
+                win.showDevTools();
+            });
+            
+            win.showDevTools();
+        }
+        
+        console.log("App: HTML Ready");
+    });
     
     /**
      * ログインチェック
