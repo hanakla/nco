@@ -3,7 +3,9 @@ define(function (require, exports, module) {
     "use strict";
     
     var Fn = Function,
-        global = (new Fn("return this"))();
+        global = (new Fn("return this"))(),
+        
+        nodeWebkit = global.require("nw.gui");
     
     if (!global.nco) {
         global.nco = {};
@@ -17,6 +19,14 @@ define(function (require, exports, module) {
     if (global.root) {
         global.nco.nodeApi = global.root;
     }
+    
+    // デバッグモードで起動されたか判定し
+    // nco.debugMode プロパティで結果を取得できるようにします。
+    var debugMode = nodeWebkit.App.argv.indexOf("--debug") !== -1;
+    Object.defineProperty(global.nco, "debugMode", {
+        get: function () { return debugMode; },
+        set: function () {}
+    });
     
     /**
      * Node.jsモジュールを要求します。
