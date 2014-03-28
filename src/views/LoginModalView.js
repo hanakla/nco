@@ -9,13 +9,8 @@ define(function (require, exports, module) {
         $alert;
     
     // モーダルウィンドウを初期化
-    $modal = $(modalLogin);
+    $modal = $(modalLogin).modal({backdrop: "static", keyboard: false, show: false});
     $alert = $modal.find("[data-login-alert]").alert();
-    
-    $modal
-        .filter("#modal-login")
-        .on("submit", _submitLogin)
-        .on("hidden.bs.modal", function () { $modal.remove(); });
     
     /**
      * ログインボタンを押された時のイベント
@@ -45,7 +40,7 @@ define(function (require, exports, module) {
                     .text(msg)
                     .show();
             });
-        
+        console.log("hi");
         return !1;
     }
     
@@ -58,8 +53,9 @@ define(function (require, exports, module) {
         
         $modal
             .one("hidden.bs.modal", function () { loginDeferred.resolve(); })
-            .modal({backdrop: "static", keyboard: false})
-            .appendTo(document.body);
+            .modal("show")
+            .filter("#modal-login")
+                .one("submit", _submitLogin);
         
         return loginDeferred;
     }
