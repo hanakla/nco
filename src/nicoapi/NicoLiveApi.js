@@ -26,13 +26,28 @@ define(function (require, exports, module) {
      * @return {Backbone.Collection} コメントプロバイダ
      */
     function _getCommentProvider(liveInfo) {
-        if (commentProviders[liveInfo.id]) {
-            return commentProviders[liveInfo.id];
+        var cp = commentProviders[liveInfo.id];
+        
+        if (cp) {
+            return cp;
         }
         
-        commentProviders[liveInfo.id] = new CommentProvider([], {live: liveInfo});
-        return commentProviders[liveInfo.id];
+        cp = new CommentProvider([], {live: liveInfo});
+        cp.on("closed", _commentProviderClosed);
+        commentProviders[liveInfo.id] = cp;
+        
+        return cp;
     }
+    
+    /**
+     * コメントプロバイダが閉じられた時の処理
+     * @param {CommentProvider} cp
+     */
+    function _commentProviderClosed(cp) {
+        var liveId = cp.getLiveInfo().id;
+        delete commentProviders[liveId];
+    }
+    
     
     exports.getPlayerStatus = function () { 
         Global.console.error("非推奨APIがコールされました (NicoLiveApi#getPlayerStatus)");

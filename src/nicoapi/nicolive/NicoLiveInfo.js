@@ -5,8 +5,9 @@ define(function (require, exports, module) {
     var UPDATE_INTERVAL = 10000,
         NICOLIVE_URL_GETPLAYERSTATUS = "http://live.nicovideo.jp/api/getplayerstatus/";
     
-    var Backbone = require("thirdparty/backbone"),
-        Global = require("utils/Global");
+    var Backbone    = require("thirdparty/backbone"),
+        Global      = require("utils/Global"),
+        NicoApi     = require("nicoapi/NicoApi");
     
     var liveInfoUpdater = _.extend({}, Backbone.Events);
     
@@ -103,7 +104,7 @@ define(function (require, exports, module) {
                     model.trigger("sync", model, res, options);
                 })
                 .fail(function (xhr) {
-                    console.log("番組情報の取得に失敗しました。", arguments);
+                    console.error("番組情報の取得に失敗しました。", arguments);
                     
                     if (xhr.status === 503) {
                         dfd.reject("たぶんニコニコ動画がメンテナンス中です。", model);
@@ -124,7 +125,8 @@ define(function (require, exports, module) {
                 val     = _.clone(this.defaults);
             
             if ($root.attr("status") !== "ok") {
-                throw new Error("NicoLiveInfo: 配信情報の取得に失敗しました。 (" + $res.find("error code") + ")");
+                console.error("NicoLiveInfo: 配信情報の取得に失敗しました。 (" + $res.find("error code") + ")");
+                return;
             }
             
             _.extend(val, {
@@ -195,7 +197,12 @@ define(function (require, exports, module) {
         destroy: function () {}
     });
     
-    setInterval(liveInfoUpdater.trigger.bind(liveInfoUpdater, "checkout"), UPDATE_INTERVAL);
+    setInterval(function () {
+        NicoApi.isLogin()
+            .done(function () {
+                liveInfoUpdater.trigger("checkout");
+            });
+    }, UPDATE_INTERVAL);
     
     module.exports = NicoLiveInfo;
 });
