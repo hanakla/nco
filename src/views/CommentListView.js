@@ -11,10 +11,12 @@ define(function (require, exports, module) {
         NicoApi     = require("nicoapi/NicoApi"),
         NicoLiveApi = require("nicoapi/NicoLiveApi");
     
+    var commentListView;
+    
     function heredoc(fn) {
         return fn.toString().match(/[^]*\/\*([^]*)\*\/\s*\}$/)[1];
     }
-        
+   
     var CommentView = Backbone.View.extend({
         tpl: _.template(heredoc(function () {/*
             <tr data-userid="<%=user.id%>" data-premium="<%=user.isPremium%>"
@@ -26,17 +28,65 @@ define(function (require, exports, module) {
         })),
         
         initialize: function () {
+            _.bindAll(this, "render", "_applyFilters", "_dispatchGenerators");
             this.render();
         },
         
         render: function () {
-            var content = _.clone(this.model.toJSON());
+            var content = this.model.toJSON();
             
             content.comment = (content.comment || "").replace(/\n/g, "<br>");
             
             this.$el = $(this.tpl(content));
+            this._dispatchGenerators()
+                ._applyFilters();
             return this;
-        }
+        },
+        
+        _applyFilters: function () {
+            var self = this,
+                filters = CommentView.filters;
+            
+            _.each(filters, function (fn, filterId) {
+                try {
+                    fn(self.model.toJSON(), self.$el[0]);
+                } catch (e) {
+                    Global.console.error("コメントフィルタ適用中にエラー %s: %s", filterId, e.message);
+                }
+            });
+            
+            return this;
+        },
+        
+        _dispatchGenerators: function () {
+            var self = this,
+                gs = CommentView.generators;
+            
+            _.each(gs, function (fn, genId) {
+                var $td = $("<td>"),
+                    ret;
+                
+                $td.attr("data-col-id", genId)
+                    .appendTo(self.$el);
+                
+                // fnに呼び出す関数が入っているのでそいつを呼び出す
+                // 関数がなにかしらの値を変えせばそれをtd要素の中身にセットする
+                try {
+                    ret = fn(self.model.toJSON(), $td[0]);
+                    (ret !== void 0) && $td.text(ret);
+                } catch (e) {
+                    $td.remove();
+                    Global.console.error("コメント列生成中にエラー %s: %s", fn.id, e.message);
+                    return;
+                }
+            });
+            
+            return this;
+        },
+    },
+    {
+        generators: {},
+        filters: {}
     });
     
     
@@ -63,7 +113,7 @@ define(function (require, exports, module) {
                     NicoApi.once("login", function () {
                         self.changeProvider(AppModel.get("currentCh"));
                     });
-                })
+                });
         },
         
         render: function () {
@@ -131,10 +181,54 @@ define(function (require, exports, module) {
         }
     });
     
-    
+    // メインビューが初期化されたらインスタンス化
     AppInit.htmlReady(function () {
-        CommentListView.$el = $("#comment-view");
+        commentListView = new CommentListView({el: $("#comment-view")});
     });
     
-    module.exports = new CommentListView();
+    
+    /**
+     * コメントリストに新しい列を生成するジェネレータ関数を登録します。
+     * ジェネレータ関数は２つの引数と一緒に呼び出されます。
+     *      1. {Object} 受信したコメントの情報(LiveComment.toJSONの結果)
+     *      2. {HTMLTableCellElement} コメントリストに追加される列(td要素)
+     *  
+     * ジェネレータ関数は表示したいデータを返す事ができます。
+     * データが返された場合は、それをtd要素の内容として表示します。
+     * 非同期にデータを返したい場合は直接td要素を操作してください。
+     * 
+     * 生成されたtd要素には data-col-id属性が付与され、ジェネレータIDが設定されます。
+     * 
+     * @param {string} colId ジェネレータID
+     * @param {Function(Object, HTMLTableCellElement)} generator 列の内容を生成する関数
+     */
+    function _registColGenerator(colId, generator) {
+        if (CommentView.generators[colId]) {
+            Global.console.error("このIDのカスタム列は登録済みです(%s)", colId);
+            return;
+        }
+        
+        CommentView.generators[colId] = generator;
+    }
+    
+    /**
+     * コメントのフィルタ関数を登録します。
+     * フィルタ関数はコメントがリストへ追加されるたびに２つの引数とともに呼び出されます。
+     *      1. {Object} 受信したコメントの情報(LiveComment.toJSONの結果)
+     *      2. {HTMLTableRowElement} コメントリストに追加される行(tr要素)
+     * 
+     * @param {string} filterId フィルタID
+     * @param {function(Object, HTMLTableRowElement)} filter フィルタ関数
+     */
+    function _registFilter(filterId, filter) {
+        if (CommentView.filters[filterId]) {
+            Global.console.error("このIDのフィルターは登録済みです(%s)", filterId);
+            return;
+        }
+        
+        CommentView.filters[filterId] = filter;
+    }
+    
+    exports.registColGenerator = _registColGenerator;
+    exports.registFilter = _registFilter;
 });
