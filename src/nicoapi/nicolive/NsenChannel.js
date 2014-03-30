@@ -58,10 +58,11 @@ define(function (require, exports, module) {
         _commentProvider: null,
         _requestedMovie: null,
         _playingMovie: null,
+        _lastSkippedMovieId: null,
         
         initialize: function (liveInfo) {
-            _.bindAll(this, "_liveInfoUpdated", "fetch", "sendRequest",
-                "cancelRequest", "pushGood", "pushSkip");
+            _.bindAll(this, "_onMovieChange", "_liveInfoUpdated", "fetch",
+                "sendRequest", "cancelRequest", "pushGood", "pushSkip");
             
             // 配信情報
             this._live = liveInfo;
@@ -69,6 +70,8 @@ define(function (require, exports, module) {
             
             // 配信情報が更新された時
             liveInfo.on("sync", this._liveInfoUpdated);
+            
+            this.on("moviechanged", this._onMovieChange);
             
             // コメントを受信した時
             this._commentProvider.on("add", function () {});
@@ -79,6 +82,10 @@ define(function (require, exports, module) {
         
         getCurrentVideo: function () {
             return this._playingMovie;
+        },
+        
+        _onMovieChange: function () {
+            this._lastSkippedMovieId = null;
         },
         
         /**
@@ -243,7 +250,8 @@ define(function (require, exports, module) {
          * @return {$.Deferred}
          */
         pushGood: function () {
-            var deferred = $.Deferred(),
+            var self = this,
+                deferred = $.Deferred(),
                 liveId = this._live.get("stream").liveId;
             
             Backbone.ajax(StringUtil.format(NSEN_URL_GOOD, liveId))
@@ -270,8 +278,15 @@ define(function (require, exports, module) {
          * @return {$.Deferred}
          */
         pushSkip: function () {
-            var deferred = $.Deferred(),
-                liveId = this._live.get("stream").liveId;
+            var self = this,
+                deferred = $.Deferred(),
+                liveId = this._live.get("stream").liveId,
+                movieId = this.getCurrentVideo().id;
+            
+            if (movieId === this._lastSkippedMovieId) {
+                var obj = {result: false, message: "スキップリクエストはすでに送られています。"};
+                return $.Deferred().reject(obj).promise();
+            }
             
             Backbone.ajax(StringUtil.format(NSEN_URL_SKIP, liveId))
                 .done(function (res) {
@@ -279,6 +294,7 @@ define(function (require, exports, module) {
                         status = $res.attr("status") === "ok";
                     
                     if (status) {
+                        self._lastSkippedMovieId = movieId;
                         self.trigger("skipin");
                         deferred.resolve({result: status});
                     } else {
