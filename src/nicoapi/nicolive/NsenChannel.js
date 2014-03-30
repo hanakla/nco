@@ -84,6 +84,10 @@ define(function (require, exports, module) {
             return this._playingMovie;
         },
         
+        isSkipRequestable: function () {
+            return this._lastSkippedMovieId !== this.getCurrentVideo().id;
+        },
+        
         _onMovieChange: function () {
             this._lastSkippedMovieId = null;
         },
@@ -256,7 +260,7 @@ define(function (require, exports, module) {
             
             Backbone.ajax(StringUtil.format(NSEN_URL_GOOD, liveId))
                 .done(function (res) {
-                    var $res = $(res),
+                    var $res = $(res).find(":root"),
                         status = $res.attr("status") === "ok";
                     
                     if (status) {
@@ -283,14 +287,14 @@ define(function (require, exports, module) {
                 liveId = this._live.get("stream").liveId,
                 movieId = this.getCurrentVideo().id;
             
-            if (movieId === this._lastSkippedMovieId) {
+            if (! this.isSkipRequestable()) {
                 var obj = {result: false, message: "スキップリクエストはすでに送られています。"};
                 return $.Deferred().reject(obj).promise();
             }
             
             Backbone.ajax(StringUtil.format(NSEN_URL_SKIP, liveId))
                 .done(function (res) {
-                    var $res = $(res),
+                    var $res = $(res).find(":root"),
                         status = $res.attr("status") === "ok";
                     
                     if (status) {
