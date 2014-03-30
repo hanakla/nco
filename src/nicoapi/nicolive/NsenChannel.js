@@ -249,7 +249,7 @@ define(function (require, exports, module) {
             Backbone.ajax(StringUtil.format(NSEN_URL_GOOD, liveId))
                 .done(function (res) {
                     var $res = $(res),
-                        status = ret.result = $res.attr("status") === "ok";
+                        status = $res.attr("status") === "ok";
                     
                     if (status) {
                         self.trigger("thumbsup");
@@ -276,7 +276,7 @@ define(function (require, exports, module) {
             Backbone.ajax(StringUtil.format(NSEN_URL_SKIP, liveId))
                 .done(function (res) {
                     var $res = $(res),
-                        status = ret.result = $res.attr("status") === "ok";
+                        status = $res.attr("status") === "ok";
                     
                     if (status) {
                         self.trigger("skipin");
