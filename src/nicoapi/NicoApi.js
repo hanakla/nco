@@ -14,7 +14,7 @@ define(function (require, exports, module) {
     var Backbone    = require("thirdparty/backbone"),
         Global      = require("utils/Global"),
         Cheerio     = Global.require("cheerio"),
-        MovieInfo   = require("./niconico/MovieInfo"),
+        NicoMovieInfo = require("./niconico/NicoMovieInfo"),
         
         nsenChannels = require("text!nicoapi/nsenChannels.json");
     
@@ -149,7 +149,7 @@ define(function (require, exports, module) {
      * @return {$.Deferred}
      */
     function _getMovieInfo(movieId) {
-        var model = new MovieInfo({id: movieId});
+        var model = new NicoMovieInfo({id: movieId});
         return model.fetch();
     }
     

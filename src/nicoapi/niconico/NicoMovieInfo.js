@@ -9,7 +9,7 @@ define(function (require, exports, module) {
     
     var NICO_URL_GETTHUMB_INFO = "http://ext.nicovideo.jp/api/getthumbinfo/";
     
-    var MovieInfo = Backbone.Model.extend({
+    var NicoMovieInfo = Backbone.Model.extend({
         url: NICO_URL_GETTHUMB_INFO,
         
         defaults: {
@@ -149,5 +149,5 @@ define(function (require, exports, module) {
         destroy: function () {}
     });
     
-    module.exports = MovieInfo;
+    module.exports = NicoMovieInfo;
 });
