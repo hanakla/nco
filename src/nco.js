@@ -6,6 +6,7 @@ define(function (require, exports, module) {
         NicoApi     = require("nicoapi/NicoApi"),
         NicoLiveApi = require("nicoapi/NicoLiveApi"),
         NodeWebkit  = Global.require("nw.gui"),
+        ExtensionLoader = require("utils/ExtensionLoader"),
         
         AppView     = require("views/AppView"),
         CommentListView = require("views/CommentListView"),
@@ -29,6 +30,14 @@ define(function (require, exports, module) {
     });
     
     /**
+     * 拡張機能を読み込み
+     */
+    ExtensionLoader.init()
+        .done(function () {
+            Global.console.info("拡張機能読み込み完了");
+        });
+    
+    /**
      * ログインチェック
      */
     NicoApi.isLogin()
@@ -39,13 +48,6 @@ define(function (require, exports, module) {
     NicoApi.on("logout", function () {
         LoginModalView.requestLogin();
     });
-//        .then(function () {
-//            return NicoLiveApi.getPlayerStatus("nsen/toho");
-//        })
-//        .then(function (info) {
-//            var provider = NicoLiveApi.getCommentProvider(info);
-//            console.log(provider);
-//        });
     
 //    window.onbeforeunload = function () { return !1;};
 });
