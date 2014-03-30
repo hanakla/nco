@@ -151,8 +151,8 @@ define(function (require, exports, module) {
                     isNsen: $res.find("ns").length > 0,
                     nsenType: $res.find("ns nstype").text(),
                     
-                    contents: $stream.find("contents_list contents").map(function () {
-                        var $content = $(this);
+                    contents: $.map($stream.find("contents_list contents"), function (content) {
+                        var $content = $(content);
                         return {
                             id: $content.attr("id"),
                             startTime: $content.attr("start_time"),
