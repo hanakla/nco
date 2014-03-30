@@ -32,6 +32,7 @@ define(function (require, exports, module) {
 
                 "isOfficial": null,
                 "isNsen": null,
+                "nsenType": null,
                 
                 "contents": [
                     // {id:string, startTime:number, disableAudio:boolean, disableVideo:boolean, content:string}
@@ -148,6 +149,7 @@ define(function (require, exports, module) {
                     
                     isOfficial: $stream.find("provider_type").text() === "official",
                     isNsen: $res.find("ns").length > 0,
+                    nsenType: $res.find("ns nstype").text(),
                     
                     contents: $stream.find("contents_list contents").map(function () {
                         var $content = $(this);
