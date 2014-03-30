@@ -73,6 +73,7 @@ define(function (require, exports, module) {
             // コメントを受信した時
             this._commentProvider.on("add", function () {});
             
+            liveInfo.fetch();
             this.fetch();
         },
         
@@ -90,6 +91,10 @@ define(function (require, exports, module) {
                 content = live.get("stream").contents[0],
                 oldMovie = this._playingMovie,
                 videoId;
+            
+            if (!content) {
+                return;
+            }
             
             videoId = content.content.match(/smile:((?:sm|nm)[1-9][0-9]*)/);
             
@@ -112,7 +117,7 @@ define(function (require, exports, module) {
                 if (content.duration !== -1) {
                     var date = new Date(),
                         changeAt = (content.startTime.getTime() + (content.duration * 1000)),
-                        timeLeft = changeAt - date.getTime() + 1000; // 再生終了までの残り時間
+                        timeLeft = changeAt - date.getTime() + 2000; // 再生終了までの残り時間
                     
                     setTimeout(function () { live.fetch(); }, timeLeft);
                 }
@@ -143,9 +148,6 @@ define(function (require, exports, module) {
                         }
                     }
                 });
-            
-            // 番組情報を確認する
-            this._liveInfoUpdated(this._live);
         },
         
         sync: function () {},
