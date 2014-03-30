@@ -11,10 +11,11 @@ define(function (require, exports, module) {
         NicoLiveApi = require("nicoapi/NicoLiveApi"),
         
         nsenChannels = require("text!nicoapi/NsenChannels.json"),
-        htmlMainView = require("text!htmlContent/main-view.html"),
+        htmlMainView = require("text!htmlContent/main-view.html");
         
-        doc = document,
-        write = doc.write.bind(doc);
+    var doc = document,
+        write = doc.write.bind(doc),
+        instance;
     
     try {
         nsenChannels = JSON.parse(nsenChannels);
@@ -31,21 +32,25 @@ define(function (require, exports, module) {
     
     var AppView = Backbone.View.extend({
         el: $mainView,
+        _nsenChannel: null,
         
         events: {
             "focusin .nco-comment-group input": "formFocus",
             "focusout .nco-comment-group input": "formFocus",
             
             "click #channel-switcher a[data-ch]": "channelChange",
+            "click [data-send-skip]" : "clickSkip",
+            "click [data-send-good]" : "clickGood",
             "submit #comment-poster": "postComment"
         },
         
         initialize: function () {
             var self = this;
             
-            _.bindAll(this, "formFocus", "channelChange", "postComment");
+            _.bindAll(this, "_onChannelChange", "formFocus", "channelChange",
+                "postComment", "clickSkip", "clickGood", "skipEnable");
             
-            
+            // 初めてログインした時のガイドを表示
             NicoApi.on("login", function () {
                 if (AppModel.get("currentCh") === null) {
                     self.$el.find("[data-ch-selecter] > a")
@@ -55,14 +60,26 @@ define(function (require, exports, module) {
                 }
             });
             
+            this.$el.find("[data-send-good], [data-send-skip]")
+                .tooltip();
+            
+            // アプリケーションのHTML初期化完了を通知
             this.render();
             AppInit._triggerHtmlReady();
+            
+            // NsenAPIを準備
+            if (!AppModel.get("currentCh")) {
+                return;
+            }
+            
+            this._onChannelChange();
         },
         
         render: function () {
             var ch = AppModel.get("currentCh");
             
             if (ch) {
+                // 今選択されているチャンネルの表示を強調する
                 this.$el.find("#channel-switcher li a")
                     .each(function () {
                         if ($(this).attr("data-ch") === ch) {
@@ -72,8 +89,22 @@ define(function (require, exports, module) {
             }
         },
         
-        onlogin: function () {
+        // AppModelのチャンネルが変わった時
+        _onChannelChange: function () {
+            var self = this;
             
+            NicoApi.isLogin()
+                .then(function () {
+                    return NicoLiveApi.getLiveInfo(AppModel.get("currentCh"));
+                })
+                .then(function (live) {
+                    if (self._nsenChannel) {
+                        self._nsenChannel.off("moviechanged", self.skipEnable);
+                    }
+                    
+                    self._nsenChannel = NicoLiveApi.getNsenChannelFromLive(live);
+                    self._nsenChannel.on("moviechanged", self.skipEnable);
+                });
         },
         
         formFocus: function () {
@@ -111,10 +142,42 @@ define(function (require, exports, module) {
                 });
             
             return false;
-        }
+        },
         
+        clickSkip: function () {
+            if (this._nsenChannel && this._nsenChannel.isSkipRequestable()) {
+                this._nsenChannel.pushSkip();
+            } else {
+                return;
+            }
+            
+            this.$el.find(".custom-nav-skip").addClass("disabled");
+            
+            var $el = this.$el.find(".custom-nav-skip .response-indicator").addClass("active");
+            if ($el.attr("data-timerid") !== void 0) {
+                clearTimeout($el.attr("data-timerid")|0);
+            }
+            $el.attr("data-timerid", setTimeout(function () { $el.removeClass("active"); $el[0].__timer = null; }, 200));
+        },
+        
+        clickGood: function () {
+            if (this._nsenChannel) {
+                this._nsenChannel.pushGood();
+            }
+            
+            var $el = this.$el.find(".custom-nav-good .response-indicator").addClass("active");
+            if ($el.attr("data-timerid") !== void 0) {
+                clearTimeout($el.attr("data-timerid")|0);
+            }
+            $el.attr("data-timerid", setTimeout(function () { $el.removeClass("active"); $el[0].__timer = null; }, 200));
+        },
+        
+        skipEnable: function () {
+            if (this._nsenChannel && this._nsenChannel.isSkipRequestable()) {
+                this.$el.find(".custom-nav-skip").removeClass("disabled");
+            }
+        }
     });
     
-    
-    module.exports = new AppView();
+    instance = new AppView();
 });
