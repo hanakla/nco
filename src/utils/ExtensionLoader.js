@@ -33,10 +33,11 @@ define(function (require, exports, module) {
         var deferred = $.Deferred();
         
         if (FileSystem.existsSync(directory + "/" + entryPoint + ".js")) {
-            var requireContext = Global.requirejs.config({
+            var cfg = _.extend(_.clone(globalConfig), {
                 context: name,
                 baseUrl: directory
-            });
+            }),
+                requireContext = Global.requirejs.config(cfg);
             
             requireContext([entryPoint], function () { deferred.resolve(); }, function () { deferred.reject(); });
         }
