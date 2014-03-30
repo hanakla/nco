@@ -1,7 +1,8 @@
 @import url("bootstrap/bootstrap.less");
 
 @base-color: #fff;
-@main-color: #2c3e50;
+@main-color: hsl(210, 29%, 24%);
+@accent-color: hsl(0, 52%, 33%);
 
 /**
  * WebFonts
@@ -78,6 +79,12 @@ a:active {
     
     .navbar-nav > li {
         float: left;
+        
+        transition: background-color .1s ease-in;
+        
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
     }
     
     .navbar-nav > li > a {
@@ -117,6 +124,15 @@ a:active {
             background-color: lighten(@main-color, 10%);
         }
     }
+    
+    .custom-nav-good {
+        margin-left: .5em;
+    }
+    
+    .custom-nav-skip {
+        margin-left: 1em;
+        background-color: @accent-color;
+    }
 }
 
 @media (max-width: @screen-sm-min) {
@@ -152,8 +168,7 @@ a:active {
         }
         
         .navbar-nav .open .dropdown-menu > li > a {
-            line-height: 1.42857143;
-            
+            line-height: 1.42857143;   
         }
         
         .dropdown-menu > li > a {
