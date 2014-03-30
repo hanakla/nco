@@ -11,6 +11,20 @@ define(function (require, exports, module) {
     
     var liveInfoUpdater = _.extend({}, Backbone.Events);
     
+    /**
+     * valがnullもしくはundefinedの時にdefを返します。
+     * @param {Object} val
+     * @param {Object} def
+     * @return {Object}
+     */
+    function defaultVal(val, def) {
+        if (val !== void 0 && val !== null) {
+            return val;
+        } else {
+            return def;
+        }
+    }
+    
     var NicoLiveInfo = Backbone.Model.extend({
         url: NICOLIVE_URL_GETPLAYERSTATUS,
         
@@ -32,6 +46,7 @@ define(function (require, exports, module) {
 
                 "isOfficial": null,
                 "isNsen": null,
+                "nsenType": null,
                 
                 "contents": [
                     // {id:string, startTime:number, disableAudio:boolean, disableVideo:boolean, content:string}
@@ -148,15 +163,18 @@ define(function (require, exports, module) {
                     
                     isOfficial: $stream.find("provider_type").text() === "official",
                     isNsen: $res.find("ns").length > 0,
+                    nsenType: $res.find("ns nstype").text(),
                     
-                    contents: $stream.find("contents_list contents").map(function () {
-                        var $content = $(this);
+                    contents: $.map($stream.find("contents_list contents"), function (content) {
+                        var $content = $(content);
                         return {
                             id: $content.attr("id"),
-                            startTime: $content.attr("start_time"),
+                            startTime: new Date(($content.attr("start_time")|0) * 1000),
                             disableAudio: ($content.attr("disableAudio")|0) !== 1,
                             disableVideo: ($content.attr("disableVideo")|0) !== 1,
-                            comment: $content.text()
+                            duration: defaultVal($content.attr("duration"), -1)|0, // ついてない時がある
+                            title: defaultVal($content.attr("title"), null), // ついてない時がある
+                            content: $content.text()
                         };
                     })
                 },

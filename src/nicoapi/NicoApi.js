@@ -13,7 +13,8 @@ define(function (require, exports, module) {
     
     var Backbone    = require("thirdparty/backbone"),
         Global      = require("utils/Global"),
-        cheerio     = Global.require("cheerio"),
+        Cheerio     = Global.require("cheerio"),
+        NicoMovieInfo = require("./niconico/NicoMovieInfo"),
         
         nsenChannels = require("text!nicoapi/nsenChannels.json");
     
@@ -51,7 +52,7 @@ define(function (require, exports, module) {
             .then(
                 function (data, status, xhr) {
                     // jQuery使うと画像の読み込みとかが始まってしまうのでちぇりおつかう
-                    var $res = cheerio(data),
+                    var $res = new Cheerio(data),
                         authFlag = xhr.getResponseHeader("x-niconico-authflag")|0;
                     
                     if (xhr.status === 503) {
@@ -141,8 +142,21 @@ define(function (require, exports, module) {
         return deferred.promise();
     }
     
+    /**
+     * 動画情報(ModelInfo）を取得します。
+     * 
+     * @param {string} movieId 動画ID
+     * @return {$.Deferred}
+     */
+    function _getMovieInfo(movieId) {
+        var model = new NicoMovieInfo({id: movieId});
+        return model.fetch();
+    }
+    
     _.extend(exports, Backbone.Events); // BackboneのEventsモジュールを継承
     exports.login = _login;
     exports.logout = _logout;
     exports.isLogin = _isLogin;
+    exports.getMovieInfo = _getMovieInfo;
+    
 }); 

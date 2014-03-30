@@ -37,7 +37,7 @@ define(function (require, exports, module) {
      *          commentProvider = NicoLiveApi.getCommentProvider([], {live: liveInfo});
      *      });
      * 
-     * CommentProviderクラスは通常のイベントに加えて、
+     * CommentProviderクラスは通常のBackbone.Collectionで発火するイベントに加えて、
      * コメントサーバーからのレスポンスを受け取った際に"receive"イベントを発火します。
      *      receive: (response) responseは文字列型です。
      */

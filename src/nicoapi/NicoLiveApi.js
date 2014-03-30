@@ -2,12 +2,14 @@
 define(function (require, exports, module) {
     "use strict";
     
-    var Global = require("utils/Global"),
-        NicoApi = require("./NicoApi"),
-        NicoLiveInfo = require("./nicolive/NicoLiveInfo"),
+    var Global          = require("utils/Global"),
+        NicoApi         = require("./NicoApi"),
+        NicoLiveInfo    = require("./nicolive/NicoLiveInfo"),
+        NsenChannel     = require("./nicolive/NsenChannel"),
         CommentProvider = require("./nicolive/CommentProvider");
     
-    var commentProviders = {};
+    var commentProviders = {},
+        nsenChannels     = {};
     
     /**
      * 指定された放送の情報を取得します。
@@ -48,6 +50,19 @@ define(function (require, exports, module) {
         delete commentProviders[liveId];
     }
     
+    /**
+     * 配信情報オブジェクトからNsenのチャンネルオブジェクトを取得します。
+     * @param {NicoLiveInfo} liveInfo 配信情報オブジェクト
+     */
+    function _nsenChannelFromLive(liveInfo) {
+        if (nsenChannels[liveInfo.id]) {
+            return nsenChannels[liveInfo.id];
+        }
+        
+        var nsenCh = new NsenChannel(liveInfo);
+        nsenChannels[liveInfo.id] = nsenCh;
+        return nsenCh;
+    }
     
     exports.getPlayerStatus = function () { 
         Global.console.error("非推奨APIがコールされました (NicoLiveApi#getPlayerStatus)");
@@ -56,4 +71,5 @@ define(function (require, exports, module) {
     
     exports.getLiveInfo = _getLiveInfo;
     exports.getCommentProvider = _getCommentProvider;
+    exports.getNsenChannelFromLive = _nsenChannelFromLive;
 });
