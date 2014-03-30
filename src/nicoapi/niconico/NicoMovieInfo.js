@@ -19,6 +19,7 @@ define(function (require, exports, module) {
             description: null,
             length: null, // 秒数
             movieType: null, // "flv", "mp4"
+            thumbnail: null,
             
             isDeleted: false,
             
@@ -111,8 +112,8 @@ define(function (require, exports, module) {
                 title: $res.find("title").text(),
                 description: $res.find("description").text(),
                 length: length, // 秒数
-                
                 movieType: $res.find("movie_type").text(), // "flv"とか
+                thumbnail: $res.find("thumbnail_url").text(),
                 
                 count: {
                     view: $res.find("view_counter").text()|0,
