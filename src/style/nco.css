@@ -5863,12 +5863,46 @@ a:active {
 #main-nav .dropdown-menu > .active > a {
   background-color: #3e5770;
 }
+#main-nav .response-indicator {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 30px;
+  width: 100%;
+  transition: 0.15s ease-out;
+  transition-property: background-color, opacity;
+}
 #main-nav .custom-nav-good {
   margin-left: .5em;
+}
+#main-nav .custom-nav-good .response-indicator {
+  background-image: -webkit-gradient(radial, center top, 0, center top, 20, from(#44eeff), to(rgba(68, 238, 255, 0)));
+  opacity: 0;
+}
+#main-nav .custom-nav-good .response-indicator.active {
+  opacity: 1;
 }
 #main-nav .custom-nav-skip {
   margin-left: 1em;
   background-color: #802828;
+  transition: background-color 0.2s ease-out;
+}
+#main-nav .custom-nav-skip a {
+  transition: color 0.2s ease-out;
+}
+#main-nav .custom-nav-skip.disabled {
+  background-color: transparent;
+}
+#main-nav .custom-nav-skip.disabled a {
+  color: #333;
+}
+#main-nav .custom-nav-skip .response-indicator {
+  background-image: -webkit-gradient(radial, center top, 0, center top, 20, from(#ff4444), to(rgba(255, 68, 68, 0)));
+  opacity: 0;
+}
+#main-nav .custom-nav-skip .response-indicator.active {
+  opacity: 1;
 }
 @media (max-width: 768px) {
   #main-nav .navbar-nav {
