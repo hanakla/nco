@@ -7,7 +7,7 @@
     
     <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-bottom">
         <ul class="nav navbar-nav navbar-left">
-            <li class="dropdown" data-ch-selecter>
+            <li class="dropup" data-ch-selecter>
                 <a href="#" data-toggle="dropdown" title="チャンネルを選択しましょう">チャンネル <b class="caret"></b></a>
                 
                 <ul id="channel-switcher" class="dropdown-menu">
@@ -17,6 +17,17 @@
                     </li>
                     <% }) %>
                 </ul>
+            </li>
+            
+            <li class="custom-nav-skip">
+                <a href="#" title="Skip Request" data-send-skip>
+                    <span class="response-indicator"></span>
+                    <span class="glyphicon glyphicon-forward"></span>
+                </a>
+            </li>
+            <li class="custom-nav-good">
+                <span class="response-indicator"></span>
+                <a href="#" title="Good!" data-send-good><span class="glyphicon glyphicon-thumbs-up"></span></a>
             </li>
         </ul>
         
@@ -31,9 +42,5 @@
                 </span>
             </div>
         </form>
-        
-        <p id="nsen-meta" class="navbar-text">
-            <!-- 放送中の動画情報とか -->
-        </p>
     </nav>
 </div>
