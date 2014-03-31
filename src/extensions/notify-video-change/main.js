@@ -6,6 +6,7 @@ define(function (require, exports, module) {
     var _           = nco.getModule("thirdparty/lodash"),
         AppInit     = nco.getModule("utils/AppInit"),
         AppModel    = nco.getModule("models/AppModel"),
+        NicoApi     = nco.getModule("nicoapi/NicoApi"),
         NicoLiveApi = nco.getModule("nicoapi/NicoLiveApi"),
         
         tmpl    = _.template(require("text!row.html"));
@@ -21,8 +22,11 @@ define(function (require, exports, module) {
         var ch = AppModel.get("currentCh");
        
         if (ch) {
-            NicoLiveApi.getLiveInfo(ch)
-                .done(function (live) {
+            NicoApi.isLogin()
+                .then(function () {
+                    return NicoLiveApi.getLiveInfo(ch);
+                })
+                .then(function (live) {
                     if (nsenCh) {
                         // 前のチャンネルオブジェクトがあったら
                         // そいつとはえんがちょ
@@ -49,6 +53,10 @@ define(function (require, exports, module) {
     
     // イベントリスニング
     AppModel.on("change:currentCh", _channelChanged);
+    
+    NicoApi.on("login", function () {
+        _channelChanged();
+    });
     
     AppInit.htmlReady(function () {
         _channelChanged();
