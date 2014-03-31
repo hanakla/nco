@@ -11,7 +11,7 @@
 define(function (require, exports, module) {
     "use strict";
     
-    var _           = require("thirdparty/lodash").
+    var _           = require("thirdparty/lodash"),
         Backbone    = require("thirdparty/backbone"),
         Global      = require("utils/Global"),
         Cheerio     = Global.require("cheerio"),
@@ -139,17 +139,17 @@ define(function (require, exports, module) {
                     // エラー情報がなければログイン済み
                     if (err.length) {
                         _isLoginCache = true;
-                        deferred.resolve(loginState);
+                        deferred.resolve(_isLoginCache);
                     } else {
                         _isLoginCache = false;
-                        deferred.reject(loginState);
+                        deferred.reject(_isLoginCache);
                     }
                 })
             
             // 通信失敗
             .fail(function () {
-                loginState = false;
-                deferred.reject(loginState);
+                _isLoginCache = false;
+                deferred.reject(_isLoginCache);
             });
         
         
@@ -160,5 +160,5 @@ define(function (require, exports, module) {
     _.extend(exports, Backbone.Events);
     exports.login = _login;
     exports.logout = _logout;
-    exports.isLogin = _isLoginCache;
+    exports.isLogin = _isLogin;
 });
