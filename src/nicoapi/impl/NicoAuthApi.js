@@ -137,7 +137,7 @@ define(function (require, exports, module) {
                     var err = $(res).find("error code");
                     
                     // エラー情報がなければログイン済み
-                    if (err.length) {
+                    if (err.length === 0) {
                         _isLoginCache = true;
                         deferred.resolve(_isLoginCache);
                     } else {
