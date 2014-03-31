@@ -30,7 +30,7 @@ define(function (require, exports, module) {
                     if (nsenCh) {
                         // 前のチャンネルオブジェクトがあったら
                         // そいつとはえんがちょ
-                        nsenCh.off("moviechanged", _moviechanged);
+                        nsenCh.off("moviechanged", _movieChanged);
                     }
 
                     // NsenChannelオブジェクトを取得する
