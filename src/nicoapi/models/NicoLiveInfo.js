@@ -1,7 +1,69 @@
 /*jslint node: true, vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, expr: true */
 
 /**
- * TODO: コメント
+ * ニコニコ生放送の放送情報のモデルです。
+ * NicoApi.Live#getLiveInfoメソッドを通じてインスタンスを取得します。
+ * （直接requireしてインスタンス化はNG）
+ * Backbone.Modelを継承しています。
+ * 
+ * Methods
+ *  - isCorrect():boolean -- 放送情報が正しく取得されているか検証します。
+ *  - isClosed():boolean -- 配信が終了しているか判定します。
+ *  - isOfficial():boolean -- 公式放送番組か判定します。
+ *  - isNsen():boolean -- 放送がNsenのチャンネルか判定します。
+ *  - getCommentProvider(): CommentProvider
+ *      -- この放送へのコメント送受信を行うCommentProviderオブジェクトを取得します。
+ * 
+ * Events
+ *  - closed() -- 配信が終了した時に発火します。
+ * 
+ * Properties
+ *  - stream:Object -- 放送の基礎情報
+ *      - liveId:string -- 放送ID
+ *      - title:string -- 放送タイトル
+ *      - description:string -- 放送の説明
+ * 
+ *      - watchCount:number -- 視聴数
+ *      - commentCount:number -- コメント数
+ * 
+ *      - baseTime:Date -- 生放送の時間の関わる計算の"元になる時間"
+ *      - startTime:Date -- 放送の開始時刻
+ *      - openTime:Date -- 放送の開場時間
+ *      - endTime:Date -- 放送の終了時刻（放送中であれば終了予定時刻）
+ *      
+ *      - isOfficial:boolean -- 公式配信か
+ *      - isNsen:boolean -- Nsenのチャンネルか
+ *      - nsenType:string -- Nsenのチャンネル種別（"nsen/***"の***の部分）
+ *  
+ *      - contents:Array.<Object>
+ *          - id:string -- IDというより、メイン画面かサブ画面か
+ *          - startTime:number -- 再生開始時間
+ *          - disableAudio:boolean -- 音声が無効にされているか
+ *          - disableVideo:boolean -- 映像が無効にされているか
+ *          - duration:number|null -- 再生されているコンテンツの長さ（秒数）
+ *          - title:string|null -- 再生されているコンテンツのタイトル
+ *          - content:string -- 再生されているコンテンツのアドレス（動画の場合は"smile:動画ID"）
+ * 
+ *  - owner:Object -- 配信者の情報
+ *      - userId:number -- ユーザーID
+ *      - name:string -- ユーザー名
+ * 
+ *  - user:Object -- 自分自身の情報
+ *      - id:number -- ユーザーID
+ *      - name:string -- ユーザー名
+ *      - isPremium:boolean -- プレミアムアカウントか
+ *  
+ *  - rtmp:Object -- 配信に関する情報。詳細不明
+ *      - isFms:boolean
+ *      - port:number
+ *      - url:string
+ *      - ticket: string
+ *
+ *  - comment:Object -- コメントサーバーの情報
+ *      - addr:string -- サーバーアドレス
+ *      - port:number -- サーバーポート
+ *      - thread:number -- この放送と対応するスレッドID
+ *
  */
 define(function (require, exports, module) {
     "use strict";
@@ -9,6 +71,7 @@ define(function (require, exports, module) {
     var UPDATE_INTERVAL = 10000;
     
     var Backbone    = require("thirdparty/backbone"),
+        CommentProvider = require("./CommentProvider"),
         Global      = require("utils/Global"),
         NicoApi     = require("../NicoApi"),
         NicoUrl     = require("../impl/NicoUrl");
@@ -32,10 +95,9 @@ define(function (require, exports, module) {
     
     var NicoLiveInfo = Backbone.Model.extend({
         url: NicoUrl.Live.GET_PLAYER_STATUS,
+        _commentProvider: null,
         
         defaults: {
-            "hasError": null,
-            
             "stream": {
                 "liveId": null,
                 "title": null,
@@ -49,12 +111,22 @@ define(function (require, exports, module) {
                 "startTime": null,
                 "endTime": null,
 
-                "isOfficial": null,
-                "isNsen": null,
+                "isOfficial": false,
+                "isNsen": false,
                 "nsenType": null,
                 
                 "contents": [
-                    // {id:string, startTime:number, disableAudio:boolean, disableVideo:boolean, content:string}
+                    /*
+                    {
+                        id:string,
+                        startTime:number,
+                        disableAudio:boolean,
+                        disableVideo:boolean, 
+                        duration:number|null,
+                        title:string|null,
+                        content:string
+                    }
+                    */
                 ]
             },
             
@@ -80,66 +152,93 @@ define(function (require, exports, module) {
                 "addr" : null,
                 "port" : -1,
                 "thread": null
-            }
+            },
+            
+            "_hasError": true,
         },
         
         initialize: function () {
             var self = this;
             
-            _.bindAll(this, "isValid", "isOfficial", "isNsen", "fetch", "parse");
+            _.bindAll(this, "_autoUpdate", "_onClosed");
             
             // 自動アップデートイベントをリスニング
-            _updateEventer.on("checkout", function () {
-                try {
-                    self.fetch();
-                } catch (e) {
-                    Global.conosle.error(e.message);
-                }
-            });
+            _updateEventer.on("checkout", this._autoUpdate);
         },
         
-        isValid: function () { return this.get("_isValid") === true; },
-        isOfficial: function () { return !!this.get("stream").isOfficial; },
-        isNsen: function () { return !!this.get("stream").isNsen; },
+        //
+        // イベントリスナ
+        //
+        _autoUpdate: function () {
+            try {
+                this.fetch();
+            } catch (e) {
+                Global.conosle.error(e.message);
+            }
+        },
         
+        _onClosed: function () {
+            _updateEventer.off("checkout", this._autoUpdate);
+            this.trigger("closed", this);
+            this.off();
+            
+            this._commentProvider = null;
+            this.set("isClosed", true);
+            delete _instances[this.id];
+        },
+        
+        //
+        // 非公開メソッド
+        //
         fetch: function (options) {
             if (this.id === null) {
-                Global.console.error("生放送IDを指定せずに配信情報を取得できません。");
-                return $.Deferred().reject("生放送IDを指定せずに配信情報を取得できません。").promise();
+                Global.console.error("生放送IDを指定せずに放送情報を取得できません。");
+                return $.Deferred().reject("生放送IDを指定せずに放送情報を取得できません。").promise();
             }
             
             options = options ? _.clone(options) : {};
             
-            var dfd = $.Deferred(),
-                model = this,
+            var deferred = $.Deferred(),
+                self = this,
                 success = options.success,
                 jqxhr;
-            
-            model.trigger("request", model, jqxhr, options);
             
             // getPlayerStatusの結果を取得
             jqxhr = $.ajax({url: this.url + this.id});
             jqxhr
                 .done(function (res, status, xhr) {
-                    if (!model.set(model.parse(res, options), options)) return false;
+                    if (!self.set(self.parse(res, options), options)) {
+                        return false;
+                    }
                     
-                    if (_.isFunction(success)) success(model, res, options);
-                    dfd.resolve(model, res, options);
-                    model.trigger("sync", model, res, options);
+                    if (_.isFunction(success)) {
+                        success(self, res, options);
+                    }
+                    
+                    // 最初に同期したらCommentProviderを取得
+                    if (!self._commentProvider) {
+                        self._commentProvider = new CommentProvider(self);
+                        
+                        // 配信終了イベントをリスニング
+                        self._commentProvider.on("closed", self._onClosed);
+                    }
+                    
+                    deferred.resolve(self, res, options);
+                    self.trigger("sync", self, res, options);
                 })
                 .fail(function (jqxhr, status, err) {
                     Global.console.error("番組情報の取得に失敗しました。", arguments);
                     
                     if (jqxhr.status === 503) {
-                        dfd.reject("たぶんニコニコ動画がメンテナンス中です。", model);
+                        deferred.reject("たぶんニコニコ動画がメンテナンス中です。", self);
                     } else {
-                        dfd.reject(err);
+                        deferred.reject(err);
                     }
                     
-                    model.trigger("error", model);
+                    self.trigger("error", self);
                 });
             
-            return dfd;
+            return deferred.promise();
         },
         
         parse: function (res) {
@@ -153,14 +252,12 @@ define(function (require, exports, module) {
             
             if ($root.attr("status") !== "ok") {
                 var msg = $res.find("error code").text();
-                Global.console.error("NicoLiveInfo: 配信情報の取得に失敗しました。 (id: %s, Reason: %s)", this.id, msg);
-                return {};
+                Global.console.error("NicoLiveInfo: 放送情報の取得に失敗しました。 (id: %s, Reason: %s)", this.id, msg);
+                return { _hasError: true };
             }
             
             val = {
-                hasError: $res.find("getplayerstatus").attr("status") !== "ok",
-                
-                // 配信情報
+                // 放送情報
                 stream: {
                     liveId: $stream.find("id").text(),
                     title: $stream.find("title").text(),
@@ -176,7 +273,7 @@ define(function (require, exports, module) {
                     
                     isOfficial: $stream.find("provider_type").text() === "official",
                     isNsen: $res.find("ns").length > 0,
-                    nsenType: $res.find("ns nstype").text(),
+                    nsenType: $res.find("ns nstype").text()||null,
                     
                     contents: $.map($stream.find("contents_list contents"), function (content) {
                         var $content = $(content);
@@ -185,14 +282,14 @@ define(function (require, exports, module) {
                             startTime: new Date(($content.attr("start_time")|0) * 1000),
                             disableAudio: ($content.attr("disableAudio")|0) !== 1,
                             disableVideo: ($content.attr("disableVideo")|0) !== 1,
-                            duration: defaultVal($content.attr("duration"), -1)|0, // ついてない時がある
+                            duration: defaultVal($content.attr("duration"), null)|0, // ついてない時がある
                             title: defaultVal($content.attr("title"), null), // ついてない時がある
                             content: $content.text()
                         };
                     })
                 },
                 
-                // 配信者情報
+                // 放送者情報
                 owner: {
                     userId: $stream.find("owner_id").text()|0,
                     name: $stream.find("owner_name").text()
@@ -220,15 +317,38 @@ define(function (require, exports, module) {
                     thread: $ms.find("thread").text()|0
                 },
                 
-                _isValid: true
+                _hasError: $res.find("getplayerstatus").attr("status") !== "ok"
             };
             
             return val;
         },
         
-        sync: function () {},
-        save: function () {},
-        destroy: function () {}
+        //
+        // 公開メソッド
+        //
+        isCorrect: function () {
+            return !this.get("_hasError");
+        },
+        
+        isOfficial: function () {
+            return !!this.get("stream").isOfficial;
+        },
+        
+        isNsen: function () {
+            return !!this.get("stream").isNsen;
+        },
+        
+        isClosed: function () {
+            return this.get("isClosed") === true;
+        },
+        
+        getCommentProvider: function () {
+            return this._commentProvider;
+        },
+        
+        sync: _.noop,
+        save: _.noop,
+        destroy: _.noop
     });
     
     setInterval(function () {
@@ -240,14 +360,14 @@ define(function (require, exports, module) {
     
     
     /**
-     * 配信情報インスタンスを取得します。
-     * @param {string} liveId 取得したい配信のID
+     * 放送情報インスタンスを取得します。
+     * @param {string} liveId 取得したい放送のID
      */
     function _getInstance(liveId) {
         var instance = _instances[liveId];
         
-        // 指定された配信の配信情報インスタンスがキャッシュされていればそれを返す
-        // キャッシュに対応する配信情報インスタンスがなければ、新規作成してキャッシュ
+        // 指定された放送の放送情報インスタンスがキャッシュされていればそれを返す
+        // キャッシュに対応する放送情報インスタンスがなければ、新規作成してキャッシュ
         return instance || (_instances[liveId] = new NicoLiveInfo({id: liveId}));
     }
     
