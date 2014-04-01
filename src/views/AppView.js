@@ -103,7 +103,7 @@ define(function (require, exports, module) {
             NicoApi.Live.getLiveInfo(AppModel.get("currentCh"))
                 .done(function (live) {
                     if (self._nsenChannel) {
-                        self._nsenChannel.off("moviechanged", self.skipEnable);
+                        self._nsenChannel.off("videochanged", self.skipEnable);
                     }
                     
                     var nsen = live.asNsen();
@@ -112,7 +112,7 @@ define(function (require, exports, module) {
                     
                     // イベントリスニング
                     nsen
-                        .on("moviechanged", self.skipEnable)
+                        .on("videochanged", self.skipEnable)
                         .on("goodcall", self.someoneSayGood);
                 });
         },
