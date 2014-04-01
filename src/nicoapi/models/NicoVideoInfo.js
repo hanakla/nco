@@ -48,8 +48,6 @@ define(function (require, exports, module) {
         url: NicoUrl.Video.GET_VIDEO_INFO,
         
         defaults: {
-            id: null,
-            
             title: null,
             description: null,
             length: null, // 秒数
@@ -73,10 +71,6 @@ define(function (require, exports, module) {
                 name: null,
                 icon: null, // URL
             }
-        },
-        
-        initialize: function () {
-            _.bind(this, "isValid", "fetch", "parse", "isDeleted");
         },
         
         isValid: function () { return this.get("_isValid") === true; },
