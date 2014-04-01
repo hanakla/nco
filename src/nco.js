@@ -4,7 +4,6 @@ define(function (require, exports, module) {
         AppInit     = require("utils/AppInit"),
         Global      = require("utils/Global"),
         NicoApi     = require("nicoapi/NicoApi"),
-        NicoLiveApi = require("nicoapi/NicoLiveApi"),
         NodeWebkit  = Global.require("nw.gui"),
         ExtensionLoader = require("utils/ExtensionLoader"),
         
@@ -40,12 +39,12 @@ define(function (require, exports, module) {
     /**
      * ログインチェック
      */
-    NicoApi.isLogin()
+    NicoApi.Auth.isLogin()
         .fail(function () {
             LoginModalView.requestLogin();
         });
     
-    NicoApi.on("logout", function () {
+    NicoApi.Auth.on("logout", function () {
         LoginModalView.requestLogin();
     });
     
