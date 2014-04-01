@@ -39,10 +39,10 @@ define(function (require, exports, module) {
             info = new NicoLiveInfo(liveId);
             info.fetch()
                 .done(function () { deferred.resolve(info); })
-                .reject(function (err) { deferred.reject(err); });
+                .fail(function (err) { deferred.reject(err); });
         }
         
-        return deferred;
+        return deferred.promise();
     }
     
     exports.getLiveInfo = _getLiveInfo;
