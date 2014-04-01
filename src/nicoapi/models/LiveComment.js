@@ -56,8 +56,10 @@ define(function (require, exports, module) {
         },
         
         isControl: function () {
-            var userid = this.get("user").id;
-            return userid === 900000000 || userid === 0;
+            var userid = this.get("user").id,
+                accountType = this.get("user").accountType;
+            
+            return userid === 900000000 || userid === 0 || accountType === 6;
         },
         
         isDistributorPost: function () {
