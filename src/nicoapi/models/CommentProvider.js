@@ -68,12 +68,12 @@ define(function (require, exports, module) {
             postKey: null
         },
         
-        initialize: function (liveInfo) {
-            if (!liveInfo) {
+        initialize: function (collection, option) {
+            if (!option.live) {
                 throw new Error("番組情報オブジェクトが渡されませんでした。");
             }
             
-            this._live = liveInfo;
+            this._live = option.live;
             
             _.bindAll(this, "_parseComment", "_parseThreadInfo", "_fetchPostKey");
             
