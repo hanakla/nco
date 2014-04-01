@@ -106,7 +106,7 @@ define(function (require, exports, module) {
             }
         };
         
-        if (obj.user.id .match(/^[0-9]*$/)) {
+        if (obj.user.id && obj.user.id.match(/^[0-9]*$/)) {
             obj.user.id = obj.user.id|0;
         }
         
