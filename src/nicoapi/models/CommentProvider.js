@@ -75,12 +75,13 @@ define(function (require, exports, module) {
             
             this._live = option.live;
             
-            _.bindAll(this, "_parseComment", "_parseThreadInfo", "_fetchPostKey");
+            _.bindAll(this, "_parseThreadInfo", "_parseComment",
+                "_listenPostResult", "_listenLiveEnd", "_disconnect");
             
             NicoAuth.once("logout", this._disconnect);
             this.on("receive", this._parseThreadInfo); // スレッド情報リスナを登録
             this.on("receive", this._parseComment); // 通常のコメントリスナ
-            this.on("receive", this._patsePostResult); // コメントのポスト結果リスナ
+            this.on("receive", this._listenPostResult); // コメントのポスト結果リスナ
             this.on("add", this._parseLiveEnd); // 放送終了リスナ
             
             // コメントサーバーへ接続
