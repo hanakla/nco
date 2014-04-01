@@ -220,7 +220,7 @@ define(function (require, exports, module) {
                     
                     // 最初に同期したらCommentProviderを取得
                     if (!self._commentProvider) {
-                        self._commentProvider = new CommentProvider(self);
+                        self._commentProvider = new CommentProvider(null, {live: self});
                         
                         // 配信終了イベントをリスニング
                         self._commentProvider.on("closed", self._onClosed);
