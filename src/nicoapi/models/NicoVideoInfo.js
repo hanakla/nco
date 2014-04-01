@@ -200,5 +200,14 @@ define(function (require, exports, module) {
         return instance || (_instances[videoId] = new NicoVideoInfo({id: videoId}));
     }
     
+    /**
+     * オブジェクトがNicoVideoInfoのインスタンスか検証します。
+     * @param {Object} obj
+     */
+    function _isInstance(obj) {
+        return obj instanceof NicoVideoInfo;
+    }
+    
     module.exports = _getInstance;
+    module.exports.isInstance = _isInstance;
 });
