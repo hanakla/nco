@@ -13,9 +13,10 @@
  *  - isNsen():boolean -- 放送がNsenのチャンネルか判定します。
  *  - getCommentProvider(): CommentProvider
  *      -- この放送へのコメント送受信を行うCommentProviderオブジェクトを取得します。
+ *  - asNsen():NsenChannel -- NsenAPIハンドラを取得します。
  * 
  * Events
- *  - closed() -- 配信が終了した時に発火します。
+ *  - closed:() -- 配信が終了した時に発火します。
  * 
  * Properties
  *  - stream:Object -- 放送の基礎情報
@@ -74,7 +75,8 @@ define(function (require, exports, module) {
         CommentProvider = require("./CommentProvider"),
         Global      = require("utils/Global"),
         NicoApi     = require("../NicoApi"),
-        NicoUrl     = require("../impl/NicoUrl");
+        NicoUrl     = require("../impl/NicoUrl"),
+        NsenChannel = require("./NsenChannel");
     
     var _instances = {},
         _updateEventer = _.extend({}, Backbone.Events);
@@ -96,6 +98,7 @@ define(function (require, exports, module) {
     var NicoLiveInfo = Backbone.Model.extend({
         url: NicoUrl.Live.GET_PLAYER_STATUS,
         _commentProvider: null,
+        _nsenChannel: null,
         
         defaults: {
             "stream": {
@@ -346,6 +349,18 @@ define(function (require, exports, module) {
             return this._commentProvider;
         },
         
+        asNsen: function () {
+            if (!this.isNsen()) {
+                throw new Error(this.id + " この放送はNsenチャンネルではありません。");
+            }
+            
+            if (!this._nsenChannel) {
+                this._nsenChannel = new NsenChannel(this);
+            }
+            
+            return this._nsenChannel;
+        },
+        
         sync: _.noop,
         save: _.noop,
         destroy: _.noop
@@ -371,5 +386,14 @@ define(function (require, exports, module) {
         return instance || (_instances[liveId] = new NicoLiveInfo({id: liveId}));
     }
     
+    /**
+     * オブジェクトがNicoLiveInfoのインスタンスか検証します。
+     * @param {Object} obj
+     */
+    function _isInstance(obj) {
+        return obj instanceof NicoLiveInfo;
+    }
+    
     module.exports = _getInstance;
+    module.exports.isInstance = _isInstance;
 });
