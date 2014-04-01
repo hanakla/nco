@@ -182,11 +182,13 @@ define(function (require, exports, module) {
             this.off();
         },
         
-        _fetchPostKey: function () {
+        _fetchPostKey: function (maxRetry) {
             var self = this,
                 deferred = $.Deferred(),
                 url = StringUtil.format(NicoUrl.Live.GET_POSTKEY, this._postInfo.threadId),
                 postKey = "";
+            
+            maxRetry = _.isNumber(maxRetry) ? Math.min(Math.abs(maxRetry), 5) : 5;
             
             $.ajax(url)
                 // 通信成功
@@ -211,17 +213,19 @@ define(function (require, exports, module) {
                 .fail(function (jqXhr, status, err) {
                     Global.console.error("postKeyの更新に失敗しました。", arguments);
                     
-                    if (status === "timeout") {
-                        // ネットにつながってない？
+                    if (maxRetry === 0) {
+                        // 何回か試して無理ならあきらめる
                         deferred.reject();
                         return;
                     }
                     
                     // ネットにつながってそうなときはリトライする。
-                    self._fetchPostKey()
-                        .done(function (key) {
-                            deferred.resolve(key);
-                        });
+                    setTimeout(function () {
+                        self._fetchPostKey(maxRetry - 1)
+                            .done(function (key) {
+                                deferred.resolve(key);
+                            });
+                    }, 400);
                 });
             
             return deferred.promise();
