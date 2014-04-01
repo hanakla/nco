@@ -234,7 +234,7 @@ define(function (require, exports, module) {
         
         postComment: function (msg, command) {
             if (!_.isString(msg) || msg === "") {
-                throw new Error("空コメントは投稿できません。");
+                return $.Deferred().reject({code:-1, message:"空コメントは投稿できません。"}).promise();
             }
             
             var self = this,
