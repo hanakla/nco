@@ -8,8 +8,7 @@ define(function (require, exports, module) {
         Global      = require("utils/Global"),
         AppModel    = require("models/AppModel"),
         
-        NicoApi     = require("nicoapi/NicoApi"),
-        NicoLiveApi = require("nicoapi/NicoLiveApi");
+        NicoApi     = require("nicoapi/NicoApi");
     
     var commentListView;
     
@@ -97,23 +96,15 @@ define(function (require, exports, module) {
         
         initialize: function () {
             var self = this;
-            _.bindAll(this, "chChange", "changeProvider", "onAddComment");
+            _.bindAll(this, "_chChange", "_onAddComment");
             
-            this.listenTo(AppModel, "change:currentCh", this.chChange);
+            this.listenTo(AppModel, "change:currentCh", this._chChange);
             
             if (!AppModel.get("currentCh")) {
                 return;
             }
-            
-            NicoApi.isLogin()
-                .done(function () {
-                    self.changeProvider(AppModel.get("currentCh"));
-                })
-                .fail(function () {
-                    NicoApi.once("login", function () {
-                        self.changeProvider(AppModel.get("currentCh"));
-                    });
-                });
+
+            self.changeProvider(AppModel.get("currentCh"));
         },
         
         render: function () {
@@ -123,7 +114,7 @@ define(function (require, exports, module) {
             
             if (this.commentProvider) {
                 this.commentProvider.each(function (model) {
-                    self.onAddComment(model, null, {noScroll: true});
+                    self._onAddComment(model, null, {noScroll: true});
                 });
                 
                 setTimeout(function () {
@@ -133,30 +124,11 @@ define(function (require, exports, module) {
             }
         },
         
-        chChange: function () {
+        _chChange: function () {
             this.changeProvider(AppModel.get("currentCh"));
         },
         
-        changeProvider: function (liveId) {
-            var self = this,
-                old = this.commentProvider;
-            
-            if (old) {
-                old.off("add", this.onAddComment);
-            }
-            
-            NicoLiveApi.getLiveInfo(liveId)
-                .then(function (info) {
-                        self.commentProvider = NicoLiveApi.getCommentProvider(info);
-                        self.commentProvider.on("add", self.onAddComment);
-                        self.render();
-                    },
-                    function (msg) {
-                        self.$el.empty().append("<tr><td>" + msg + "</td></tr>");
-                    });
-        },
-        
-        onAddComment: function (model, collection, options) {
+        _onAddComment: function (model, collection, options) {
             // 制御コメントは表示しない
             if (model.isControl()) {
                 return;
@@ -178,6 +150,25 @@ define(function (require, exports, module) {
             options.noAnim || view.$el.hide().fadeIn(200);
             // ページ最下部にいる時だけ自動スクロールする
             options.noScroll || (scroll && $(content).stop(false, true).animate({scrollTop: content.scrollHeight}, 200));
+        },
+        
+        changeProvider: function (liveId) {
+            var self = this,
+                old = this.commentProvider;
+            
+            if (old) {
+                old.off("add", this._onAddComment);
+            }
+            
+            NicoApi.Live.getLiveInfo(liveId)
+                .done(function (info) {
+                    self.commentProvider = info.getCommentProvider(info);
+                    self.commentProvider.on("add", self._onAddComment);
+                    self.render();
+                })
+                .fail(function (msg) {
+                    self.$el.empty().append("<tr><td>" + msg + "</td></tr>");
+                });
         }
     });
     
