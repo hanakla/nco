@@ -25,7 +25,7 @@ define(function (require, exports, module) {
             .addClass("alert-info")
             .text("ログイン中です...");
         
-        NicoApi.login(mail, password)
+        NicoApi.Auth.login(mail, password)
             .done(function () {
                 $alert
                     .removeClass("alert-danger alert-info")
