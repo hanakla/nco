@@ -86,7 +86,7 @@ define(function (require, exports, module) {
             
             // 必要なオブジェクトをキープ
             this._live = liveInfo;
-            this._commentProvider = liveInfo.getCommentProvider(liveInfo);
+            this._commentProvider = liveInfo.getCommentProvider();
             
             // イベントリスニング
             liveInfo
