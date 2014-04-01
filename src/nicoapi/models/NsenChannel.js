@@ -96,7 +96,7 @@ define(function (require, exports, module) {
             this._commentProvider
                 .on("add", this._commentReceived); // コメントを受信した時
             
-            this.on("moviechanged", this._onVideoChange); // 再生中の動画が変わった時
+            this.on("videochanged", this._onVideoChange); // 再生中の動画が変わった時
             
             this.fetch();
         },
