@@ -32,7 +32,7 @@ define(function (require, exports, module) {
      *  WaitListの取得
      * 
      * 以下のイベントを発火させます。
-     *  - moviechanged: (NsenChannel, NicoMovieInfo, NicoMovieInfo)
+     *  - videochanged: (NsenChannel, NicoMovieInfo, NicoMovieInfo)
      *      動画が変わったことを通知します。
      *      第２引数に変更後の動画の情報が渡され、
      *      第３引数には変更前の動画の情報が渡されます。
@@ -71,7 +71,7 @@ define(function (require, exports, module) {
             // 配信情報が更新された時
             liveInfo.on("sync", this._liveInfoUpdated);
             
-            this.on("moviechanged", this._onMovieChange);
+            this.on("videochanged", this._onMovieChange);
             
             // コメントを受信した時
             this._commentProvider.on("add", function () {});
@@ -121,7 +121,7 @@ define(function (require, exports, module) {
                 NicoApi.getMovieInfo(videoId)
                     .done(function (movie) {
                         self._playingMovie = movie;
-                        self.trigger("moviechanged", self, movie, oldMovie);
+                        self.trigger("videochanged", self, movie, oldMovie);
                     });
                 
                 // 次に動画が変わったタイミングで配信情報を更新させる
