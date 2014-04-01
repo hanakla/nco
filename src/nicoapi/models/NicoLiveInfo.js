@@ -130,7 +130,7 @@ define(function (require, exports, module) {
                 .fail(function (jqxhr, status, err) {
                     Global.console.error("番組情報の取得に失敗しました。", arguments);
                     
-                    if (jqxhrxhr.status === 503) {
+                    if (jqxhr.status === 503) {
                         dfd.reject("たぶんニコニコ動画がメンテナンス中です。", model);
                     } else {
                         dfd.reject(err);
