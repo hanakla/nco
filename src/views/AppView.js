@@ -8,7 +8,6 @@ define(function (require, exports, module) {
         
         AppModel    = require("models/AppModel"),
         NicoApi     = require("nicoapi/NicoApi"),
-        NicoLiveApi = require("nicoapi/NicoLiveApi"),
         
         nsenChannels = require("text!nicoapi/NsenChannels.json"),
         htmlMainView = require("text!htmlContent/main-view.html");
@@ -25,33 +24,39 @@ define(function (require, exports, module) {
         return;
     }
     
+    // メインビューを用意
     var $mainView = $(_.template(htmlMainView)({nsenChannels: nsenChannels}));
+    
+    $mainView.find("[data-send-good], [data-send-skip]")
+                .tooltip();
     
     // メインビューを表示
     $("body").append($mainView);
     
     var AppView = Backbone.View.extend({
         el: $mainView,
+        
+        _live: null,
         _nsenChannel: null,
         
         events: {
             "focusin .nco-comment-group input": "formFocus",
             "focusout .nco-comment-group input": "formFocus",
             
-            "click #channel-switcher a[data-ch]": "channelChange",
+            "click #channel-switcher a[data-ch]": "channelSelected",
             "click [data-send-skip]" : "clickSkip",
             "click [data-send-good]" : "clickGood",
-            "submit #comment-poster": "postComment"
+            "submit #comment-poster": "submitComment"
         },
         
         initialize: function () {
             var self = this;
             
-            _.bindAll(this, "_onChannelChange", "formFocus", "channelChange",
-                "postComment", "clickSkip", "clickGood", "skipEnable");
+            _.bindAll(this, "formFocus", "channelSelected", "submitComment",
+                "clickSkip", "clickGood", "someoneSayGood");
             
             // 初めてログインした時のガイドを表示
-            NicoApi.on("login", function () {
+            NicoApi.Auth.on("login", function () {
                 if (AppModel.get("currentCh") === null) {
                     self.$el.find("[data-ch-selecter] > a")
                         .one("hidden.bs.tooltip", function () { $(this).tooltip('destroy'); })
@@ -59,9 +64,6 @@ define(function (require, exports, module) {
                         .tooltip("show");
                 }
             });
-            
-            this.$el.find("[data-send-good], [data-send-skip]")
-                .tooltip();
             
             // アプリケーションのHTML初期化完了を通知
             this.render();
@@ -89,29 +91,43 @@ define(function (require, exports, module) {
             }
         },
         
+        
+        //
+        // ウラカタイベントリスナ
+        //
+        
         // AppModelのチャンネルが変わった時
         _onChannelChange: function () {
             var self = this;
             
-            NicoApi.isLogin()
-                .then(function () {
-                    return NicoLiveApi.getLiveInfo(AppModel.get("currentCh"));
-                })
-                .then(function (live) {
+            NicoApi.Live.getLiveInfo(AppModel.get("currentCh"))
+                .done(function (live) {
                     if (self._nsenChannel) {
-                        self._nsenChannel.off("moviechanged", self.skipEnable);
+                        self._nsenChannel.off("videochanged", self.skipEnable);
                     }
                     
-                    self._nsenChannel = NicoLiveApi.getNsenChannelFromLive(live);
-                    self._nsenChannel.on("moviechanged", self.skipEnable);
+                    var nsen = live.asNsen();
+                    self._live = live;
+                    self._nsenChannel = nsen;
+                    
+                    // イベントリスニング
+                    nsen
+                        .on("videochanged", self.skipEnable)
+                        .on("goodcall", self.someoneSayGood);
                 });
         },
         
+        //
+        // GUIイベントリスナ
+        //
+        
+        // 投稿フォームがクリックされた時
         formFocus: function () {
             this.$el.find(".nco-comment-group").toggleClass("focus");
         },
         
-        channelChange: function (e) {
+        // チャンネルが選ばれた時
+        channelSelected: function (e) {
             var $parent = this.$el.find("#channel-switcher").parent(),
                 $item = $(e.target);
             
@@ -129,21 +145,26 @@ define(function (require, exports, module) {
             return false;
         },
         
-        postComment: function () {
+        // コメントを投稿した時
+        submitComment: function () {
             var ch = AppModel.get("currentCh"),
                 $comment = $mainView.find("#comment-poster [name='comment']"),
                 provider;
             
-            NicoLiveApi.getLiveInfo(ch)
-                .done(function (info) {
-                    provider = NicoLiveApi.getCommentProvider(info);
-                    provider.postComment($comment.val());
-                    $comment.val("");
-                });
+            if (this._live) {
+                provider = this._live.getCommentProvider();
+                
+                provider.postComment($comment.val())
+                    .done(function () {
+                        $comment.val("");
+                    })
+                    .fail(function () { /* TODO: エラー表示 */ });
+            }
             
             return false;
         },
         
+        // スキップリクエストをクリックした時
         clickSkip: function () {
             if (this._nsenChannel && this._nsenChannel.isSkipRequestable()) {
                 this._nsenChannel.pushSkip();
@@ -160,22 +181,33 @@ define(function (require, exports, module) {
             $el.attr("data-timerid", setTimeout(function () { $el.removeClass("active"); $el[0].__timer = null; }, 200));
         },
         
+        // Goodをクリックした時
         clickGood: function () {
             if (this._nsenChannel) {
                 this._nsenChannel.pushGood();
             }
             
+            this.someoneSayGood();
+        },
+        
+        //
+        // メソッド
+        //
+        
+        // スキップが有効にできるかチェック
+        skipEnable: function () {
+            if (this._nsenChannel && this._nsenChannel.isSkipRequestable()) {
+                this.$el.find(".custom-nav-skip").removeClass("disabled");
+            }
+        },
+        
+        // （メソッド兼ウラカタイベントリスナ）グッドを光らせる
+        someoneSayGood: function () {
             var $el = this.$el.find(".custom-nav-good .response-indicator").addClass("active");
             if ($el.attr("data-timerid") !== void 0) {
                 clearTimeout($el.attr("data-timerid")|0);
             }
             $el.attr("data-timerid", setTimeout(function () { $el.removeClass("active"); $el[0].__timer = null; }, 200));
-        },
-        
-        skipEnable: function () {
-            if (this._nsenChannel && this._nsenChannel.isSkipRequestable()) {
-                this.$el.find(".custom-nav-skip").removeClass("disabled");
-            }
         }
     });
     
