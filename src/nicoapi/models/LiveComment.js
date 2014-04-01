@@ -98,14 +98,18 @@ define(function (require, exports, module) {
             isMyPost: $xml.attr("yourpost") === "1",
 
             user: {
-                id: $xml.attr("user_id")|0,
+                id: $xml.attr("user_id"),
                 score: $xml.attr("score")|0,
                 accountType: $xml.attr("premium")|0,
                 isPremium: ($xml.attr("premium")|0) > 0,
                 isAnonymous: $xml.attr("anonymity")|0 !== 0
             }
         };
-
+        
+        if (obj.user.id .match(/^[0-9]*$/)) {
+            obj.user.id = obj.user.id|0;
+        }
+        
         return new LiveComment(obj);
     }
     
