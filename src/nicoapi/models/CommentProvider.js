@@ -105,25 +105,24 @@ define(function (require, exports, module) {
         },
         
         _parseComment: function (res) {
-            var self = this;
-            
             if (/^<chat /.test(res)) {
                 var comment = LiveComment.fromPlainXml(res);
                 
                 // 時々流れてくるよくわからない無効データは破棄
                 if (comment.get("comment") !== "") {
                     // LiveCommentの自己ポスト判定が甘いので厳密に。
-                    if (comment.get("user").id === self._live.get("user").id) {
+                    if (comment.get("user").id === this._live.get("user").id) {
                         comment.set("isMyPost", true);
                     }
                     
-                    self.add(comment);
+                    this.add(comment);
                 }
             }
         },
         
         _listenPostResult: function (res) {
             if (/^<chat_result /.test(res)) {
+                Global.console.log(res);
                 var status = /status="([0-9]+)"/.exec(res);
                 status = status && status[0]|0;
                 this.trigger("_chatresult", {status:status});
@@ -195,7 +194,7 @@ define(function (require, exports, module) {
                     if (jqXhr.status === 200) {
                         // 正常に通信できた時
                         postKey = /^postkey=(.*)\s*/.exec(res);
-                        postKey && (postKey = postKey[0]);
+                        postKey && (postKey = postKey[1]);
                     }
                     
                     if (postKey !== "") {
