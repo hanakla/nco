@@ -7,7 +7,7 @@
 define(function (require, exports, module) {
     "use strict";
     
-    var NicoAuthApi     = require("./impl/NicoAuth"),
+    var NicoAuthApi     = require("./impl/NicoAuthApi"),
         NicoLiveApi     = require("./impl/NicoLiveApi"),
         NicoVideoApi    = require("./impl/NicoVideoApi");
     
