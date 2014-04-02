@@ -122,7 +122,6 @@ define(function (require, exports, module) {
         
         _listenPostResult: function (res) {
             if (/^<chat_result /.test(res)) {
-                Global.console.log(res);
                 var status = /status="([0-9]+)"/.exec(res);
                 status = status && status[0]|0;
                 this.trigger("_chatresult", {status:status});
@@ -250,13 +249,13 @@ define(function (require, exports, module) {
                 // 通信成功
                 .done(function (postKey) {
                     // 送信する情報を集める
-                    postInfo = _.defaults(postInfo, {
+                    postInfo = _.defaults({
                         userId: self._live.get("user").id,
                         isPremium: self._live.get("user").isPremium|0,
                         postKey: postKey,
                         comment: escapeHtml(msg),
-                        command: command
-                    });
+                        command: command|""
+                    }, postInfo);
                     
                     // 投稿結果をリスニング
                     self.once("_chatresult", function (result) {
