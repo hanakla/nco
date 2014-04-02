@@ -41,9 +41,10 @@ define(function (require, exports, module) {
     }
     
     function _onVideoChanged(ch, movie) {
-        if (movie.id === prevVideoId) {
+        if (!movie || movie.id === prevVideoId) {
             return;
         }
+        
         var movieInfo = movie.toJSON();
         prevVideoId = movie.id;
         
