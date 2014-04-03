@@ -106,7 +106,7 @@ define(function (require, exports, module) {
      * @param {Function(HTMLTableCellElement, Object)} generator 列の内容を生成する関数
      * @return {boolean}
      */
-    function _registColGenerator(colId, generator) {
+    function registColumn(colId, generator) {
         if (_columnGenerators[colId]) {
             Global.console.error("このIDのカスタム列は登録済みです(%s)", colId);
             return false;
@@ -127,7 +127,7 @@ define(function (require, exports, module) {
      * @param {function(HTMLTableRowElement, Object)} filter フィルタ関数
      * @return {boolean}
      */
-    function _registFilter(filterId, filter) {
+    function addFilter(filterId, filter) {
         if (_rowFilters.filters[filterId]) {
             Global.console.error("このIDのフィルターは登録済みです(%s)", filterId);
             return false;
@@ -146,7 +146,7 @@ define(function (require, exports, module) {
     /**
      * @param {HTMLTableRowElement} el 追加するtr要素
      */
-    function _addRow(el) {
+    function addRow(el) {
         if ($(el).is("tr")) {
             exports.trigger("_addRow", el);
         }
@@ -158,7 +158,7 @@ define(function (require, exports, module) {
     /**
      * カラム数を取得
      */
-    function _getColsCount() {
+    function getColsCount() {
         return _.size(_columnGenerators);
     }
     
@@ -170,11 +170,11 @@ define(function (require, exports, module) {
     // 公開メソッド
     _.extend(exports, Backbone.Events);
     
-    exports.registColumn = _registColGenerator;
-    exports.addFilter = _registFilter;
-    exports.addRow = _addRow;
+    exports.registColumn = registColumn;
+    exports.addFilter = addFilter;
+    exports.addRow = addRow;
     
-    exports.getColsCount = _getColsCount;
+    exports.getColsCount = getColsCount;
     
     exports.removeColumn = _noImplement("removeColumn");
     exports.removeFilter = _noImplement("removeFilter");
