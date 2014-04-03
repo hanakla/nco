@@ -105,6 +105,8 @@ define(function (require, exports, module) {
         
         // APIからマイリスト一覧を取得
         $.ajax({url:NicoUrl.MyList.GET_GROUPS, dataType:"json"})
+        
+            // レスポンス受信
             .done(function (res) {
                 if (res.status !== "ok") {
                     dfd.reject("不明なエラー(API接続完了)");
@@ -130,6 +132,13 @@ define(function (require, exports, module) {
                         cache[group.id] = new MyListGroup(group);
                     }
                 });
+                
+                // とりあえずマイリストを取得
+                if (cache.default) {
+                    cache.default.fetch();
+                } else {
+                    cache.default = new MyListGroup();
+                }
                 
                 dfd.resolve(_.clone(cache));
             })
