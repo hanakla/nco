@@ -35,4 +35,17 @@ define(function (require, exports, module) {
         // URL + 動画ID
         GET_VIDEO_INFO: "http://ext.nicovideo.jp/api/getthumbinfo/"
     };
+    
+    exports.MyList = {
+        FETCH_TOKEN: "http://www.nicovideo.jp/my/mylist",
+        
+        DefList: {
+            GET_CONTENTS: "http://www.nicovideo.jp/api/deflist/list"
+        },
+        
+        GET_GROUPS: "http://www.nicovideo.jp/api/mylistgroup/list",
+        
+        // パラメータ: マイリストID
+        GET_GROUP_CONTENTS: "http://www.nicovideo.jp/api/mylist/list?group_id=%s"
+    };
 });
