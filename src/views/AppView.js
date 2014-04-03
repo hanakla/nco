@@ -1,4 +1,5 @@
 /*jslint node: true, vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, expr: true */
+/*global document, define*/
 define(function (require, exports, module) {
     "use strict";
     
@@ -6,7 +7,7 @@ define(function (require, exports, module) {
         AppInit     = require("utils/AppInit"),
         Backbone    = require("thirdparty/backbone"),
         
-        AppModel    = require("models/AppModel"),
+        ChannelManager = require("appcore/ChannelManager"),
         NicoApi     = require("nicoapi/NicoApi"),
         
         nsenChannels = require("text!nicoapi/NsenChannels.json"),
@@ -52,12 +53,14 @@ define(function (require, exports, module) {
         initialize: function () {
             var self = this;
             
-            _.bindAll(this, "formFocus", "channelSelected", "submitComment",
-                "clickSkip", "clickGood", "someoneSayGood");
+            _.bindAll(this, "formFocus", "channelSelected",
+                "submitComment", "clickSkip", "clickGood",
+                "skipDisabled", "skipEnabled", "someoneSayGood");
+            
             
             // 初めてログインした時のガイドを表示
             NicoApi.Auth.on("login", function () {
-                if (AppModel.get("currentCh") === null) {
+                if (ChannelManager.getChannelType() === null) {
                     self.$el.find("[data-ch-selecter] > a")
                         .one("hidden.bs.tooltip", function () { $(this).tooltip('destroy'); })
                         .tooltip({title: "チャンネルを選択しましょう"})
@@ -65,57 +68,28 @@ define(function (require, exports, module) {
                 }
             });
             
+            // Nsenのイベントをリスニング
+            ChannelManager
+                .on("skipin", this.skipDisabled)
+                .on("skipAvailable", this.skipEnabled)
+                .on("goodcall", this.someoneSayGood)
+                .once("channelChanged", this._render);
+            
             // アプリケーションのHTML初期化完了を通知
             this.render();
             AppInit._triggerHtmlReady();
-            
-            // NsenAPIを準備
-            if (!AppModel.get("currentCh")) {
-                return;
-            }
-            
-            this._onChannelChange();
         },
         
         render: function () {
-            var ch = AppModel.get("currentCh");
+            var ch = ChannelManager.getChannelType();
             
             if (ch) {
                 // 今選択されているチャンネルの表示を強調する
-                this.$el.find("#channel-switcher li a")
-                    .each(function () {
-                        if ($(this).attr("data-ch") === ch) {
-                            $(this).parent().addClass("active");
-                        }
-                    });
+                this.$el.find("#channel-switcher li a[data-ch='nsen/" + ch + "']") 
+                    .parent().addClass("active");
             }
         },
         
-        
-        //
-        // ウラカタイベントリスナ
-        //
-        
-        // AppModelのチャンネルが変わった時
-        _onChannelChange: function () {
-            var self = this;
-            
-            NicoApi.Live.getLiveInfo(AppModel.get("currentCh"))
-                .done(function (live) {
-                    if (self._nsenChannel) {
-                        self._nsenChannel.off("videochanged", self.skipEnable);
-                    }
-                    
-                    var nsen = live.asNsen();
-                    self._live = live;
-                    self._nsenChannel = nsen;
-                    
-                    // イベントリスニング
-                    nsen
-                        .on("videochanged", self.skipEnable)
-                        .on("goodcall", self.someoneSayGood);
-                });
-        },
         
         //
         // GUIイベントリスナ
@@ -139,7 +113,7 @@ define(function (require, exports, module) {
             
             // チャンネルを変更
             var ch = $item.attr("data-ch");
-            AppModel.set("currentCh", ch);
+            ChannelManager.changeChannel(ch);
             
             $parent.find(">a").dropdown("toggle");
             return false;
@@ -147,31 +121,40 @@ define(function (require, exports, module) {
         
         // コメントを投稿した時
         submitComment: function () {
-            var ch = AppModel.get("currentCh"),
-                $comment = $mainView.find("#comment-poster [name='comment']"),
-                provider;
+            var $comment = $mainView.find("#comment-poster [name='comment']");
             
-            if (this._live) {
-                provider = this._live.getCommentProvider();
-                
-                provider.postComment($comment.val())
-                    .done(function () {
-                        $comment.val("");
-                    })
-                    .fail(function () { /* TODO: エラー表示 */ });
-            }
+            ChannelManager.pushComment($comment.val())
+                .done(function () {
+                    $comment.val("");
+                })
+                .fail(function () {
+                    // TODO
+                });
             
             return false;
         },
         
         // スキップリクエストをクリックした時
         clickSkip: function () {
-            if (this._nsenChannel && this._nsenChannel.isSkipRequestable()) {
-                this._nsenChannel.pushSkip();
+            if (ChannelManager.isSkipRequestable()) {
+                ChannelManager.pushSkip();
             } else {
                 return;
             }
-            
+        },
+        
+        // Goodをクリックした時
+        clickGood: function () {
+            ChannelManager.pushGood();
+            this.someoneSayGood();
+        },
+        
+        //
+        // メソッド
+        //
+        // スキップを無効にする
+        skipDisabled: function () {
+            this.$el.find(".custom-nav-skip").addClass("disabled");
             this.$el.find(".custom-nav-skip").addClass("disabled");
             
             var $el = this.$el.find(".custom-nav-skip .response-indicator").addClass("active");
@@ -181,24 +164,9 @@ define(function (require, exports, module) {
             $el.attr("data-timerid", setTimeout(function () { $el.removeClass("active"); $el[0].__timer = null; }, 200));
         },
         
-        // Goodをクリックした時
-        clickGood: function () {
-            if (this._nsenChannel) {
-                this._nsenChannel.pushGood();
-            }
-            
-            this.someoneSayGood();
-        },
-        
-        //
-        // メソッド
-        //
-        
-        // スキップが有効にできるかチェック
-        skipEnable: function () {
-            if (this._nsenChannel && this._nsenChannel.isSkipRequestable()) {
-                this.$el.find(".custom-nav-skip").removeClass("disabled");
-            }
+        // スキップを有効にする
+        skipEnabled: function () {
+            this.$el.find(".custom-nav-skip").removeClass("disabled");
         },
         
         // （メソッド兼ウラカタイベントリスナ）グッドを光らせる
