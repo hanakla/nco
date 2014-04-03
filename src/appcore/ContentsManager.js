@@ -3,17 +3,17 @@
 /**
  * コンテンツマネージャ。コメント一覧に表示するコンテンツを管理します。
  * Method
- *  - registColumn(id:string, generator:function(el:HTMLTableCellElement, comment:LiveComment#toJSON())):boolean
- *      カラムジェネレータを登録します。
- *      generatorは必要なタイミングで新しいtd要素、コメント情報(LiveCommentのJSON化オブジェクト)とともに呼び出されるので
+ *  - registColumn(id:string, name:string, generator:function(el:HTMLTableCellElement, comment:LiveComment)):boolean
+ *      カラムジェネレータを登録します。idは任意でかぶらなそうなID、nameは列名です。
+ *      generatorは必要なタイミングで新しいtd要素、コメント情報(LiveComment)とともに呼び出されるので
  *      受け取ったtd要素にコンテンツを設定してください（同期非同期問わない）
  *      generatorはコンテンツの生成をキャンセルできません。（しないでください）
  *      
  *      td要素には data-generator-id属性が付与され、それにジェネレータのidが設定されます。
  * 
- * - addFilter(id:string, filter:function(el:HTMLTableRowElement, comment:LiveComment#toJSON())):boolean
+ * - addFilter(id:string, filter:function(el:HTMLTableRowElement, comment:LiveComment)):boolean
  *      フィルターを登録します。
- *      filterは行を追加する前にtr要素、コメント情報(LiveCommentのJSON化オブジェクト)とともに呼び出され、
+ *      filterは行を追加する前にtr要素、コメント情報(LiveComment)とともに呼び出され、
  *      登録されたすべてのフィルターを通過した後に行として表示されます。
  *      もしいずれかのフィルターが"false"を返した場合、その要素の表示はキャンセルされます。
  * 
@@ -38,9 +38,13 @@ define(function (require, exports, module) {
         ChannelManager  = require("appcore/ChannelManager"),
         Global          = require("utils/Global");
     
-    /**
-     * 生成した列
-     */
+    var _tmpl = _.template((function () {/*
+            <tr data-userid="<%=user.id%>" data-premium="<%=user.isPremium%>"
+                data-date="<%=date.getTime()%>" data-score="<%=user.score%>"
+                data-command="<%=command%>" <%=isMyPost?"data-mypost":""%>>
+                <td><%=comment%></td>
+            </tr>
+        */}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1]);
     
     /**
      * カラムジェネレータのid-functionマップ
@@ -80,8 +84,7 @@ define(function (require, exports, module) {
      * @param {LiveComment} comment
      */
     function _onReceiveComment(comment) {
-        var tr = document.createElement("tr");
-        comment = comment.toJSON();
+        var tr = $(_tmpl(comment.toJSON()))[0];
         
         // ジェネレータを通す
         _.each(_columnGenerators, function (fn, id) {
@@ -108,10 +111,11 @@ define(function (require, exports, module) {
     
     /**
      * @param {string} generatorId ジェネレータID
+     * @param {string} name 列名
      * @param {Function(HTMLTableCellElement, Object)} generator 列の内容を生成する関数
      * @return {boolean}
      */
-    function registColumn(colId, generator) {
+    function registColumn(colId, name, generator) {
         if (_columnGenerators[colId]) {
             Global.console.error("このIDのカスタム列は登録済みです(%s)", colId);
             return false;
