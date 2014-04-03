@@ -96,8 +96,19 @@ define(function (require, exports, module) {
         //
         
         // 投稿フォームがクリックされた時
-        formFocus: function () {
-            this.$el.find(".nco-comment-group").toggleClass("focus");
+        formFocus: function (e) {
+            var cmgroup = this.$el.find(".nco-comment-group"),
+                fn;
+            
+            if (e.type === "focusin") {
+                $(document).on("click", fn = function (e) {
+                    if (cmgroup.find(e.target).length === 0)  {
+                        cmgroup.removeClass("focus");
+                    }
+                });
+            }
+            
+            cmgroup.addClass("focus");
         },
         
         // チャンネルが選ばれた時
