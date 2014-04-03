@@ -26,5 +26,5 @@ define(function (require, exports, module) {
         return deferred.promise();
     }
     
-    exports._getVideoInfo = _getVideoInfo;
+    exports.getVideoInfo = _getVideoInfo;
 });
