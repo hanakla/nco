@@ -79,6 +79,15 @@ define(function (require, exports, module) {
      */
     function _onChannelChange() {
         exports.trigger("_clear");
+        _rows = null;
+        _rows = [];
+        
+        var comments = ChannelManager.getComments();
+        if (comments && comments.length !== 0) {
+            _.each(comments, function (comment) {
+                _onReceiveComment(comment);
+            });
+        }
     }
     
     
@@ -185,7 +194,7 @@ define(function (require, exports, module) {
     
     // イベントリスニング
     ChannelManager
-        .on("changeChannel", _onChannelChange)
+        .on("channelChanged", _onChannelChange)
         .on("said", _onReceiveComment);
     
     exports.on("_addRow", function (el) { _rows.push(el); });
