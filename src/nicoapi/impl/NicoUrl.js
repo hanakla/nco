@@ -23,11 +23,11 @@ define(function (require, exports, module) {
         NSEN_REQUEST: "http://live.nicovideo.jp/api/nsenrequest?v=%s&id=%s",
         // パラメータ: 放送ID
         NSEN_REQUEST_CANCEL: "http://live.nicovideo.jp/api/nsenrequest?v=%s&mode=cancel",
-        //パラメータ: 放送ID
+        // パラメータ: 放送ID
         NSEN_REQUEST_SYNC: "http://live.nicovideo.jp/api/nsenrequest?v=%s&mode=requesting",
-        //パラメータ: 放送ID
+        // パラメータ: 放送ID
         NSEN_GOOD: "http://ow.live.nicovideo.jp/api/nsengood?v=%s",
-        //パラメータ: 放送ID
+        // パラメータ: 放送ID
         NSEN_SKIP: "http://ow.live.nicovideo.jp/api/nsenskip?v=%s"
     };
     
@@ -38,14 +38,20 @@ define(function (require, exports, module) {
     
     exports.MyList = {
         FETCH_TOKEN: "http://www.nicovideo.jp/my/mylist",
-        
-        DefList: {
-            GET_CONTENTS: "http://www.nicovideo.jp/api/deflist/list"
-        },
-        
         GET_GROUPS: "http://www.nicovideo.jp/api/mylistgroup/list",
         
-        // パラメータ: マイリストID
-        GET_GROUP_CONTENTS: "http://www.nicovideo.jp/api/mylist/list?group_id=%s"
+        DefList: {
+            LIST: "http://www.nicovideo.jp/api/deflist/list",
+            
+            // フォームデータ: item_type, item_id, token, ?description
+            ADD: "http://www.nicovideo.jp/api/deflist/add",
+        },
+        
+        Normal: {
+            // パラメータ: マイリストID
+            LIST: "http://www.nicovideo.jp/api/mylist/list?group_id=%s",
+            
+            ADD: "http://www.nicovideo.jp/api/mylist/add",
+        }
     };
 });

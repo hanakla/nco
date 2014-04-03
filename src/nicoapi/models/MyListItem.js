@@ -3,7 +3,11 @@
 /**
  * マイリストの項目モデルです。
  * Backbone.Modelを継承しています。
+ * 
  * Properties
+ *  getメソッドを通じて第１階層まで取得できます。
+ *  Ex. mylistItem.get("movie").title
+ * 
  *  - id:number -- マイリスト項目ID
  *  - type:number -- 項目の種類（動画、静画など）
  *  - description:string -- マイリストコメント
@@ -32,7 +36,8 @@ define(function (require, exports, module) {
     "use strict";
     
     var _               = require("thirdparty/lodash"),
-        NicoVideoInfo   = require("./NicoVideoInfo");
+        NicoVideoInfo   = require("./NicoVideoInfo"),
+        StringUtil      = require("utils/StringUtil");
     
     var ItemType = {
         movie: 0,
@@ -65,7 +70,7 @@ define(function (require, exports, module) {
                 movie: {
                     id: item.video_id,
                     
-                    title: item.title,
+                    title: StringUtil.descapeHtml(item.title),
                     length: item.length_seconds|0, // 秒数
                     thumbnail: item.thumbnail_url,
                     
