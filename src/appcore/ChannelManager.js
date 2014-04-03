@@ -17,6 +17,9 @@
  *      現在再生中の動画情報を取得します。
  *      （基本的にはこのメソッドを用いず、"videochanged"イベントをリスニングしてください）
  * 
+ *  - getChannelType():string|null
+ *      チャンネルの種別を取得します。（nsen/***の"***"の部分だけ）
+ * 
  *  - pushRequest(video:NicoVideoInfo|string):$.Promise
  *      リクエストを送信します。リクエストの送信が成功すればresolveされます。
  *      失敗すればエラーオブジェクトとともにrejectされます。
@@ -247,6 +250,14 @@ define(function (require, exports, module) {
         return _nsenChannel.getCurrentVideo();
     }
     
+    function getChannelType() {
+        if (_isNotInitialized()) {
+            return null;
+        }
+        
+        return _nsenChannel.getChannelType();
+    }
+    
     /**
      * リクエストを送信します。
      * @param {NicoVideoInfo|string} movie リクエストする動画の動画情報か、動画ID
@@ -357,6 +368,7 @@ define(function (require, exports, module) {
     exports.changeChannel = changeChannel;
     
     exports.getCurrentVideo = getCurrentVideo;
+    exports.getChannelType = getChannelType;
     
     exports.pushRequest = pushRequest;
     exports.cancelRequest = cancelRequest;

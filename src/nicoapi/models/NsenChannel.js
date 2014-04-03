@@ -9,6 +9,7 @@
  * 
  * Methods
  *  - getCurrentVideo():NicoVideoInfo|null -- 現在再生中の動画情報を取得します。
+ *  - getChannelType():string -- チャンネルの種別を取得します。（nsen/***の"***"の部分だけ）
  *  - isSkipRequestable():boolean -- 今現在、スキップリクエストを送ることができるか検証します。
  *  - sendRequest(movie:NicoVideoInfo) -- リクエストを送信します。
  *  - cancelRequest() -- リクエストをキャンセルします。
@@ -217,6 +218,10 @@ define(function (require, exports, module) {
         //
         // 公開メソッド
         //
+        getChannelType: function () {
+            return this._live.get("stream").nsenType;
+        },
+        
         getCurrentVideo: function () {
             return this._playingMovie;
         },
