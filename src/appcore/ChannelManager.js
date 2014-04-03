@@ -178,9 +178,11 @@ define(function (require, exports, module) {
      * 関係オブジェクトのイベントリスニングを停止します。
      */
     function _stopListening() {
-        _.each(_listeners.live, function (fn, ev) { _live.off(ev, fn); });
-        _.each(_listeners.comment, function (fn, ev) { _commentProvider.off(ev, fn); });
-        _.each(_listeners.nsen, function (fn, ev) { _nsenChannel.off(ev, fn); });
+        if (!_isNotInitialized()) {
+            _.each(_listeners.live, function (fn, ev) { _live.off(ev, fn); });
+            _.each(_listeners.comment, function (fn, ev) { _commentProvider.off(ev, fn); });
+            _.each(_listeners.nsen, function (fn, ev) { _nsenChannel.off(ev, fn); });
+        }
     }
     
     
@@ -252,7 +254,10 @@ define(function (require, exports, module) {
     
     function getChannelType() {
         if (_isNotInitialized()) {
-            return null;
+            // そのうち変更
+            var id = AppModel.get("currentCh");
+            id && (id = id.replace("nsen/", ""));
+            return id || null;
         }
         
         return _nsenChannel.getChannelType();
@@ -367,7 +372,7 @@ define(function (require, exports, module) {
      * 起動直前のチャンネルを復元
      */
     if (AppModel.get("currentCh")) {
-        changeChannel(AppModel.get("currentCh"));
+        changeChannel(AppModel.get("currentCh")); // そのうち削除
     }
     
     // 公開メソッド
