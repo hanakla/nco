@@ -164,7 +164,7 @@ define(function (require, exports, module) {
                 NicoVideoApi._getVideoInfo(videoId)
                     .done(function (movie) {
                         self._playingMovie = movie;
-                        self.trigger("videochanged", self, movie, beforeVideo);
+                        self.trigger("videochanged", movie, beforeVideo);
                     });
                 
                 // 次に動画が変わるタイミングで配信情報を更新させる
