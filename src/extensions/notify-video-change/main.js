@@ -4,43 +4,21 @@ define(function (require, exports, module) {
     "use strict";
     
     var _           = nco.getModule("thirdparty/lodash"),
-        AppInit     = nco.getModule("utils/AppInit"),
-        AppModel    = nco.getModule("models/AppModel"),
-        NicoApi     = nco.getModule("nicoapi/NicoApi"),
+        ChannelManager = nco.getModule("appcore/ChannelManager"),
+        ContentsManager = nco.getModule("appcore/ContentsManager"),
         
         tmpl    = _.template(require("text!row.html"));
     
-    var nsenCh = null,
-        prevVideoId = null;
+    var prevVideoId = null;
     
     function comma(num) {
         return num.toString().replace(/(\d)(?=(\d\d\d)+$)/g , "$1,");
     }
     
-    /**
-     * チャンネル変更リスナ
-     * @param {Type} 
-     */
-    function _channelChanged() {
-        var ch = AppModel.get("currentCh");
-       
-        if (ch) {
-            NicoApi.Live.getLiveInfo(ch)
-                .done(function (live) {
-                    if (nsenCh) {
-                        // 前のチャンネルオブジェクトがあったら
-                        // そいつとはえんがちょ
-                        nsenCh.off("videochanged", _onVideoChanged);
-                    }
-
-                    // NsenChannelオブジェクトを取得する
-                    nsenCh = live.asNsen();
-                    nsenCh.on("videochanged", _onVideoChanged);
-                });
-        }
-    }
+    // 動画変更イベントをリスニング
+    ChannelManager.on("videochanged", _onVideoChanged);
     
-    function _onVideoChanged(ch, movie) {
+    function _onVideoChanged(movie) {
         if (!movie || movie.id === prevVideoId) {
             return;
         }
@@ -54,14 +32,7 @@ define(function (require, exports, module) {
         
         var $tr = $(tmpl(movieInfo));
         
-        setTimeout(function () { $("#comment-view").append($tr); }, 500);
+        // ContentsManagerAPIに行要素を投げる
+        ContentsManager.addRow($tr[0]);
     }
-    
-    
-    // イベントリスニング
-    AppModel.on("change:currentCh", _channelChanged);
-    
-    AppInit.htmlReady(function () {
-        _channelChanged();
-    });
 });
