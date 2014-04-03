@@ -54,6 +54,11 @@ define(function (require, exports, module) {
      */
     var _rowFilters = {};
     
+    /**
+     * 直前に削除されるまでに追加されたtr要素
+     * @type {Array.<HTMLTableRowElement>}
+     */
+    var _rows = [];
     
     function _noImplement(method) {
         return function () {
@@ -156,6 +161,15 @@ define(function (require, exports, module) {
     
     
     /**
+     * 今までに追加された行を取得します。
+     * @param {Array.<HTMLTableRowElement>} 
+     */
+    function getRows() {
+        return _.clone(_rows);
+    }
+    
+    
+    /**
      * カラム数を取得
      */
     function getColsCount() {
@@ -167,6 +181,8 @@ define(function (require, exports, module) {
         .on("changeChannel", _onChannelChange)
         .on("said", _onReceiveComment);
     
+    exports.on("_addRow", function (el) { _rows.push(el); });
+    
     // 公開メソッド
     _.extend(exports, Backbone.Events);
     
@@ -175,6 +191,7 @@ define(function (require, exports, module) {
     exports.addRow = addRow;
     
     exports.getColsCount = getColsCount;
+    exports.getRows = getRows;
     
     exports.removeColumn = _noImplement("removeColumn");
     exports.removeFilter = _noImplement("removeFilter");
