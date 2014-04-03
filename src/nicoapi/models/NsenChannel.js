@@ -167,7 +167,7 @@ define(function (require, exports, module) {
             if (!this._playingMovie || this._playingMovie.id !== videoId) {
                 
                 // 直前の再生中動画と異なれば情報を更新
-                NicoVideoApi._getVideoInfo(videoId)
+                NicoVideoApi.getVideoInfo(videoId)
                     .done(function (movie) {
                         self._playingMovie = movie;
                         self.trigger("videochanged", movie, beforeVideo);
