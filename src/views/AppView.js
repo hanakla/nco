@@ -96,8 +96,19 @@ define(function (require, exports, module) {
         //
         
         // 投稿フォームがクリックされた時
-        formFocus: function () {
-            this.$el.find(".nco-comment-group").toggleClass("focus");
+        formFocus: function (e) {
+            var cmgroup = this.$el.find(".nco-comment-group"),
+                fn;
+            
+            if (e.type === "focusin") {
+                $(document).on("click", fn = function (e) {
+                    if (cmgroup.find(e.target).length === 0)  {
+                        cmgroup.removeClass("focus");
+                    }
+                });
+            }
+            
+            cmgroup.addClass("focus");
         },
         
         // チャンネルが選ばれた時
@@ -121,16 +132,19 @@ define(function (require, exports, module) {
         
         // コメントを投稿した時
         submitComment: function () {
-            var $comment = $mainView.find("#comment-poster [name='comment']");
+            var $form =  $mainView.find("#comment-poster"),
+                $comment = $form.find("[name='comment']");
             
-            ChannelManager.pushComment($comment.val())
+            var iyayo = $form.find("[name='184']")[0].checked ? "184" : null,
+                command = (iyayo ? "184" : null);
+            
+            ChannelManager.pushComment($comment.val(), command)
                 .done(function () {
                     $comment.val("");
                 })
                 .fail(function () {
                     // TODO
                 });
-            
             return false;
         },
         

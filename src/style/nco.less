@@ -235,9 +235,24 @@ a:active {
 .nco-comment-group {
     width: 100%;
     padding: 0 5px;
-    transition: width .2s ease-out;
+    margin-top:0;
     
-    input {
+    transition: .2s ease-out;
+    transition-property: width, margin-top;
+    backface-visibility: hidden;
+    
+    .nco-comment-subpanel {
+        display: none;
+        position: absolute;
+        bottom: 100%;
+        
+        width: 100%;
+        height: 40px;
+        padding: 10px;
+        margin-bottom: 5px;
+    }
+    
+    .nco-form-comment {
         font-size: 0.85em;
         
         color: #fff;
@@ -267,8 +282,13 @@ a:active {
     }
     
     &.focus {
+        margin-top: 40px; // サブパネル用
         
-        input {
+        .nco-comment-subpanel {
+            display: block;
+        }
+        
+        .nco-form-comment {
             color: #000;
             background-color: #fff;
             
@@ -288,13 +308,23 @@ a:active {
         }
     }
 }
-
+// デスクトップサイズ
  @media (min-width: @screen-sm-min) {
-     .nco-comment-group {
+    .nco-comment-group {
         width: 16em;
         margin: 0;
-
+         
         &.focus {
+            margin-top: 0; // サブパネル
+            
+            .nco-comment-subpanel {
+                top: auto;
+                bottom: 100%;
+                
+                margin-bottom: 10px;
+                background-color: @main-color;
+            }
+            
             width: 25em !important;
         }
     }
