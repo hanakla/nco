@@ -70,6 +70,9 @@ define(function (require, exports, module) {
         };
     }
     
+    // 継承
+    _.extend(exports, Backbone.Events);
+    
     
     /**
      * チャンネル変更時のイベント 
@@ -188,7 +191,6 @@ define(function (require, exports, module) {
     exports.on("_addRow", function (el) { _rows.push(el); });
     
     // 公開メソッド
-    _.extend(exports, Backbone.Events);
     
     exports.registColumn = registColumn;
     exports.addFilter = addFilter;
