@@ -98,7 +98,7 @@ define(function (require, exports, module) {
     
     var _        = require("thirdparty/lodash"),
         Global   = require("utils/Global"),
-        AppModel = require("appcore/AppModel"),
+        AppModel = require("models/AppModel"), // そのうち削除
         Backbone = require("thirdparty/backbone"),
         NicoApi  = require("nicoapi/NicoApi"),
         
