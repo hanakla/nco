@@ -140,7 +140,7 @@ define(function (require, exports, module) {
      * @return {boolean}
      */
     function addFilter(filterId, filter) {
-        if (_rowFilters.filters[filterId]) {
+        if (_rowFilters[filterId]) {
             Global.console.error("このIDのフィルターは登録済みです(%s)", filterId);
             return false;
         }
@@ -150,7 +150,7 @@ define(function (require, exports, module) {
             return false;
         }
         
-        _rowFilters.filters[filterId] = filter;
+        _rowFilters[filterId] = filter;
         return true;
     }
     
