@@ -93,7 +93,7 @@ define(function (require, exports, module) {
         _.each(_columnGenerators, function (fn, id) {
             var el = document.createElement("td");
             
-            fn(el, _.clone(comment));
+            fn(el, comment);
             el.setAttribute("data-data-generator-id", id);
             
             tr.appendChild(el);
@@ -102,7 +102,7 @@ define(function (require, exports, module) {
         // フィルターを通す
         var result =  true;
         _.each(_rowFilters, function (fn, id) {
-            var r = fn(tr, _.clone(comment));
+            var r = fn(tr, comment);
             result = result && (r !== false);
             return r !== false;
         });
