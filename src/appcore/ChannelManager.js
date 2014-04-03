@@ -19,6 +19,9 @@
  * 
  *  - getChannelType():string|null
  *      チャンネルの種別を取得します。（nsen/***の"***"の部分だけ）
+ *
+ *  - getComments():Array.<LiveComment>|null
+ *      受信済みのコメントを全て取得します。
  * 
  *  - pushRequest(video:NicoVideoInfo|string):$.Promise
  *      リクエストを送信します。リクエストの送信が成功すればresolveされます。
@@ -252,6 +255,10 @@ define(function (require, exports, module) {
         return _nsenChannel.getCurrentVideo();
     }
     
+    /**
+     * チャンネルの種別を取得します。（nsen/***の"***"の部分だけ）
+     * @param {?string} 
+     */
     function getChannelType() {
         if (_isNotInitialized()) {
             // そのうち変更
@@ -261,6 +268,18 @@ define(function (require, exports, module) {
         }
         
         return _nsenChannel.getChannelType();
+    }
+    
+    /**
+     *  受信済みのコメントを全て取得します。
+     * @param {?Array.<LiveComment>} 
+     */
+    function getComments() {
+        if (_isNotInitialized()) {
+            return null;
+        }
+        
+        return _.clone(_commentProvider.models);
     }
     
     /**
@@ -381,6 +400,7 @@ define(function (require, exports, module) {
     
     exports.getCurrentVideo = getCurrentVideo;
     exports.getChannelType = getChannelType;
+    exports.getComments = getComments;
     
     exports.pushRequest = pushRequest;
     exports.cancelRequest = cancelRequest;
