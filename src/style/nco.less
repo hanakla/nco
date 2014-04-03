@@ -235,7 +235,11 @@ a:active {
 .nco-comment-group {
     width: 100%;
     padding: 0 5px;
-    transition: width .2s ease-out;
+    margin-top:0;
+    
+    transition: .2s ease-out;
+    transition-property: width, margin-top;
+    backface-visibility: hidden;
     
     .nco-comment-subpanel {
         display: none;
