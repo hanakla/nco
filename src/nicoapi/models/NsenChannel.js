@@ -155,11 +155,14 @@ define(function (require, exports, module) {
         _liveInfoUpdated: function (live) {
             var self = this,
                 beforeVideo = this._playingMovie,
-                
                 content = live.get("stream").contents[0],
-                videoId = content && content.content.match(/^smile:((?:sm|nm)[1-9][0-9]*)/)[1];
+                videoId;
             
-            if (!content) {
+            videoId = content && content.content.match(/^smile:((?:sm|nm)[1-9][0-9]*)/);
+            videoId = videoId ? videoId[1] : null;
+            
+            if (!videoId) {
+                Global.console.info("再生中の動画が不明です。");
                 this._playingMovie = null;
                 self.trigger("videochanged", null, beforeVideo);
                 return;
