@@ -49,18 +49,19 @@ define(function (require, exports, module) {
         
         _onAddRow: function (element) {
             var $cont = $("#content"),
+                $row = $(element),
                 content = $cont[0],
                 scroll = false;
             
             // 要素を追加すると計算結果が乱れるので
             // 先に最下部判定しておく
-            if (content.scrollHeight === $cont.scrollTop() + $cont.height()) {
+            if (content.scrollHeight - ($cont.scrollTop() + $cont.height()) < 100) {
                 scroll = true;
             }
             
             this.$el.append(element);
             
-            //options.noAnim || view.$el.hide().fadeIn(200);
+            $row.hide().fadeIn(200);
             // ページ最下部にいる時だけ自動スクロールする
             scroll && $(content).stop(false, true).animate({scrollTop: content.scrollHeight}, 200);
         }
