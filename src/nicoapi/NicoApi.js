@@ -9,11 +9,13 @@ define(function (require, exports, module) {
     
     var NicoAuthApi     = require("./impl/NicoAuthApi"),
         NicoLiveApi     = require("./impl/NicoLiveApi"),
+        NicoMyListApi   = require("./impl/NicoMyListApi"),
         NicoVideoApi    = require("./impl/NicoVideoApi");
     
     Object.defineProperties(exports, {
         Auth: { get: function () { return NicoAuthApi; } },
         Live: { get: function () { return NicoLiveApi;} },
-        Video: { get: function () { return NicoVideoApi; } }
+        Video: { get: function () { return NicoVideoApi; } },
+        MyList: { get: function () { return NicoMyListApi; } }
     });
 }); 
