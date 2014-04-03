@@ -102,7 +102,7 @@ define(function (require, exports, module) {
         Backbone = require("thirdparty/backbone"),
         NicoApi  = require("nicoapi/NicoApi"),
         
-        nsenChannels = require("text!nicoapi/NsenChannels.json");
+        nsenChannels = JSON.parse(require("text!nicoapi/NsenChannels.json"));
     
     /**
      * 現在アクティブなチャンネルの配信情報オブジェクト
@@ -363,7 +363,14 @@ define(function (require, exports, module) {
         return _nsenChannel && _nsenChannel.isSkipRequestable();
     }
     
+    /**
+     * 起動直前のチャンネルを復元
+     */
+    if (AppModel.get("currentCh")) {
+        changeChannel(AppModel.get("currentCh"));
+    }
     
+    // 公開メソッド
     _.extend(exports, Backbone.Events);
     exports.changeChannel = changeChannel;
     
