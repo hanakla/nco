@@ -106,7 +106,7 @@ define(function (require, exports, module) {
         $.ajax({url:url, dataType:"json"})
             .done(function (resp) {
                 if (resp.status !== "ok") {
-                    dfd.reject(this.id "");
+                    dfd.reject(this.id + " 不明なエラー");
                 }
                 
                 _.each(resp.mylistitem, function (item) {
