@@ -9,6 +9,7 @@
  * 
  * Methods
  *  - getCurrentVideo():NicoVideoInfo|null -- 現在再生中の動画情報を取得します。
+ *  - getChannelType():string -- チャンネルの種別を取得します。（nsen/***の"***"の部分だけ）
  *  - isSkipRequestable():boolean -- 今現在、スキップリクエストを送ることができるか検証します。
  *  - sendRequest(movie:NicoVideoInfo) -- リクエストを送信します。
  *  - cancelRequest() -- リクエストをキャンセルします。
@@ -17,19 +18,24 @@
  * 
  * Events
  *  - videochanged:(video:NicoVideoInfo|null, beforeVideo:NicoVideoInfo|null)
- *      -- 再生中の動画が変わった時に発火します。第２引数に変更後の動画の情報が渡され、第３引数には変更前の動画の情報が渡されます。
+ *      再生中の動画が変わった時に発火します。第２引数に変更後の動画の情報が渡され、第３引数には変更前の動画の情報が渡されます。
  *  - requested:(video:NicoVideoInfo)
- *      -- リクエストが完了した時に発火します。第２引数にリクエストされた動画の情報が渡されます。
+ *      リクエストが完了した時に発火します。第２引数にリクエストされた動画の情報が渡されます。
  *  - cancelled:(video:NicoVideoInfo)
- *      -- リクエストがキャンセルされた時に発火します。第２引数にキャンセルされた動画の情報が渡されます。
+ *      リクエストがキャンセルされた時に発火します。第２引数にキャンセルされた動画の情報が渡されます。
+ * 
  *  - thumbsup:() -- Goodが送信された時に発火します。
  *  - skipin:() -- SkipRequestが送信された時に発火します。
  * 
  *  - goodcall:() -- 誰かがGoodを送信した時に発火します。
  *  - mylistcall:() -- 誰かが動画をマイリストに追加した時に発火します。
+ * 
+ *  - skipAvailable:() -- スキップリクエストが送信可能になった時に発火します。
+ * 
  *  - closing:(liveId:string)
- *      -- 午前４時くらいから送られ始める、更新リクエストを受け取った時に発火します。
- *          第２引数は移動先の放送IDです。
+ *      午前４時くらいから送られ始める、更新リクエストを受け取った時に発火します。
+ *      第２引数は移動先の放送IDです。
+ * 
  *  - closed:() -- 配信が終了した時に発火します。
  * 
  * @param {LiveInfo} liveInfo Nsenチャンネルとして扱う配信情報オブジェクト
@@ -131,6 +137,7 @@ define(function (require, exports, module) {
         
         _onVideoChange: function () {
             this._lastSkippedMovieId = null;
+            this.trigger("skipAvailable");
         },
         
         _onLiveClosed: function () {
@@ -161,10 +168,10 @@ define(function (require, exports, module) {
             if (!this._playingMovie || this._playingMovie.id !== videoId) {
                 
                 // 直前の再生中動画と異なれば情報を更新
-                NicoVideoApi._getVideoInfo(videoId)
+                NicoVideoApi.getVideoInfo(videoId)
                     .done(function (movie) {
                         self._playingMovie = movie;
-                        self.trigger("videochanged", self, movie, beforeVideo);
+                        self.trigger("videochanged", movie, beforeVideo);
                     });
                 
                 // 次に動画が変わるタイミングで配信情報を更新させる
@@ -211,6 +218,10 @@ define(function (require, exports, module) {
         //
         // 公開メソッド
         //
+        getChannelType: function () {
+            return this._live.get("stream").nsenType;
+        },
+        
         getCurrentVideo: function () {
             return this._playingMovie;
         },
