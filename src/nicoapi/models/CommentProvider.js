@@ -1,4 +1,5 @@
 /*jslint node: true, vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, expr: true */
+/*global define, $*/
 
 /**
  * 放送中の番組のコメントの取得と投稿を行うクラスです。
@@ -30,7 +31,6 @@ define(function (require, exports, module) {
         LiveComment = require("./LiveComment"),
         NicoAuth     = require("../impl/NicoAuthApi"),
         NicoUrl     = require("../impl/NicoUrl"),
-        NicoLiveInfo = require("./NicoLiveInfo"),
         StringUtil  = require("utils/StringUtil"),
         
         // Node.jsモジュール
@@ -63,9 +63,9 @@ define(function (require, exports, module) {
         _connection: null,
         
         _postInfo : {
-            threadId: null,
             ticket: null,
-            postKey: null
+            postKey: null,
+            threadId: null,
         },
         
         initialize: function (collection, option) {
@@ -76,7 +76,8 @@ define(function (require, exports, module) {
             this._live = option.live;
             
             _.bindAll(this, "_parseThreadInfo", "_parseComment",
-                "_listenPostResult", "_listenLiveEnd", "_disconnect");
+                "_listenPostResult", "_listenLiveEnd", "_listenLiveInfoSync",
+                "_disconnect");
             
             NicoAuth.once("logout", this._disconnect);
             this.on("receive", this._parseThreadInfo); // スレッド情報リスナを登録
@@ -96,7 +97,7 @@ define(function (require, exports, module) {
             
             if ($thread.is("thread")) {
                 // 最初の接続応答を受け付け
-                this._postInfo.threadId = $thread.attr("thread")|0;
+                // チケットを取得
                 this._postInfo.ticket = $thread.attr("ticket");
                 Global.console.info("%s - スレッド情報を受信", this._live.get("id"));
                 
@@ -123,7 +124,7 @@ define(function (require, exports, module) {
         _listenPostResult: function (res) {
             if (/^<chat_result /.test(res)) {
                 var status = /status="([0-9]+)"/.exec(res);
-                status = status && status[0]|0;
+                status = status && status[1]|0;
                 this.trigger("_chatresult", {status:status});
             }
         },
@@ -133,6 +134,11 @@ define(function (require, exports, module) {
             if (comment.isControl() || comment.isDistributorPost()) {
                 comment.get("comment") === "/disconnect" && this._disconnect();
             }
+        },
+        
+        _listenLiveInfoSync: function () {
+            // 時々threadIdが変わるのでその変化を監視
+            this._postInfo.threadId = this._live.get("comment").thread;
         },
         
         //
@@ -184,7 +190,7 @@ define(function (require, exports, module) {
         _fetchPostKey: function (maxRetry) {
             var self = this,
                 deferred = $.Deferred(),
-                url = StringUtil.format(NicoUrl.Live.GET_POSTKEY, this._postInfo.threadId),
+                url = StringUtil.format(NicoUrl.Live.GET_POSTKEY, this._live.get("comment").thread),
                 postKey = "";
             
             maxRetry = _.isNumber(maxRetry) ? Math.min(Math.abs(maxRetry), 5) : 5;
@@ -241,24 +247,31 @@ define(function (require, exports, module) {
             
             var self = this,
                 deferred = $.Deferred(),
-                postInfo = this._postInfo;
+                timeoutId = null,
+                postInfo;
             
             // PostKeyを取得してコメントを送信
             this._fetchPostKey()
                 
                 // 通信成功
-                .done(function (postKey) {
+                .done(function () {
                     // 送信する情報を集める
-                    postInfo = _.defaults({
+                    postInfo = {
                         userId: self._live.get("user").id,
                         isPremium: self._live.get("user").isPremium|0,
-                        postKey: postKey,
+                        
                         comment: escapeHtml(msg),
-                        command: command|""
-                    }, postInfo);
+                        command: command|"",
+                        
+                        threadId: self._postInfo.threadId,
+                        postKey: self._postInfo.postKey,
+                        ticket: self._postInfo.ticket
+                    };
                     
                     // 投稿結果をリスニング
                     self.once("_chatresult", function (result) {
+                        clearTimeout(timeoutId);
+                        
                         switch (result.status) {
                             case ChatResult.SUCCESS:
                                 deferred.resolve();
