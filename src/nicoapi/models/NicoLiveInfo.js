@@ -16,6 +16,7 @@
  *  - asNsen():NsenChannel -- NsenAPIハンドラを取得します。
  * 
  * Events
+ *  - sync:(model:NicoLiveInfo) -- 放送情報を最新状態と同期した時に発火します。
  *  - closed:() -- 配信が終了した時に発火します。
  * 
  * Properties
@@ -71,7 +72,8 @@ define(function (require, exports, module) {
     
     var UPDATE_INTERVAL = 10000;
     
-    var Backbone    = require("thirdparty/backbone"),
+    var _           = require("thirdparty/lodash"),
+        Backbone    = require("thirdparty/backbone"),
         CommentProvider = require("./CommentProvider"),
         Global      = require("utils/Global"),
         NicoApi     = require("../NicoApi"),
@@ -227,7 +229,7 @@ define(function (require, exports, module) {
                     }
                     
                     deferred.resolve(self, res, options);
-                    self.trigger("sync", self, res, options);
+                    self.trigger("sync", self);
                 })
                 .fail(function (jqxhr, status, err) {
                     Global.console.error("番組情報の取得に失敗しました。", arguments);
