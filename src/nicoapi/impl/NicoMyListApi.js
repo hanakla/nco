@@ -88,6 +88,40 @@ define(function (require, exports, module) {
     }
     
     /**
+     * 仮実装 TODO:そのうちコメント書いたりする。
+     * @param {Type} withoutDefList
+     */
+    function __getMyListIndex(withoutDefList) {
+        var dfd = $.Deferred(),
+            lists = [];
+        
+        $.ajax({url:NicoUrl.MyList.GET_GROUPS, dataType:"json"})
+            .done(function (res) {
+                if (res.status !== "ok") {
+                    dfd.reject("不明なエラー(API接続完了)");
+                    return;
+                }
+                
+                // 受信したデータからインデックスを作成
+                _.each(res.mylistgroup, function (group) {
+                    lists.push({id:group.id, name:group.name})
+                });
+                
+                // とりあえずマイリストを取得
+                if (withoutDefList !== true) {
+                    lists.push({id:"default", name:"とりあえずマイリスト"});
+                }
+                
+                dfd.resolve(lists);
+            })
+            .fail(function (jqxhr, status, error) {
+                dfd.reject(error);
+            });
+        
+        return dfd.promise();
+    }
+    
+    /**
      * マイリスト一覧を実際に取得するリスナ関数
      * @private
      * @param {$.Deferred} dfd
@@ -147,6 +181,52 @@ define(function (require, exports, module) {
             });
     }
     
+    function __getMyListGroupFromId(id) {
+        var dfd = $.Deferred();
+        
+        if (_mylistGroups.groups && _mylistGroups.groups[id]) {
+            return dfd.resolve(_mylistGroups.groups[id]).promise();
+        }
+        
+        if (["", "default", null, void 0].indexOf(id) !== -1) {
+            return dfd.resolve(new MyListGroup()).promise();
+        }
+        
+        $.ajax({url:NicoUrl.MyList.GET_GROUPS, dataType:"json"})
+            .done(function (res) {
+                if (res.status !== "ok") {
+                    dfd.reject("不明なエラー(API接続完了)");
+                    return;
+                }
+                
+                // リストが初期化されていなければ初期化
+                _mylistGroups.groups = _mylistGroups.groups || {};
+                
+                var cache = _mylistGroups.groups,
+                    groups = res.mylistgroup;
+                
+                // 受信したデータからMyListGroupインスタンスを生成
+                _.each(groups, function (group) {
+                    if (group.id === id) {
+                        cache[group.id] = new MyListGroup(group);
+                    }
+                });
+                
+                if (_mylistGroups.groups[id]) {
+                    dfd.resolve(_mylistGroups.groups[id]);
+                } else {
+                    dfd.reject("指定されたマイリストは見つかりませんでした。");
+                }
+            })
+            .fail(function (jqxhr, status, error) {
+                dfd.reject(error);
+            });
+        
+        return dfd.promise();
+    }
+    
     exports._fetchToken = _fetchToken;
+    exports.__getMyListGroupFromId = __getMyListGroupFromId;
+    exports.__getMyListIndex = __getMyListIndex;
     exports.getMyListGroups = _getMyListGroups;
 });
