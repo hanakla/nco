@@ -24,6 +24,9 @@
  *      列数列数を取得します。
  * 
  * Events
+ *  - init
+ *      チャンネル切り替え後の初期化完了を通知します。
+ * 
  *  （内部モジュール用イベント）
  *  - _clear:()
  *      一覧の削除リクエストを通知する
@@ -88,6 +91,8 @@ define(function (require, exports, module) {
                 _onReceiveComment(comment);
             });
         }
+        
+        exports.trigger("init");
     }
     
     
