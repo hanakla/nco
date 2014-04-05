@@ -1,4 +1,17 @@
 <div id="main-view">
+    <header id="nco-window-head">
+        <ul class="nco-window-nav basic">
+            <li data-action="close">&times;</li>
+            <li data-action="minimize">&#95;</li>
+        </ul>
+        
+        <ul class="nco-window-nav ex">
+            <li class="window-nav-item-lock" data-action="pin" title="ウィンドウを最前面に固定" data-placement="bottom" data-tooltipin>
+                <a href="#"><span class="glyphicon glyphicon-pushpin"></span></a>
+            </li>
+        </ul>
+    </header>
+    
     <div id="content">
         <table id="comment-view" class="table table-condensed">
 
@@ -20,14 +33,14 @@
             </li>
             
             <li class="custom-nav-skip">
-                <a href="#" title="Skip Request" data-send-skip>
+                <a href="#" title="Skip Request" data-send-skip data-tooltipin>
                     <span class="response-indicator"></span>
                     <span class="glyphicon glyphicon-forward"></span>
                 </a>
             </li>
             <li class="custom-nav-good">
                 <span class="response-indicator"></span>
-                <a href="#" title="Good!" data-send-good><span class="glyphicon glyphicon-thumbs-up"></span></a>
+                <a href="#" title="Good!" data-send-good data-tooltipin><span class="glyphicon glyphicon-thumbs-up"></span></a>
             </li>
         </ul>
         
