@@ -13,7 +13,7 @@ define(function (require, exports, module) {
         // コメント内のURLを検索して置き換え
         var $td = $(tr).find("td:first");
         var html = $td.html();
-        console.log(html, html.match(regexp));
+        
         $td.html(html.replace(regexp, "<a href='$&'>$&</a>"));
     });
 });
