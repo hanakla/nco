@@ -164,6 +164,9 @@ define(function (require, exports, module) {
                 .fail(function () {
                     console.log(arguments);
                 });
+            
+            this.$el.find("[data-add-mylist] a").dropdown("toggle");
+            return false;
         },
         
         // チャンネルが選ばれた時
