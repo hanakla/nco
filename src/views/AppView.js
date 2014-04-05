@@ -149,7 +149,6 @@ define(function (require, exports, module) {
             
             NicoApi.MyList.__getMyListGroupFromId(id)
                 .done(function (mylist) {
-                    console.log(mylist);
                     mylist.add(video);
                 })
                 .fail(function () {
