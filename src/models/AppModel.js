@@ -12,8 +12,6 @@ define(function (require, exports, module) {
         },
         
         initialize: function () {
-            this.set("currentCh", "nsen/toho");
-            
             this.on("change", function () { this.save(); });
             this.on("change:currentCh", function (model) {
                 Global.console.info("チャンネルが変更されました: %s", this.get("currentCh"));
