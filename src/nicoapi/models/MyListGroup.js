@@ -139,7 +139,7 @@ define(function (require, exports, module) {
             item_id: typeof movie === "string" ? movie : movie.id,
             token: null,
             description: desc,
-            group_id: this.id
+            group_id: this.attr("id")
         };
         
         // 不要なデータを削除
@@ -158,6 +158,7 @@ define(function (require, exports, module) {
             // 受信成功
             .then(function (token) {
                 data.token = token;
+                console.log(data);
                 return $.ajax({url: self._urlSet.ADD, type:"POST", data:data, dataType:"json"});
             })
             // APIの実行結果受信

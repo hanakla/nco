@@ -14,8 +14,16 @@ define(function (require, exports, module) {
         nativeWindow = Global.require("nw.gui").Window.get(),
         
         nsenChannels = require("text!nicoapi/NsenChannels.json"),
-        htmlMainView = require("text!htmlContent/main-view.html");
-        
+        htmlMainView = require("text!htmlContent/main-view.html"),
+        mylistItemTpl = _.template((function () {/*
+            <% _.each(lists, function (list) { %>
+                <li data-id='<%= list.id %>'><a href='#'><%= list.name %></a></li>
+            <% }) %>
+        */}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1].replace(/\n/g, ""));
+    
+    /**
+     * 初期化
+     */
     var doc = document,
         write = doc.write.bind(doc),
         instance;
@@ -35,11 +43,15 @@ define(function (require, exports, module) {
     var $mainView = $(_.template(htmlMainView)({nsenChannels: nsenChannels}));
     
     $mainView.find("[data-tooltipin]")
-                .tooltip();
+                .tooltip({container:"body"});
     
     // メインビューを表示
     $("body").append($mainView);
     
+    
+    /**
+     * イベントリスナーとか
+     */
     var AppView = Backbone.View.extend({
         el: $mainView,
         _isPinned: false,
@@ -48,10 +60,12 @@ define(function (require, exports, module) {
             "click #channel-switcher a[data-ch]": "channelSelected",
             "click [data-send-skip]" : "clickSkip",
             "click [data-send-good]" : "clickGood",
+            "click [data-add-mylist]": "clickAddMylist",
             
             "click [data-action='close']": "_onClickClose",
             "click [data-action='minimize']": "_onClickMinimize",
-            "click [data-action='pin']": "_onClickPin"
+            "click [data-action='pin']": "_onClickPin",
+            "click [data-add-mylist] .dropdown-menu li": "_addMylist"
         },
         
         initialize: function () {
@@ -59,7 +73,7 @@ define(function (require, exports, module) {
             
             _.bindAll(this, "channelSelected", "clickSkip", "clickGood",
                 "skipDisabled", "skipEnabled", "someoneSayGood",
-                "_onClickClose", "_onClickMinimize", "_onClickPin");
+                "_onClickClose", "_onClickMinimize", "_onClickPin", "_addMylist");
             
             // 初めてログインした時のガイドを表示
             NicoApi.Auth.on("login", function () {
@@ -91,6 +105,14 @@ define(function (require, exports, module) {
                 this.$el.find("#channel-switcher li a[data-ch='nsen/" + ch + "']") 
                     .parent().addClass("active");
             }
+            
+            // マイリスト一覧を表示
+            var self = this;
+            NicoApi.MyList.__getMyListIndex()
+                .done(function (groups) {
+                    self.$el.find("[data-add-mylist] ul").append(mylistItemTpl({lists:groups}));
+                });
+            
         },
         
         
@@ -119,6 +141,19 @@ define(function (require, exports, module) {
             }
             
             this._isPinned = !this._isPinned;
+        },
+        
+        _addMylist: function (e) {
+            var id = e.currentTarget.getAttribute("data-id");
+            var video = ChannelManager.getCurrentVideo();
+            
+            NicoApi.MyList.__getMyListGroupFromId(id)
+                .done(function (mylist) {
+                    mylist.add(video);
+                })
+                .fail(function () {
+                    console.log(arguments);
+                });
         },
         
         // チャンネルが選ばれた時

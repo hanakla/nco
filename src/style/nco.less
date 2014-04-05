@@ -266,7 +266,7 @@ a:active {
             }
         }
         
-        .response-indicator{
+        .response-indicator {
             background-image:
                 -webkit-gradient(radial, center top, 0, center top, 20,
                     from(#f44),
@@ -275,6 +275,25 @@ a:active {
             
             &.active {
                 opacity: 1;
+            }
+        }
+    }
+    
+    .custom-nav-mylist {
+        &.open .dropdown-menu {
+            left: 0;
+            right: auto;
+        }
+        
+        .dropdown-menu {
+            width: auto;
+            max-height: 300px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            
+            [data-id="default"] {
+                position: sticky;
+                bottom: 0;
             }
         }
     }
@@ -318,6 +337,11 @@ a:active {
         
         .dropdown-menu > li > a {
             color: #fff;
+        }
+        
+        .navbar-nav .custom-nav-mylist.open .dropdown-menu {
+            right: 0;
+            left: auto;
         }
     }
 }
