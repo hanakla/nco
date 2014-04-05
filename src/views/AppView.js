@@ -5,10 +5,13 @@ define(function (require, exports, module) {
     
     var _           = require("thirdparty/lodash"),
         AppInit     = require("utils/AppInit"),
+        Global      = require("utils/Global"),
         Backbone    = require("thirdparty/backbone"),
         
         ChannelManager = require("appcore/ChannelManager"),
         NicoApi     = require("nicoapi/NicoApi"),
+        
+        nativeWindow = Global.require("nw.gui").Window.get(),
         
         nsenChannels = require("text!nicoapi/NsenChannels.json"),
         htmlMainView = require("text!htmlContent/main-view.html");
@@ -25,10 +28,13 @@ define(function (require, exports, module) {
         return;
     }
     
+    // プラットフォーム判別クラスを付与
+    $(document.body).addClass("platform-" + Global.nco.platform);
+    
     // メインビューを用意
     var $mainView = $(_.template(htmlMainView)({nsenChannels: nsenChannels}));
     
-    $mainView.find("[data-send-good], [data-send-skip]")
+    $mainView.find("[data-tooltipin]")
                 .tooltip();
     
     // メインビューを表示
@@ -36,18 +42,24 @@ define(function (require, exports, module) {
     
     var AppView = Backbone.View.extend({
         el: $mainView,
+        _isPinned: false,
         
         events: {
             "click #channel-switcher a[data-ch]": "channelSelected",
             "click [data-send-skip]" : "clickSkip",
             "click [data-send-good]" : "clickGood",
+            
+            "click [data-action='close']": "_onClickClose",
+            "click [data-action='minimize']": "_onClickMinimize",
+            "click [data-action='pin']": "_onClickPin"
         },
         
         initialize: function () {
             var self = this;
             
             _.bindAll(this, "channelSelected", "clickSkip", "clickGood",
-                "skipDisabled", "skipEnabled", "someoneSayGood");
+                "skipDisabled", "skipEnabled", "someoneSayGood",
+                "_onClickClose", "_onClickMinimize", "_onClickPin");
             
             // 初めてログインした時のガイドを表示
             NicoApi.Auth.on("login", function () {
@@ -85,6 +97,29 @@ define(function (require, exports, module) {
         //
         // GUIイベントリスナ
         //
+        
+        // クローズボタンが押された時
+        _onClickClose: function () {
+            nativeWindow.close();
+        },
+        
+        _onClickMinimize: function () {
+            nativeWindow.minimize();
+        },
+        
+        _onClickPin: function () {
+            if (this._isPinned) {
+                nativeWindow.setAlwaysOnTop(false);
+                this.$el.find("[data-action='pin']")
+                    .removeClass("lock");
+            } else {
+                nativeWindow.setAlwaysOnTop(true);
+                this.$el.find("[data-action='pin']")
+                    .addClass("lock");
+            }
+            
+            this._isPinned = !this._isPinned;
+        },
         
         // チャンネルが選ばれた時
         channelSelected: function (e) {

@@ -1,4 +1,5 @@
 /*jslint node: true, vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
+/*global define, navigator*/
 define(function (require, exports, module) {
     "use strict";
     
@@ -27,6 +28,12 @@ define(function (require, exports, module) {
         get: function () { return debugMode; },
         set: function () {}
     });
+    
+    if (navigator.userAgent.match(/Mac OS X/)) {
+        global.nco.platform = "mac";
+    } else if (navigator.userAgent.match(/Windows/)) {
+        global.nco.platform = "win";
+    }
     
     /**
      * Node.jsモジュールを要求します。

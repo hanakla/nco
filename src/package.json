@@ -35,6 +35,7 @@
         "height": 500,
         "min_width": 300,
         "min_height": 400,
-        "toolbar": false
+        "toolbar": false,
+        "frame": false
     }
 }
