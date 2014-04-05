@@ -11,7 +11,8 @@ define(function (require, exports, module) {
         ChannelManager = require("appcore/ChannelManager"),
         NicoApi     = require("nicoapi/NicoApi"),
         
-        nativeWindow = Global.require("nw.gui").Window.get(),
+        NodeWebkit  = Global.require("nw.gui"),
+        nativeWindow = NodeWebkit.Window.get(),
         
         nsenChannels = require("text!nicoapi/NsenChannels.json"),
         htmlMainView = require("text!htmlContent/main-view.html"),
@@ -44,6 +45,15 @@ define(function (require, exports, module) {
     
     $mainView.find("[data-tooltipin]")
                 .tooltip({container:"body"});
+    
+    // 外部リンクをデフォルトブラウザで開く
+    $(document).on("click", "a", function () {
+        if (/https?:\/\//.test(this.href)) {
+            NodeWebkit.Shell.openExternal(this.href);
+        }
+        return false;
+    });
+    
     
     // メインビューを表示
     $("body").append($mainView);
