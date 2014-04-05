@@ -37,7 +37,7 @@ define(function (require, exports, module) {
             .fail(function (msg) {
                 $alert
                     .addClass("alert-danger")
-                    .text(msg)
+                    .text(msg.message)
                     .show();
             });
         
