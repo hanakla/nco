@@ -1,5 +1,5 @@
 /*jslint node: true, vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, expr: true */
-/*global document, define*/
+/*global document, $, define*/
 define(function (require, exports, module) {
     "use strict";
     
@@ -37,26 +37,17 @@ define(function (require, exports, module) {
     var AppView = Backbone.View.extend({
         el: $mainView,
         
-        _live: null,
-        _nsenChannel: null,
-        
         events: {
-            "focusin .nco-comment-group input": "formFocus",
-            "focusout .nco-comment-group input": "formFocus",
-            
             "click #channel-switcher a[data-ch]": "channelSelected",
             "click [data-send-skip]" : "clickSkip",
             "click [data-send-good]" : "clickGood",
-            "submit #comment-poster": "submitComment"
         },
         
         initialize: function () {
             var self = this;
             
-            _.bindAll(this, "formFocus", "channelSelected",
-                "submitComment", "clickSkip", "clickGood",
+            _.bindAll(this, "channelSelected", "clickSkip", "clickGood",
                 "skipDisabled", "skipEnabled", "someoneSayGood");
-            
             
             // 初めてログインした時のガイドを表示
             NicoApi.Auth.on("login", function () {
@@ -95,22 +86,6 @@ define(function (require, exports, module) {
         // GUIイベントリスナ
         //
         
-        // 投稿フォームがクリックされた時
-        formFocus: function (e) {
-            var cmgroup = this.$el.find(".nco-comment-group"),
-                fn;
-            
-            if (e.type === "focusin") {
-                $(document).on("click", fn = function (e) {
-                    if (cmgroup.find(e.target).length === 0)  {
-                        cmgroup.removeClass("focus");
-                    }
-                });
-            }
-            
-            cmgroup.addClass("focus");
-        },
-        
         // チャンネルが選ばれた時
         channelSelected: function (e) {
             var $parent = this.$el.find("#channel-switcher").parent(),
@@ -127,24 +102,6 @@ define(function (require, exports, module) {
             ChannelManager.changeChannel(ch);
             
             $parent.find(">a").dropdown("toggle");
-            return false;
-        },
-        
-        // コメントを投稿した時
-        submitComment: function () {
-            var $form =  $mainView.find("#comment-poster"),
-                $comment = $form.find("[name='comment']");
-            
-            var iyayo = $form.find("[name='184']")[0].checked ? "184" : null,
-                command = (iyayo ? "184" : null);
-            
-            ChannelManager.pushComment($comment.val(), command)
-                .done(function () {
-                    $comment.val("");
-                })
-                .fail(function () {
-                    // TODO
-                });
             return false;
         },
         
@@ -183,7 +140,7 @@ define(function (require, exports, module) {
             this.$el.find(".custom-nav-skip").removeClass("disabled");
         },
         
-        // （メソッド兼ウラカタイベントリスナ）グッドを光らせる
+        // グッドを光らせる
         someoneSayGood: function () {
             var $el = this.$el.find(".custom-nav-good .response-indicator").addClass("active");
             if ($el.attr("data-timerid") !== void 0) {
