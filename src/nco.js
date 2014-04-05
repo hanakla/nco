@@ -7,11 +7,12 @@ define(function (require, exports, module) {
         NodeWebkit  = Global.require("nw.gui"),
         ExtensionLoader = require("utils/ExtensionLoader"),
         
-        AppView     = require("views/AppView"),
-        CommentListView = require("views/CommentListView"),
         LoginModalView = require("views/LoginModalView");
         
     require("widgets/bootstrap"); // モジュールじゃないけど必要
+    require("views/AppView");
+    require("views/CommentListView");
+    require("views/CommentPostView");
     
     AppInit.htmlReady(function () {
         if (Global.nco.debugMode === true) {
