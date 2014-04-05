@@ -58,6 +58,93 @@ a:active {
     
     width: 100%;
     height: 100%;
+    
+    border: 3px solid @main-color;
+    border-top-width: 0;
+    border-bottom-width: 0;
+}
+
+/**
+ * ヘッダ
+ */
+#nco-window-head {
+    order: 1;
+    height: 30px;
+    background: @main-color;
+    
+    color: white;
+    
+    -webkit-user-select: none;
+    -webkit-app-region: drag;
+    
+    .nco-window-nav {
+        .clearfix;
+        .list-unstyled;
+        //list-style: none
+        
+        //-webkit-app-region: no-drag;
+        
+        &.basic { float: left; }
+        &.ex { float: right; }
+        
+        > li {
+            height: 30px;
+            padding: 0 20px;
+            float: left;
+
+            line-height: 30px;
+            cursor: default;
+            
+            -webkit-app-region: no-drag;
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+            }
+        }
+        
+        .window-nav-item-lock {
+            padding: 0 10px;
+            line-height: 34px;
+            cursor: pointer;
+            
+            a {
+                color: white;
+            }
+
+            &.lock a {
+                color: @brand-primary;
+            }
+        }
+    }
+}
+
+.platform-win #nco-window-head {
+    .nco-window-nav {
+        &.basic {
+            float: right;
+            
+            li { float: right;}
+        }
+        
+        &.ex { float: left;}
+    }
+}
+
+/**
+ * コンテンツ
+ */
+#content {
+    order: 1;
+    -webkit-box-flex: 1.0;
+    overflow: auto;
+}
+
+#comment-view {
+    padding-bottom: 20px;
+    
+    [data-mypost] {
+        background-color: #ffa;
+    }
 }
 
 /**
@@ -72,6 +159,8 @@ a:active {
     
     color: @base-color;
     background-color: @main-color;
+    
+    -webkit-user-select: none;
     
     .navbar-nav {
         padding: 0 5px;
@@ -123,6 +212,10 @@ a:active {
         & > a {
             background-color: lighten(@main-color, 10%);
         }
+    }
+    
+    .nco-form-comment {
+        -webkit-user-select: element;
     }
     
     .response-indicator {
@@ -355,21 +448,4 @@ a:active {
         }
     }
  }
-
-/**
- * コンテンツ
- */
-#content {
-    order: 1;
-    -webkit-box-flex: 1.0;
-    overflow: auto;
-}
-
-#comment-view {
-    padding-bottom: 20px;
-    
-    [data-mypost] {
-        background-color: #ffa;
-    }
-}
 
