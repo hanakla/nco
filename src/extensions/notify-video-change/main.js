@@ -1,5 +1,5 @@
 /*jslint node: true, vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, expr: true */
-/*global nco*/
+/*global $, nco, define*/
 define(function (require, exports, module) {
     "use strict";
     
@@ -20,7 +20,7 @@ define(function (require, exports, module) {
     ChannelManager.on("videochanged", _onVideoChanged);
     
     function _onInit() {
-        var video = ChannelManager.getCurrentVideo()
+        var video = ChannelManager.getCurrentVideo();
         _onVideoChanged(video);
     }
     
