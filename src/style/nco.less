@@ -359,6 +359,31 @@ a:active {
                 bottom: 0;
             }
         }
+        
+        .response-indicator {
+            opacity: 0;
+            
+            transition: opacity .3s linear;
+            
+            &.success {
+                background-image:
+                -webkit-gradient(radial, center top, 0, center top, 30,
+                    from(#23ccff),
+                    to(rgba(35, 204, 255, 0)));
+            }
+            
+            &.fail {
+                background-image:
+                -webkit-gradient(radial, center top, 0, center top, 30,
+                    from(#ff234d),
+                    to(rgba(255, 35, 77, 0)));
+            }
+            
+            &.active {
+                opacity: 1;
+                transition: opacity .3s linear;
+            }
+        }
     }
 }
 

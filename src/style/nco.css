@@ -6054,6 +6054,20 @@ a:active {
   position: sticky;
   bottom: 0;
 }
+#main-nav .custom-nav-mylist .response-indicator {
+  opacity: 0;
+  transition: opacity .3s linear;
+}
+#main-nav .custom-nav-mylist .response-indicator.success {
+  background-image: -webkit-gradient(radial, center top, 0, center top, 30, from(#23ccff), to(rgba(35, 204, 255, 0)));
+}
+#main-nav .custom-nav-mylist .response-indicator.fail {
+  background-image: -webkit-gradient(radial, center top, 0, center top, 30, from(#ff234d), to(rgba(255, 35, 77, 0)));
+}
+#main-nav .custom-nav-mylist .response-indicator.active {
+  opacity: 1;
+  transition: opacity .3s linear;
+}
 @media (max-width: 768px) {
   #main-nav .navbar-nav {
     margin: 0;
