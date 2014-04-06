@@ -57,7 +57,7 @@ define(function (require, exports, module) {
                 updateTime: new Date(groupInfo.update_time * 1000)
             }, this.defaults);
         } else {
-            attr =_.defaults({id: "default"}, this.defaults);
+            attr =_.defaults({id: "default", name: "とりあえずマイリスト"}, this.defaults);
         }
         
         this._attributes = attr;
