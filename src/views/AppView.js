@@ -18,7 +18,7 @@ define(function (require, exports, module) {
         htmlMainView = require("text!htmlContent/main-view.html"),
         mylistItemTpl = _.template((function () {/*
             <% _.each(lists, function (list) { %>
-                <li data-id='<%= list.id %>'><a href='#'><%= list.name %></a></li>
+                <li data-id='<%= list.get("id") %>'><a href='#'><%= list.get("name") %></a></li>
             <% }) %>
         */}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1].replace(/\n/g, ""));
     
@@ -118,7 +118,7 @@ define(function (require, exports, module) {
             
             // マイリスト一覧を表示
             var self = this;
-            NicoApi.MyList.__getMyListIndex()
+            NicoApi.MyList.getMyListIndex()
                 .done(function (groups) {
                     self.$el.find("[data-add-mylist] ul").append(mylistItemTpl({lists:groups}));
                 });
@@ -161,7 +161,7 @@ define(function (require, exports, module) {
                 return;
             }
             
-            NicoApi.MyList.__getMyListGroupFromId(id)
+            NicoApi.MyList.getMyListGroup(id)
                 .done(function (mylist) {
                     mylist.add(video);
                 })
