@@ -1,7 +1,7 @@
 /*jslint node: true, vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
+/*global define*/
 define(function (require, exports, module) {
-    var _           = require("thirdparty/lodash"),
-        AppInit     = require("utils/AppInit"),
+    var AppInit     = require("utils/AppInit"),
         Global      = require("utils/Global"),
         NicoApi     = require("nicoapi/NicoApi"),
         NodeWebkit  = Global.require("nw.gui"),
@@ -14,6 +14,7 @@ define(function (require, exports, module) {
     require("views/CommentListView");
     require("views/CommentPostView");
     require("command/DefaultCommand");
+    require("contents/DefaultContents");
     
     AppInit.htmlReady(function () {
         if (Global.nco.debugMode === true) {
