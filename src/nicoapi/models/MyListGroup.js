@@ -38,6 +38,8 @@ define(function (require, exports, module) {
         MyListItem  = require("./MyListItem"),
         StringUtil  = require("utils/StringUtil");
     
+    var _instances = {};
+    
     function MyListGroup(groupInfo) {
         if (groupInfo) {
             this._attributes = {
@@ -56,6 +58,11 @@ define(function (require, exports, module) {
             };
         } else {
             this._attributes.id = "default";
+        }
+        
+        // 既存のインスタンスがあればそれを返す。
+        if (_instances[this._attributes.id]) {
+            return _instances[this._attributes.id];
         }
         
         // 適切なAPIのURLを注入する
