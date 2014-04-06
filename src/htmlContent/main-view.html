@@ -6,6 +6,18 @@
         </ul>
         
         <ul class="nco-window-nav ex">
+            <li class="dropdown nco-window-nav-channel" data-ch-selecter>
+                <a href="#" data-toggle="dropdown" title="チャンネルを選択しましょう">チャンネル</a>
+                
+                <ul id="nco-channel-switcher" class="dropdown-menu">
+                    <% _.each(nsenChannels, function (ch) { %>
+                    <li>
+                        <a href="#" data-ch="<%= ch.id %>"><%= ch.name %></a>
+                    </li>
+                    <% }) %>
+                </ul>
+            </li>
+            
             <li class="window-nav-item-lock" data-action="pin" title="ウィンドウを最前面に固定" data-placement="bottom" data-tooltipin>
                 <a href="#"><span class="glyphicon glyphicon-pushpin"></span></a>
             </li>
@@ -20,18 +32,6 @@
     
     <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-bottom">
         <ul class="nav navbar-nav navbar-left">
-            <li class="dropup" data-ch-selecter>
-                <a href="#" data-toggle="dropdown" title="チャンネルを選択しましょう">チャンネル <b class="caret"></b></a>
-                
-                <ul id="channel-switcher" class="dropdown-menu">
-                    <% _.each(nsenChannels, function (ch) { %>
-                    <li>
-                        <a href="#" data-ch="<%= ch.id %>"><%= ch.name %></a>
-                    </li>
-                    <% }) %>
-                </ul>
-            </li>
-            
             <li class="custom-nav-skip">
                 <a href="#" title="Skip Request" data-send-skip data-tooltipin>
                     <span class="response-indicator"></span>

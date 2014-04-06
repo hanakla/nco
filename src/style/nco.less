@@ -1,9 +1,5 @@
 @import url("bootstrap/bootstrap.less");
-
-@base-color: #fff;
-@main-color: hsl(210, 29%, 24%);
-@accent-color: hsl(0, 52%, 33%);
-@text-color: #333;
+@import url("_variables.less");
 
 /**
  * WebFonts
@@ -66,70 +62,13 @@ a:active {
     border-bottom-width: 0;
 }
 
-/**
- * ヘッダ
- */
-#nco-window-head {
-    order: 1;
-    height: 30px;
-    background: @main-color;
-    
-    color: white;
-    
-    -webkit-user-select: none;
-    -webkit-app-region: drag;
-    
-    .nco-window-nav {
-        .clearfix;
-        .list-unstyled;
-        //list-style: none
-        
-        //-webkit-app-region: no-drag;
-        
-        &.basic { float: left; }
-        &.ex { float: right; }
-        
-        > li {
-            height: 30px;
-            padding: 0 20px;
-            float: left;
+@import url("window/_shell.less");
 
-            line-height: 30px;
-            cursor: default;
-            
-            -webkit-app-region: no-drag;
-
-            &:hover {
-                background-color: rgba(255, 255, 255, 0.2);
-            }
-        }
-        
-        .window-nav-item-lock {
-            padding: 0 10px;
-            line-height: 34px;
-            cursor: pointer;
-            
-            a {
-                color: white;
-            }
-
-            &.lock a {
-                color: @brand-primary;
-            }
-        }
-    }
-}
-
-.platform-win #nco-window-head {
-    .nco-window-nav {
-        &.basic {
-            float: right;
-            
-            li { float: right;}
-        }
-        
-        &.ex { float: left;}
-    }
+//
+// ログインモーダル
+//
+#modal-login > .modal-dialog {
+    margin-top: 60px;
 }
 
 /**
@@ -259,23 +198,6 @@ a:active {
         background-color: lighten(@main-color, 60%);
     }
     
-    .dropdown-menu > .active {
-        position: relative;
-        
-        &::before {
-            content: '';
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            z-index: 10;
-            border: 5px solid white;
-            border-color: transparent transparent transparent white;
-        }
-        
-        & > a {
-            background-color: lighten(@main-color, 10%);
-        }
-    }
     
     .nco-form-comment {
         -webkit-user-select: element;
