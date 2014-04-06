@@ -1,0 +1,113 @@
+//
+// クリックレスポンスインジケータ
+//
+.response-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    
+    display: block;
+    width: 100%;
+    height: 30px;
+
+    transition: .2s ease;
+    transition-property: background-color, opacity;
+}
+
+//
+// Goodボタン
+//
+.custom-nav-good {
+    .response-indicator{
+        background-image:
+            -webkit-gradient(radial, center top, 0, center top, 20,
+                from(#4ef),
+                to(rgba(68, 238, 255, 0)));
+        opacity: 0;
+        
+        &.active {
+            opacity: 1;
+        }
+    }
+}
+
+//
+// Skipリクエストボタン
+//
+.custom-nav-skip {
+    background-color: @accent-color;
+    transition: background-color .2s ease;
+
+    a {
+        transition: color .2s ease;
+    }
+    
+    // 無効化状態
+    &.disabled {
+        background-color: transparent;
+
+        a {
+            color: #333;
+        }
+    }
+    
+    .response-indicator {
+        background-image:
+            -webkit-gradient(radial, center top, 0, center top, 20,
+                from(#f44),
+                to(rgba(255, 68, 68, 0)));
+        opacity: 0;
+
+        &.active {
+            opacity: 1;
+        }
+    }
+}
+
+//
+// マイリスト追加ボタン
+//
+.custom-nav-mylist {
+    &.open .dropdown-menu {
+        left: 0;
+        right: auto;
+    }
+
+    .dropdown-menu {
+        width: auto;
+        max-height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        [data-id="default"] {
+            position: sticky;
+            bottom: 0;
+        }
+    }
+    
+    // クリックレスポンスインジケータ
+    .response-indicator {
+        opacity: 0;
+        transition: opacity .3s linear;
+
+        // 追加に成功
+        &.success {
+            background-image:
+            -webkit-gradient(radial, center top, 0, center top, 30,
+                from(#23ccff),
+                to(rgba(35, 204, 255, 0)));
+        }
+
+        // 追加失敗
+        &.fail {
+            background-image:
+            -webkit-gradient(radial, center top, 0, center top, 30,
+                from(#ff234d),
+                to(rgba(255, 35, 77, 0)));
+        }
+
+        &.active {
+            opacity: 1;
+        }
+    }
+}
