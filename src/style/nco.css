@@ -5897,19 +5897,51 @@ a:active {
 #comment-view [data-mypost] {
   background-color: #ffa;
 }
-#comment-view .nco-comment-item {
+#comment-view .nco-comment-ml {
+  position: relative;
+}
+#comment-view .nco-comment-ml::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+#comment-view .nco-comment-ml pre {
   display: block;
+  height: 1.42857143em;
   padding: 0;
   margin: 0;
+  border: none;
+  overflow: hidden;
+  float: left;
   font-family: inherit;
   font-size: 14px;
   line-height: 1.42857143;
   word-break: break-all;
   word-wrap: break-word;
+  white-space: normal;
   color: #333333;
   background-color: transparent;
-  border: none;
   border-radius: 0;
+  transition: height 0.2s ease-out;
+}
+#comment-view .nco-comment-ml .nco-comment-ml-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: #ccc;
+  font-size: 12px;
+  font-family: mplus-1p-light;
+  background-color: #fff;
+}
+#comment-view .nco-comment-ml .nco-comment-ml-toggle::before {
+  content: "すべて表示";
+}
+#comment-view .nco-comment-ml.open pre {
+  height: 100%;
+  white-space: pre;
+}
+#comment-view .nco-comment-ml.open .nco-comment-ml-toggle::before {
+  content: "閉じる";
 }
 /**
  * ナビゲーション
