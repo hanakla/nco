@@ -154,19 +154,23 @@ define(function (require, exports, module) {
         },
         
         _addMylist: function (e) {
-            var id = e.currentTarget.getAttribute("data-id");
-            var video = ChannelManager.getCurrentVideo();
+            var self = this,
+                id = e.currentTarget.getAttribute("data-id"),
+                video = ChannelManager.getCurrentVideo();
             
             if (video == null) {
                 return;
             }
             
             NicoApi.MyList.getMyListGroup(id)
-                .done(function (mylist) {
-                    mylist.add(video);
+                .then(function (mylist) {
+                    return mylist.add(video);
+                })
+                .done(function () {
+                    self.mylistAdded(true);
                 })
                 .fail(function () {
-                    console.log(arguments);
+                    self.mylistAdded(false);
                 });
             
             this.$el.find("[data-add-mylist] a").dropdown("toggle");
@@ -226,6 +230,23 @@ define(function (require, exports, module) {
         skipEnabled: function () {
             this.$el.find(".custom-nav-skip").removeClass("disabled");
         },
+        
+        // マイリストを光らせる
+        mylistAdded: function (result) {
+            var $el = this.$el.find(".custom-nav-mylist .response-indicator");
+            
+            $el.addClass("active " + (result ? "success" : "fail"))
+            
+            if ($el.attr("data-timerid") !== void 0) {
+                clearTimeout($el.attr("data-timerid")|0);
+            }
+            
+            var id = setTimeout(function () {
+                $el.removeClass("active success fail"); $el[0].__timer = null;
+            }, 1300);
+            $el.attr("data-timerid", id);
+        },
+        
         
         // グッドを光らせる
         someoneSayGood: function () {
