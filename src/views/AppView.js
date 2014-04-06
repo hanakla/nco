@@ -18,7 +18,7 @@ define(function (require, exports, module) {
         htmlMainView = require("text!htmlContent/main-view.html"),
         mylistItemTpl = _.template((function () {/*
             <% _.each(lists, function (list) { %>
-                <li data-id='<%= list.id %>'><a href='#'><%= list.name %></a></li>
+                <li data-id='<%= list.get("id") %>'><a href='#'><%= list.get("name") %></a></li>
             <% }) %>
         */}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1].replace(/\n/g, ""));
     
@@ -118,7 +118,7 @@ define(function (require, exports, module) {
             
             // マイリスト一覧を表示
             var self = this;
-            NicoApi.MyList.__getMyListIndex()
+            NicoApi.MyList.getMyListIndex()
                 .done(function (groups) {
                     self.$el.find("[data-add-mylist] ul").append(mylistItemTpl({lists:groups}));
                 });
@@ -154,19 +154,23 @@ define(function (require, exports, module) {
         },
         
         _addMylist: function (e) {
-            var id = e.currentTarget.getAttribute("data-id");
-            var video = ChannelManager.getCurrentVideo();
+            var self = this,
+                id = e.currentTarget.getAttribute("data-id"),
+                video = ChannelManager.getCurrentVideo();
             
             if (video == null) {
                 return;
             }
             
-            NicoApi.MyList.__getMyListGroupFromId(id)
-                .done(function (mylist) {
-                    mylist.add(video);
+            NicoApi.MyList.getMyListGroup(id)
+                .then(function (mylist) {
+                    return mylist.add(video);
+                })
+                .done(function () {
+                    self.mylistAdded(true);
                 })
                 .fail(function () {
-                    console.log(arguments);
+                    self.mylistAdded(false);
                 });
             
             this.$el.find("[data-add-mylist] a").dropdown("toggle");
@@ -226,6 +230,23 @@ define(function (require, exports, module) {
         skipEnabled: function () {
             this.$el.find(".custom-nav-skip").removeClass("disabled");
         },
+        
+        // マイリストを光らせる
+        mylistAdded: function (result) {
+            var $el = this.$el.find(".custom-nav-mylist .response-indicator");
+            
+            $el.addClass("active " + (result ? "success" : "fail"))
+            
+            if ($el.attr("data-timerid") !== void 0) {
+                clearTimeout($el.attr("data-timerid")|0);
+            }
+            
+            var id = setTimeout(function () {
+                $el.removeClass("active success fail"); $el[0].__timer = null;
+            }, 1300);
+            $el.attr("data-timerid", id);
+        },
+        
         
         // グッドを光らせる
         someoneSayGood: function () {

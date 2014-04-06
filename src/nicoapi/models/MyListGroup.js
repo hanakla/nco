@@ -36,26 +36,23 @@ define(function (require, exports, module) {
         NicoUrl     = require("../impl/NicoUrl"),
         NicoMyListApi = require("../impl/NicoMyListApi"),
         MyListItem  = require("./MyListItem"),
+        OmittedMyListGroup = require("./OmittedMyListGroup"),
         StringUtil  = require("utils/StringUtil");
     
-    function MyListGroup(groupInfo) {
-        if (groupInfo) {
-            this._attributes = {
-                id: groupInfo.id|0,
-                name: groupInfo.name,
-                description: groupInfo.description,
-                public: (groupInfo.public|0) === 1,
-
-                iconId: groupInfo.icon_id|0,
-                defaultSort: groupInfo.default_sort|0,
-                sortOrder: groupInfo.sort_order|0,
-                userId: groupInfo.user_id|0,
-
-                createTime: new Date(groupInfo.create_time * 1000),
-                updateTime: new Date(groupInfo.update_time * 1000)
-            };
-        } else {
-            this._attributes.id = "default";
+    var _instances = {};
+    
+    /**
+     * マイリストマイリストグループ（一つのリスト）のコレクションです。
+     * Backbone.Collectionを継承しています。
+     * @param {OmittedMyListGroup} groupInfo マイリスト情報を持つ
+     *    OmittedMyListGroupのインスタンス。
+     */
+    function MyListGroup(omitted) {
+        this._attributes = omitted.toJSON();
+        
+        // 既存のインスタンスがあればそれを返す。
+        if (_instances[this._attributes.id]) {
+            return _instances[this._attributes.id];
         }
         
         // 適切なAPIのURLを注入する
@@ -110,10 +107,12 @@ define(function (require, exports, module) {
                     dfd.reject(this.id + " 不明なエラー");
                 }
                 
-                _.each(resp.mylistitem, function (item) {
+                _.each(resp.mylistitem.reverse, function (item) {
                     var m = MyListItem.fromApiResult(item);
                     self.set(m, _.extend({merge: false}, options, {add: true, remove: false}));
                 });
+                
+                dfd.resolve();
             });
         
         return dfd.promise();
@@ -166,13 +165,13 @@ define(function (require, exports, module) {
             // 受信成功
             .then(function (token) {
                 data.token = token;
-                console.log(data);
                 return $.ajax({url: self._urlSet.ADD, type:"POST", data:data, dataType:"json"});
             })
             // APIの実行結果受信
             .done(function (res) {
                 if (res.status === "ok") {
                     dfd.resolve();
+                    window.list = self;
                 } else {
                     dfd.reject(res.error.description);
                 }
