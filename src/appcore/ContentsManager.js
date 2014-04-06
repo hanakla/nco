@@ -45,7 +45,7 @@ define(function (require, exports, module) {
             <tr data-userid="<%=user.id%>" data-premium="<%=user.isPremium%>"
                 data-date="<%=date.getTime()%>" data-score="<%=user.score%>"
                 data-command="<%=command%>" <%=isMyPost?"data-mypost":""%>>
-                <td><%=comment%></td>
+                <td><pre class="nco-comment-item"><%=comment%></pre></td>
             </tr>
         */}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1]);
     
