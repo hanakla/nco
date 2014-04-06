@@ -5,7 +5,7 @@ define(function (require, exports, module) {
     
     var _           = nco.getModule("thirdparty/lodash"),
         ChannelManager = nco.getModule("appcore/ChannelManager"),
-        ContentsManager = nco.getModule("appcore/ContentsManager"),
+        ContentsManager = nco.getModule("contents/ContentsManager"),
         
         tmpl    = _.template(require("text!row.html"));
     
