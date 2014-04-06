@@ -4,7 +4,7 @@ define(function (require, exports, module) {
     "use strict";
     
     var _           = nco.getModule("thirdparty/lodash"),
-        ContentsManager = nco.getModule("appcore/ContentsManager");
+        ContentsManager = nco.getModule("contents/ContentsManager");
     
     var regexp = /(https?:\/\/[^\s　<>]+)/;
     // http://d.hatena.ne.jp/sutara_lumpur/20100827/1282872312
