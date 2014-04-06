@@ -6,7 +6,7 @@ define(function (require, exports, module) {
     var _           = require("thirdparty/lodash"),
         AppInit     = require("utils/AppInit"),
         Backbone    = require("thirdparty/backbone"),
-        ContentsManager = require("appcore/ContentsManager");
+        ContentsManager = require("contents/ContentsManager");
     
     var commentListView;
     
