@@ -1,4 +1,5 @@
-/*jslint node: true, vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, expr: true */
+/*jslint node: true, devel: true, indent: 4, nomen: true, vars: true, plusplus: true, expr: true, eqnull:true, maxerr: 50 */
+/*global $, define */
 
 /**
  * マイリストマイリストグループ（一つのリスト）のコレクションです。
@@ -133,10 +134,17 @@ define(function (require, exports, module) {
             dfd = $.Deferred(),
             id;
         
+        // movieが文字列じゃない上に、オブジェクトじゃないとか、idプロパティがない場合
+        if (typeof movie !== "string" && (!movie || movie.id == null)) {
+            return $.Deferred().reject("動画IDが正しくありません").promise();
+        } else {
+            id = typeof movie === "string" ? movie : movie.id;
+        }
+        
         //-- 送信データを準備
         var data = {
             item_type:0,
-            item_id: typeof movie === "string" ? movie : movie.id,
+            item_id: id,
             token: null,
             description: desc,
             group_id: this.attr("id")
@@ -168,7 +176,7 @@ define(function (require, exports, module) {
                 } else {
                     dfd.reject(res.error.description);
                 }
-            })
+            });
         
         dfd.done(function () {
             // APIを叩き終わったら最新の情報に更新
