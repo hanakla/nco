@@ -1,4 +1,4 @@
-/*jslint node: true, vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, expr: true */
+/*jslint node: true, vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, expr: true, eqnull: true */
 /*global document, $, define*/
 define(function (require, exports, module) {
     "use strict";
@@ -156,6 +156,10 @@ define(function (require, exports, module) {
         _addMylist: function (e) {
             var id = e.currentTarget.getAttribute("data-id");
             var video = ChannelManager.getCurrentVideo();
+            
+            if (video == null) {
+                return;
+            }
             
             NicoApi.MyList.__getMyListGroupFromId(id)
                 .done(function (mylist) {
