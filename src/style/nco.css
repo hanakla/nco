@@ -5797,6 +5797,7 @@ body {
   overflow: hidden;
   background-color: #ffffff;
   font-family: 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', 'メイリオ', Meiryo, mplus-1p-regular 'ＭＳ Ｐゴシック', sans-serif;
+  color: #333333;
 }
 a,
 a:focus,
@@ -5895,6 +5896,19 @@ a:active {
 }
 #comment-view [data-mypost] {
   background-color: #ffa;
+}
+#comment-view .nco-comment-item {
+  display: block;
+  padding: 0;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.42857143;
+  word-break: break-all;
+  word-wrap: break-word;
+  color: #333333;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
 }
 /**
  * ナビゲーション
