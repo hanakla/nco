@@ -1,0 +1,166 @@
+@import url("../_variables.less");
+
+//
+// ウィンドウ
+//
+#nco-window-head {
+    order: 1;
+    height: 30px;
+    background: @main-color;
+    
+    color: white;
+    font-family: mplus-1p-light;
+    
+    -webkit-user-select: none;
+    -webkit-app-region: drag;
+}
+
+//
+// ウィンドウ操作ナビ（閉じるボタンなど）
+//
+ul.nco-window-nav {
+    padding: 0;
+    list-style: none;
+    -webkit-app-region: no-drag;
+
+    &::after{
+        content: '';
+        display: table;
+        clear: both;
+    }
+
+    &.basic { float: left; } // 閉じるボタンなどのメニュー
+    &.ex { float: right; } // 最前面固定などのメニュー
+
+    > li {
+        height: 30px;
+        padding: 0 20px;
+        float: left;
+
+        line-height: 30px;
+        cursor: default;
+
+        -webkit-app-region: no-drag;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        a {
+            color: @base-color;
+        }
+    }
+}
+
+//
+// チャンネルセレクタ
+//
+ li.nco-window-nav-channel {
+    padding: 0 !important;
+    
+    > a {
+        position: relative;
+        display: inline-block;
+        height: 30px;
+        padding: 0 25px 0 20px;
+        box-shadow: 0 0 1px #fff;
+
+        &::after {
+            content: '';
+            display: inline-block;
+            width: 0;
+            height: 0;
+            margin-left: 2px;
+            vertical-align: middle;
+            border-top: 4px solid;
+            border-right: 4px solid transparent;
+            border-left: 4px solid transparent;
+
+            position: absolute;
+            right: 9px;
+            top: 14px;
+        }
+    }
+    
+    .dropdown-menu {
+        position: absolute;
+        left: auto;
+        right: 0;
+        margin: 0;
+        margin-top: -1px;
+        
+        // 選択されたチャンネル
+        > .active {
+            position: relative;
+
+            &::before {
+                content: '';
+                position: absolute;
+                top: 8px;
+                left: 8px;
+                z-index: 10;
+                border: 5px solid white;
+                border-color: transparent transparent transparent white;
+            }
+
+            & > a {
+                color: @base-color;
+                background-color: lighten(@main-color, 10%);
+            }
+        }
+        
+        // リストアイテム
+        li a {
+            color: @text-color;
+
+            &:hover, &:focus {
+                text-decoration: none;
+            }
+        }
+    }
+}
+
+// 最前面にロック
+li.window-nav-item-lock {
+    padding: 0 10px;
+    line-height: 34px;
+    cursor: pointer;
+
+    a {
+        color: white;
+    }
+
+    &.lock a {
+        color: @brand-primary;
+    }
+}
+
+//
+// Windows用スタイル
+//
+.platform-win {
+    
+    // 閉じるボタンなどの配置を変更
+    .nco-window-nav {
+        &.basic {
+            float: right;
+            
+            > li { float: right;}
+        }
+        
+        &.ex {
+            float: left;
+            
+            > li { float: right; }
+        }
+    }
+    
+    // チャンネルセレクタの位置を変更
+    li.nco-window-nav-channel .dropdown-menu {
+        position: absolute;
+        left: 0;
+        right: auto;
+        margin: 0;
+        margin-top: -1px;
+    }
+}
