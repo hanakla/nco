@@ -8,12 +8,14 @@
  * Methods
  *  - attr(attr:string) -- 指定したプロパティの値を取得します。
  *  - isDefaultList():boolean -- このリストが"とりあえずマイリスト"か判定します。
+ *  - getMyListGroup():MyListGroup -- オブジェクトと対応するMyListGroupインスタンスを取得します。
+ *  - toJSON():Object -- インスタンスのプロパティを複製します。
  * 
  * Events
  *  イベントはありません。
  * 
  * Properties
- *  attrメソッドを介して取得します。（とりあえずマイリストの場合、属性は一切設定されません。）
+ *  attrメソッドを介して取得します。（とりあえずマイリストの場合,idとname以外設定されません。）
  *      Ex. mylist.attr("id") // -> マイリストIDを取得
  *  - id:number -- マイリストID
  *  - name:string -- リスト名
@@ -108,11 +110,20 @@ define(function (require, exports, module) {
     };
     
     /**
-     * 
+     * オブジェクトと対応するMyListGroupインスタンスを取得します。
+     * @return {$.Promise}
      */
     OmittedMyListGroup.prototype.getMyListGroup = function () {
         // インスタンス化する時に実装される
-        throw new Error("getMyListGroupが実装されていません");
+        throw new Error("getMyListGroupメソッドが実装されていません");
+    };
+    
+    /**
+     * インスタンスのプロパティを複製します。
+     * @return {Object}
+     */
+    OmittedMyListGroup.prototype.toJSON = function () {
+        return _.clone(this._attributes);
     };
     
     module.exports = OmittedMyListGroup;
