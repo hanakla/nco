@@ -1,5 +1,5 @@
 /*jslint node: true, vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, expr: true, eqnull: true */
-/*global document, $, define*/
+/*global document, $, define, location*/
 define(function (require, exports, module) {
     "use strict";
     
@@ -53,7 +53,10 @@ define(function (require, exports, module) {
         if (/https?:\/\//.test(this.href)) {
             NodeWebkit.Shell.openExternal(this.href);
         }
-        return false;
+        
+        if (this.href === "#") {
+            return false;
+        }
     });
     
     
@@ -74,6 +77,7 @@ define(function (require, exports, module) {
             "click [data-send-good]" : "clickGood",
             "click [data-add-mylist]": "clickAddMylist",
             "click [data-send-request]": "clickRequest",
+            "click [nco-action-reload]": "clickReload",
             
             "click [data-action='close']": "_onClickClose",
             "click [data-action='minimize']": "_onClickMinimize",
@@ -85,7 +89,7 @@ define(function (require, exports, module) {
             var self = this;
             
             _.bindAll(this, "channelSelected", "clickSkip", "clickGood",
-                "skipDisabled", "skipEnabled", "someoneSayGood",
+                "skipDisabled", "skipEnabled", "someoneSayGood", "receiveClosing",
                 "_onClickClose", "_onClickMinimize", "_onClickPin", "_addMylist");
             
             // 初めてログインした時のガイドを表示
@@ -103,7 +107,8 @@ define(function (require, exports, module) {
                 .on("skipin", this.skipDisabled)
                 .on("skipAvailable", this.skipEnabled)
                 .on("goodcall", this.someoneSayGood)
-                .once("channelChanged", this._render);
+                .once("channelChanged", this._render)
+                .on("closing", this.receiveClosing);
             
             // アプリケーションのHTML初期化完了を通知
             this.render();
@@ -131,6 +136,11 @@ define(function (require, exports, module) {
             
         },
         
+        //
+        // モジュールイベントリスナ
+        //
+        receiveClosing: function () {
+        },
         
         //
         // GUIイベントリスナ
@@ -226,6 +236,10 @@ define(function (require, exports, module) {
             } else {
                 RequestSelectionModal.show();
             }
+        },
+        
+        clickReload: function () {
+            location.reload();
         },
         
         //
