@@ -31,6 +31,9 @@ define(function (require, exports, module) {
             "click [nco-request-close]": "onClose",
             "click .nco-mylist-selector a": "onSelectMylist",
             "click .nco-mylist-contents>a": "onMovieSelect",
+            "keyup *": function () {
+                console.log(arguments);
+            }
         },
         
         initialize: function () {
@@ -92,6 +95,10 @@ define(function (require, exports, module) {
             }
         },
         
+        onKeyup: function () {
+            console.log(arguments);
+        },
+        
         // 閉じるボタンが押された時
         onClose: function () {
             this.close();
@@ -102,10 +109,15 @@ define(function (require, exports, module) {
         // ビューメソッド
         //
         
+        isOpen: function () {
+            return this.$el.is(".show");
+        },
+        
         // セレクターを表示
         show: function () {
             var self = this;
             
+            this.clear();
             this.$el.addClass("show");
             
             NicoMyListApi.getMyListIndex(true)
@@ -169,7 +181,7 @@ define(function (require, exports, module) {
         _instance = new RequestSelectionModal({el: $("#nco-dialog-request-selection")});
     });
     
-    exports.show = function () {
-        _instance && _instance.show();
-    };
+    exports.show = function () { _instance && _instance.show(); };
+    exports.close = function () { _instance && _instance.close(); };
+    exports.isOpen = function () { return !!(_instance && _instance.isOpen()); };
 });

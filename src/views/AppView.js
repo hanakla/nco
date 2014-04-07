@@ -221,7 +221,11 @@ define(function (require, exports, module) {
         
         // Requestをクリックした時
         clickRequest: function () {
-            RequestSelectionModal.show();
+            if (RequestSelectionModal.isOpen()) {
+                RequestSelectionModal.close();
+            } else {
+                RequestSelectionModal.show();
+            }
         },
         
         //
