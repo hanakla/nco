@@ -53,7 +53,10 @@ define(function (require, exports, module) {
         if (/https?:\/\//.test(this.href)) {
             NodeWebkit.Shell.openExternal(this.href);
         }
-        return false;
+        
+        if (this.href === "#") {
+            return false;
+        }
     });
     
     
@@ -86,7 +89,7 @@ define(function (require, exports, module) {
             var self = this;
             
             _.bindAll(this, "channelSelected", "clickSkip", "clickGood",
-                "skipDisabled", "skipEnabled", "someoneSayGood",
+                "skipDisabled", "skipEnabled", "someoneSayGood", "receiveClosing",
                 "_onClickClose", "_onClickMinimize", "_onClickPin", "_addMylist");
             
             // 初めてログインした時のガイドを表示
@@ -104,7 +107,8 @@ define(function (require, exports, module) {
                 .on("skipin", this.skipDisabled)
                 .on("skipAvailable", this.skipEnabled)
                 .on("goodcall", this.someoneSayGood)
-                .once("channelChanged", this._render);
+                .once("channelChanged", this._render)
+                .on("closing", this.receiveClosing);
             
             // アプリケーションのHTML初期化完了を通知
             this.render();
@@ -132,6 +136,11 @@ define(function (require, exports, module) {
             
         },
         
+        //
+        // モジュールイベントリスナ
+        //
+        receiveClosing: function () {
+        },
         
         //
         // GUIイベントリスナ
