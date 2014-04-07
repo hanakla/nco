@@ -52,7 +52,8 @@ define(function (require, exports, module) {
         StringUtil      = require("utils/StringUtil");
     
     var RequestErrors = {
-        nsen_close: "現在リクエストを受け付けていません。"
+        nsen_close: "現在リクエストを受け付けていません。",
+        nsen_tag: "リクエストに必要なタグが登録されていません。"
     };
     
     var _instances = {};
@@ -273,7 +274,7 @@ define(function (require, exports, module) {
                             reason = errCode;
                         }
                         
-                        deferred.reject({result: status, message: $res.find("error code").text()});
+                        deferred.reject({result: status, message: reason});
                     }
                 })
             
