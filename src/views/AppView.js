@@ -1,5 +1,5 @@
 /*jslint node: true, vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, expr: true, eqnull: true */
-/*global document, $, define*/
+/*global document, $, define, location*/
 define(function (require, exports, module) {
     "use strict";
     
@@ -74,6 +74,7 @@ define(function (require, exports, module) {
             "click [data-send-good]" : "clickGood",
             "click [data-add-mylist]": "clickAddMylist",
             "click [data-send-request]": "clickRequest",
+            "click [nco-action-reload]": "clickReload",
             
             "click [data-action='close']": "_onClickClose",
             "click [data-action='minimize']": "_onClickMinimize",
@@ -226,6 +227,10 @@ define(function (require, exports, module) {
             } else {
                 RequestSelectionModal.show();
             }
+        },
+        
+        clickReload: function () {
+            location.reload();
         },
         
         //
