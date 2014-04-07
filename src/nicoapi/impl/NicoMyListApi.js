@@ -141,6 +141,10 @@ define(function (require, exports, module) {
             getInstanceDfd.resolve(new MyListGroup(id));
         } else {
             
+            if (id !== "default") {
+                id = id|0;
+            }
+            
             getMyListIndex().done(function (groups) {
                 _.each(groups, function (obj) {
                     
