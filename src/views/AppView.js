@@ -52,6 +52,7 @@ define(function (require, exports, module) {
     $(document).on("click", "a", function () {
         if (/https?:\/\//.test(this.href)) {
             NodeWebkit.Shell.openExternal(this.href);
+            return false;
         }
         
         if (this.href === "#") {
