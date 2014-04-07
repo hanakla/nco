@@ -171,7 +171,6 @@ define(function (require, exports, module) {
             .done(function (res) {
                 if (res.status === "ok") {
                     dfd.resolve();
-                    window.list = self;
                 } else {
                     dfd.reject(res.error.description);
                 }
