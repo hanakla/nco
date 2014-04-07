@@ -107,7 +107,7 @@ define(function (require, exports, module) {
                     dfd.reject(this.id + " 不明なエラー");
                 }
                 
-                _.each(resp.mylistitem.reverse, function (item) {
+                _.each(resp.mylistitem.reverse(), function (item) {
                     var m = MyListItem.fromApiResult(item);
                     self.set(m, _.extend({merge: false}, options, {add: true, remove: false}));
                 });
