@@ -1,4 +1,4 @@
-/*jslint node: true, vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, expr: true */
+/*jslint node: true, vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, expr: true, eqnull: true */
 
 /**
  * Nsenのチャンネルと対応するモデルです。
@@ -50,6 +50,11 @@ define(function (require, exports, module) {
         NicoVideoInfo   = require("./NicoVideoInfo"),
         NicoUrl         = require("../impl/NicoUrl"),
         StringUtil      = require("utils/StringUtil");
+    
+    var RequestErrors = {
+        nsen_close: "現在リクエストを受け付けていません。",
+        nsen_tag: "リクエストに必要なタグが登録されていません。"
+    };
     
     var _instances = {};
     
@@ -255,14 +260,21 @@ define(function (require, exports, module) {
             
                 // 送信に成功したら、正しくリクエストされたか確認する
                 .done(function (res) {
-                    var $res = $(res),
+                    var $res = $(res).find(":root"),
                         status = $res.attr("status") === "ok";
                     
                     if (status) {
                         deferred.resolve({result: status});
                     } else {
                         // 何かしらのエラーが起きた
-                        deferred.reject({result: status, message: $res.find("error code").text()});
+                        var errCode = $res.find("error code").text(),
+                            reason = RequestErrors[errCode];
+                        
+                        if (reason == null) {
+                            reason = errCode;
+                        }
+                        
+                        deferred.reject({result: status, message: reason});
                     }
                 })
             

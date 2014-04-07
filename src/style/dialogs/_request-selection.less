@@ -1,0 +1,172 @@
+//
+// リクエストダイアログ
+//
+#nco-dialog-request-selection {
+    @request-selection-height: 300px;
+    
+    display: none;
+    height: 0;
+    border: none;
+    
+    &.show {
+        display: block;
+        height: auto;
+    }
+    
+    
+    .panel {
+        border: none;
+    }
+    
+    .panel-heading {
+        background-color: @main-color;
+        border-color: @main-color;
+        color: #fff;
+        border-radius: 0;
+    }
+    
+    .panel-body {
+        position: relative;
+        height: @request-selection-height;
+        overflow: hidden;
+        padding: 0;
+    }
+    
+    .panel-footer {
+        margin-top: 0;
+    }
+    
+    
+    // マイリスセレクタ
+    .nco-mylist-selector {
+        position: absolute;
+        left: -95%;
+        z-index: 10;
+        
+        width: 100%;
+        height: @request-selection-height;
+        margin-bottom: 0;
+        overflow: hidden;
+        overflow-y: auto;
+        
+        opacity: .5;
+        transition: .2s ease-out;
+        transition-property: left, opacity;
+        
+        &:not(.show):not(:hover) li > a {
+            background-color: @main-color;
+        }
+        
+        &.show {
+            left: 0;
+            opacity: 1;
+            overflow: auto;
+        }
+        
+        &:not(.show):not(.no-hover):hover {
+            left: -10%;
+            opacity: 1;
+        }
+        
+        
+        li > a {
+            position: relative;
+            display: block;
+            padding: 10px 15px;
+            margin-bottom: -1px;
+            
+            background-color: #fff;
+            border: 1px solid #ddd;
+            
+            text-align: center;
+            
+            &:hover {
+                color: #fff;
+                background-color: @brand-primary;
+            }
+        }
+    }
+    
+    // 動画一覧
+    .nco-mylist-contents {
+        position: absolute;
+        left: 100%;
+        
+        height: @request-selection-height;
+        margin: 0;
+        overflow: hidden;
+        overflow-y:auto;
+        
+        transition: left .2s ease-out;
+        
+        &.show {
+            position: absolute;
+            left: 0;
+        }
+    }
+        // 動画アイテム
+        .nco-mylist-item {
+            position: relative;
+            padding: 5px;
+            height: 170px;
+            box-shadow: 0 0 1px #ddd;
+            overflow: hidden;
+
+            &:hover {
+                background-color: #ddd;
+            }
+
+            .media-object {
+                margin: 0 auto;
+            }
+
+            p {
+                width: 100%;
+                margin-top: 10px;
+
+                font-size: 12px;
+                text-align: center;
+            }
+        }
+            .nco-mylist-item {
+                &[class*="nco-mylist-item-"]::after {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    padding: .1em .4em 0;
+                    color: #fff;
+                }
+                
+                // 選択された動画アイテム
+                &.nco-mylist-item-selection::after {
+                    background-color: fade(@brand-info, 80%);
+                    content: "もう一度クリックでリクエスト";
+                }
+                
+                // リクエスト送信待機中
+                &.nco-mylist-item-selection-wait::after {
+                    background-color: fade(@brand-info, 80%);
+                    content: "送信中です";
+                }
+                
+                // リクエスト送信完了
+                &.nco-mylist-item-selection-done {
+                    background-color: fade(@brand-success, 50%);
+                    
+                    &::after {
+                        background-color: fade(@brand-success, 80%);
+                        content: "リクエストしました。";
+                    }
+                }
+                
+                // リクエスト送信失敗
+                &.nco-mylist-item-selection-fail {
+                    background-color: fade(@brand-danger, 50%);
+                    
+                    &::after {
+                        background-color: fade(@brand-danger, 80%);
+                        content: attr(nco-fail-reason);
+                    }
+                }
+            }
+}
