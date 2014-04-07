@@ -79,7 +79,7 @@ define(function (require, exports, module) {
                             .addClass("nco-mylist-item-selection-fail");
                     });
                 
-                console.log(e.currentTarget);
+                this.lastSelectItem = null;
             } else {
                 if (this.lastSelectItem) {
                     // 選択済みのアイテムの選択状態を解除
