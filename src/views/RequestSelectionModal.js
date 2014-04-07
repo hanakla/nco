@@ -123,6 +123,9 @@ define(function (require, exports, module) {
         // セレクターを隠す
         close: function () {
             this.$el.removeClass("show");
+            this.$mylistGroups.addClass("show");
+            this.$mylistContents.removeClass("show");
+            
             this.clear();
         },
         
