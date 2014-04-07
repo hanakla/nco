@@ -14,6 +14,8 @@ define(function (require, exports, module) {
         NodeWebkit  = Global.require("nw.gui"),
         nativeWindow = NodeWebkit.Window.get(),
         
+        RequestSelectionModal = require("views/RequestSelectionModal"),
+        
         nsenChannels = require("text!nicoapi/NsenChannels.json"),
         htmlMainView = require("text!htmlContent/main-view.html"),
         mylistItemTpl = _.template((function () {/*
@@ -67,10 +69,11 @@ define(function (require, exports, module) {
         _isPinned: false,
         
         events: {
-            "click #channel-switcher a[data-ch]": "channelSelected",
+            "click #nco-channel-switcher a[data-ch]": "channelSelected",
             "click [data-send-skip]" : "clickSkip",
             "click [data-send-good]" : "clickGood",
             "click [data-add-mylist]": "clickAddMylist",
+            "click [data-send-request]": "clickRequest",
             
             "click [data-action='close']": "_onClickClose",
             "click [data-action='minimize']": "_onClickMinimize",
@@ -90,7 +93,7 @@ define(function (require, exports, module) {
                 if (ChannelManager.getChannelType() === null) {
                     self.$el.find("[data-ch-selecter] > a")
                         .one("hidden.bs.tooltip", function () { $(this).tooltip('destroy'); })
-                        .tooltip({title: "チャンネルを選択しましょう"})
+                        .tooltip({title: "チャンネルを選択しましょう", placement: "bottom"})
                         .tooltip("show");
                 }
             });
@@ -112,8 +115,11 @@ define(function (require, exports, module) {
             
             if (ch) {
                 // 今選択されているチャンネルの表示を強調する
-                this.$el.find("#channel-switcher li a[data-ch='nsen/" + ch + "']") 
-                    .parent().addClass("active");
+                var $parent = this.$el.find("#nco-channel-switcher").parent(),
+                    $item = $parent.find("li:has(a[data-ch='nsen/" + ch + "'])");
+                
+                $item.addClass("active");
+                $parent.find("> a").html($item.text());
             }
             
             // マイリスト一覧を表示
@@ -179,14 +185,16 @@ define(function (require, exports, module) {
         
         // チャンネルが選ばれた時
         channelSelected: function (e) {
-            var $parent = this.$el.find("#channel-switcher").parent(),
+            var $parent = this.$el.find("#nco-channel-switcher").parent(),
                 $item = $(e.target);
             
             // 他のチャンネルのアクティブを無効化
-            $parent.find("#channel-switcher li").removeClass("active");
+            $parent.find("#nco-channel-switcher li").removeClass("active");
             
             // 選択されたチャンネルにクラスを付加
             $item.parent().addClass("active");
+            
+            $parent.find("> a").text($item.text());
             
             // チャンネルを変更
             var ch = $item.attr("data-ch");
@@ -211,6 +219,15 @@ define(function (require, exports, module) {
             this.someoneSayGood();
         },
         
+        // Requestをクリックした時
+        clickRequest: function () {
+            if (RequestSelectionModal.isOpen()) {
+                RequestSelectionModal.close();
+            } else {
+                RequestSelectionModal.show();
+            }
+        },
+        
         //
         // メソッド
         //
@@ -233,6 +250,7 @@ define(function (require, exports, module) {
         
         // マイリストを光らせる
         mylistAdded: function (result) {
+            console.trace();
             var $el = this.$el.find(".custom-nav-mylist .response-indicator");
             
             $el.addClass("active " + (result ? "success" : "fail"))

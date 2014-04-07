@@ -1,0 +1,140 @@
+//
+// コメント入力フォーム
+//
+.nco-comment-group {
+    padding: 0 5px;
+    
+    width: 16em;
+    margin: 0;
+    
+    transition: .2s ease-out;
+    transition-property: width, margin-top;
+    backface-visibility: hidden;
+    
+    // コマンド、184など
+    .nco-comment-subpanel {
+        display: none;
+        position: absolute;
+        bottom: 100%;
+        
+        width: 100%;
+        height: 40px;
+        padding: 10px;
+        margin-bottom: 5px;
+    }
+    
+    // エラー表示カバー
+    .nco-comment-error {
+        position: absolute;
+        z-index: 10;
+        
+        display: block;
+        width: 0;
+        height: 0;
+        padding: 0;
+        overflow: hidden;
+        
+        background-color: fade(@main-color, 90%);
+        opacity: 0;
+        
+        transition: .2s ease-out;
+        transition-property: opacity;
+        
+        &.show {
+            width: 100%;
+            height: 100%;
+            padding: 6px 12px;
+            
+            opacity: 1;
+        }
+    }
+    
+    // コメント入力欄
+    .nco-form-comment {
+        font-size: 0.85em;
+        
+        color: #fff;
+        background-color: transparent;
+        background-color: lighten(@main-color, 10%);
+        border-color: transparent !important;
+        box-shadow: none;
+        border-radius: 0;
+        
+        transition: .2s ease-out;
+        transition-property: background-color, color;
+        
+        -webkit-user-select: element;
+        
+        &::-webkit-input-placeholder {
+            color: #ccc;
+        }
+    }
+    
+    // 投稿ボタン
+    .btn-default {
+        display: none;
+        margin-left: -4em;
+        
+        background-color: transparent;
+        border-color: transparent;
+        
+        transition: .2s ease-out;
+        transition-property: background-color, margin-left;
+    }
+}
+
+//
+// コメント投稿フォーム（フォーカス時）
+//
+.nco-comment-group.focus {
+    width: 25em;
+    margin-top: 0;
+    
+    .nco-comment-subpanel {
+        top: auto;
+        bottom: 100%;
+
+        margin-bottom: 10px;
+        background-color: @main-color;
+    }
+    
+
+    .nco-form-comment {
+        color: #000;
+        background-color: #fff;
+
+        &::-webkit-input-placeholder {
+            color: #999;
+        }
+    }
+
+    .btn-default {
+        display: inline-block;
+        margin-left: 0;
+        background-color: #fff;
+
+        &:hover, &:active, &:hover {
+            background-color: lighten(@main-color, 60%);
+        }
+    }
+}
+
+
+// スモールサイズ
+ @media (max-width: @screen-sm-min) {
+    .nco-comment-group {
+        width: 100%;
+        margin-top:0;
+    
+        &.focus {
+            width: 100%;
+            margin-top: 40px; // サブパネル
+            
+            .nco-comment-subpanel {
+                display: block;
+            }
+            
+            
+        }
+    }
+ }

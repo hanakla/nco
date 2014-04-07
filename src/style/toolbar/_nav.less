@@ -1,0 +1,99 @@
+//
+// ナビゲーション
+//
+#nco-main-nav {
+    order: 2;
+    
+    position: relative;
+    border: none;
+    
+    font-family: mplus-1p-light;
+    
+    color: @base-color;
+    background-color: @main-color;
+    
+    -webkit-user-select: none;
+    
+    //
+    // Bootstrapオーバーライド
+    //
+    .navbar-nav {
+        padding: 0 5px;
+    }
+    
+    .navbar-nav > li {
+        float: left;
+        
+        transition: background-color .1s ease-in;
+        
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+    }
+    
+    .navbar-nav > li > a {
+        color: #fff;
+    }
+    
+    .navbar-nav .open .dropdown-menu > li > a,
+    .navbar-nav .open .dropdown-menu .dropdown-header {
+        padding: 5px 15px 5px 25px;
+    }
+    
+    .navbar-nav > .open > a,
+    .navbar-nav > .open > a:hover,
+    .navbar-nav > .open > a:focus {
+        background-color: darken(@main-color, 10%);
+    }
+    
+    .dropdown-menu > li > a:hover,
+    .dropdown-menu > li > a:focus {
+        background-color: lighten(@main-color, 60%);
+    }
+}
+
+// 画面が小さい時
+@media (max-width: @screen-sm-min) {
+    #nco-main-nav {
+        .navbar-nav {
+            margin: 0;
+        }
+        
+        .navbar-form {
+            margin-top: 0;
+        }
+        
+        .navbar-nav .open .dropdown-menu {
+            position: absolute;
+            width: auto;
+            margin-top: 2px;
+            background-color: #fff;
+            border: 1px solid #cccccc;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            border-radius: 0;
+            -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+            background-clip: padding-box;
+        }
+        
+        .navbar-nav .open .dropdown-menu > li > a {
+            color: #333;
+        }
+        
+        .navbar-nav .open .dropdown-menu > .active > a,
+        .navbar-nav .open {
+            color: #fff;
+        }
+        
+        .navbar-nav .open .dropdown-menu > li > a {
+            line-height: 1.42857143;   
+        }
+        
+        .dropdown-menu > li > a {
+            color: #fff;
+        }
+    }
+}
+
+@import "./_buttons.less";
+@import "./_comment.less";
