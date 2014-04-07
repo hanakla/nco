@@ -14,6 +14,8 @@ define(function (require, exports, module) {
         NodeWebkit  = Global.require("nw.gui"),
         nativeWindow = NodeWebkit.Window.get(),
         
+        RequestSelectionModal = require("views/RequestSelectionModal"),
+        
         nsenChannels = require("text!nicoapi/NsenChannels.json"),
         htmlMainView = require("text!htmlContent/main-view.html"),
         mylistItemTpl = _.template((function () {/*
@@ -71,6 +73,7 @@ define(function (require, exports, module) {
             "click [data-send-skip]" : "clickSkip",
             "click [data-send-good]" : "clickGood",
             "click [data-add-mylist]": "clickAddMylist",
+            "click [data-send-request]": "clickRequest",
             
             "click [data-action='close']": "_onClickClose",
             "click [data-action='minimize']": "_onClickMinimize",
@@ -216,6 +219,11 @@ define(function (require, exports, module) {
             this.someoneSayGood();
         },
         
+        // Requestをクリックした時
+        clickRequest: function () {
+            RequestSelectionModal.show();
+        },
+        
         //
         // メソッド
         //
@@ -238,6 +246,7 @@ define(function (require, exports, module) {
         
         // マイリストを光らせる
         mylistAdded: function (result) {
+            console.trace();
             var $el = this.$el.find(".custom-nav-mylist .response-indicator");
             
             $el.addClass("active " + (result ? "success" : "fail"))
