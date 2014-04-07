@@ -57,7 +57,8 @@ define(function (require, exports, module) {
         
         // 動画が選択された時
         onMovieSelect: function (e) {
-            var $el = $(e.currentTarget);
+            var self = this,
+                $el = $(e.currentTarget);
             
             if (this.lastSelectItem === $el[0]) {
                 // 同じアイテムが２度クリックされたら
@@ -68,12 +69,12 @@ define(function (require, exports, module) {
                 
                 ChannelManager.pushRequest(id)
                     .done(function () {
-                        console.log("done");
                         $el.removeClass("nco-mylist-item-selection-wait")
                             .addClass("nco-mylist-item-selection-done");
+                        
+                        setTimeout(function () { self.close(); }, 1300);
                     })
                     .fail(function (err) {
-                        console.log("fail");
                         $el.attr("nco-fail-reason", err.message);
                         $el.removeClass("nco-mylist-item-selection-wait")
                             .addClass("nco-mylist-item-selection-fail");
