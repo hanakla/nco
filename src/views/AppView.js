@@ -189,8 +189,7 @@ define(function (require, exports, module) {
                     self.mylistAdded(false);
                 });
             
-            this.$el.find("[data-add-mylist] a").dropdown("toggle");
-            return false;
+            this.$el.find("[data-add-mylist] > a").dropdown("toggle");
         },
         
         // チャンネルが選ばれた時
@@ -264,7 +263,6 @@ define(function (require, exports, module) {
         
         // マイリストを光らせる
         mylistAdded: function (result) {
-            console.trace();
             var $el = this.$el.find(".custom-nav-mylist .response-indicator");
             
             $el.addClass("active " + (result ? "success" : "fail"))
@@ -274,8 +272,10 @@ define(function (require, exports, module) {
             }
             
             var id = setTimeout(function () {
-                $el.removeClass("active success fail"); $el[0].__timer = null;
+                $el.removeClass("active success fail");
+                $el[0].__timer = null;
             }, 1300);
+            
             $el.attr("data-timerid", id);
         },
         
