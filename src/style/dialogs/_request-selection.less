@@ -129,56 +129,44 @@
             }
         }
             .nco-mylist-item {
-                // 選択された動画アイテム
-                &.nco-mylist-item-selection::after {
+                &[class*="nco-mylist-item-"]::after {
                     position: absolute;
                     top: 0;
                     right: 0;
-
-                    background-color: @brand-info;
+                    padding: .1em .4em 0;
                     color: #fff;
-
+                }
+                
+                // 選択された動画アイテム
+                &.nco-mylist-item-selection::after {
+                    background-color: fade(@brand-info, 80%);
                     content: "もう一度クリックでリクエスト";
                 }
                 
                 // リクエスト送信待機中
                 &.nco-mylist-item-selection-wait::after {
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-
-                    background-color: @brand-info;
-                    color: #fff;
-
+                    background-color: fade(@brand-info, 80%);
                     content: "送信中です";
                 }
                 
                 // リクエスト送信完了
-                &.nco-mylist-item-selection-done{
+                &.nco-mylist-item-selection-done {
                     background-color: fade(@brand-success, 50%);
                     
                     &::after {
-                        position: absolute;
-                        top: 0;
-                        right: 0;
-
-                        background-color: @brand-success;
-                        color: #fff;
-
+                        background-color: fade(@brand-success, 80%);
                         content: "リクエストしました。";
                     }
                 }
                 
                 // リクエスト送信失敗
-                &.nco-mylist-item-selection-done::after {
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-
-                    background-color: @brand-warning;
-                    color: #fff;
-
-                    content: attr(nco-fail-reason);
+                &.nco-mylist-item-selection-fail {
+                    background-color: fade(@brand-danger, 50%);
+                    
+                    &::after {
+                        background-color: fade(@brand-danger, 80%);
+                        content: attr(nco-fail-reason);
+                    }
                 }
             }
 }
