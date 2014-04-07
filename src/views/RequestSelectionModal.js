@@ -75,6 +75,7 @@ define(function (require, exports, module) {
                         $el.removeClass("nco-mylist-item-selection-wait")
                             .addClass("nco-mylist-item-selection-done");
                         
+                        self.lastSelectItem = null;
                         setTimeout(function () { self.close(); }, 1300);
                     })
                     .fail(function (err) {
@@ -82,12 +83,14 @@ define(function (require, exports, module) {
                         $el.removeClass("nco-mylist-item-selection-wait")
                             .addClass("nco-mylist-item-selection-fail");
                     });
-                
-                this.lastSelectItem = null;
             } else {
                 if (this.lastSelectItem) {
                     // 選択済みのアイテムの選択状態を解除
-                    this.lastSelectItem.classList.remove("nco-mylist-item-selection");
+                    $(this.lastSelectItem)
+                        .removeClass("nco-mylist-item-selection")
+                        .removeClass("nco-mylist-item-selection-wait")
+                        .removeClass("nco-mylist-item-selection-done")
+                        .removeClass("nco-mylist-item-selection-fail");
                 }
                 
                 $el.addClass("nco-mylist-item-selection");
