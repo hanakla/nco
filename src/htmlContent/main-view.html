@@ -70,16 +70,18 @@
         </ul>
         
         
-        <form id="comment-poster" class="navbar-form navbar-left">
-            <div class="input-group nco-comment-group">
+        <form id="nco-comment-form" class="navbar-form navbar-left">
+            <div class="input-group nco-comment-form-group">
                 <div class="nco-comment-subpanel">
-                    <label class="checkbox-inline"><input type="checkbox" name="184" maxlength="120">184コメント</label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="184" maxlength="120">184コメント
+                    </label>
                 </div>
                 
                 <div class="nco-comment-error">
                 </div>
                 
-                <input type="text" class="form-control nco-form-comment" name="comment" placeholder="コメントを入力...">
+                <textarea type="text" class="form-control nco-comment-input" name="comment" placeholder="コメントを入力...（Shift+Enterで改行）"></textarea>
                 
                 <span class="input-group-btn">
                     <button class="btn btn-default">
