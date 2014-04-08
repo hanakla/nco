@@ -6,8 +6,8 @@ define(function (require, exports, module) {
     var _           = require("thirdparty/lodash"),
         AppInit     = require("utils/AppInit"),
         Backbone    = require("thirdparty/backbone"),
-        
-        ChannelManager = require("appcore/ChannelManager");
+        ChannelManager = require("appcore/ChannelManager"),
+        Global      = require("utils/Global");
     
     var _instance;
     
@@ -15,19 +15,23 @@ define(function (require, exports, module) {
 //        el: $("#comment-poster") // インスタンス化するときに注入される
         
         events: {
-            "focusin .nco-comment-group input": "onFormFocus",
-            "focusout .nco-comment-group input": "onFormFocus",
+            "focusin .nco-comment-form-group textarea": "onFormFocus",
+            "focusout .nco-comment-form-group textarea": "onFormFocus",
+            "click [nco-action='comment-multiline']": "openMultiline",
+            "keydown [name='comment']": "onFormKeydown",
+            
             "submit": "onPostComment"
         },
         
         initialize: function () {
-            _.bindAll(this, "onFormFocus", "onPostComment");
+            _.bindAll(this, "onFormFocus", "onFormKeydown",
+                "openMultiline", "onPostComment");
             this.$alert = this.$el.find(".nco-comment-error");
         },
         
         // 投稿フォームがクリックされた時
         onFormFocus: function (e) {
-            var cmgroup = this.$el.find(".nco-comment-group"),
+            var cmgroup = this.$el.find(".nco-comment-form-group"),
                 fn;
             
             if (e.type === "focusin") {
@@ -41,6 +45,15 @@ define(function (require, exports, module) {
             cmgroup.addClass("focus");
         },
         
+        // コメント入力欄で何かキーが押された時
+        onFormKeydown: function (e) {
+            if (e.keyCode === 13 && e.shiftKey === false) {
+                // シフトキーを押さずにエンターが押されたら送信
+                this.onPostComment();
+                return false;
+            }
+        },
+        
         // コメントを投稿した時
         onPostComment: function () {
             var self = this,
@@ -50,7 +63,7 @@ define(function (require, exports, module) {
                 comment = $comment.val(),
                 command = (iyayo ? "184" : null);
             
-            ChannelManager.pushComment($comment.val(), command)
+            ChannelManager.pushComment(comment, command)
                 .done(function () {
                     $comment.val("");
                 })
@@ -82,6 +95,6 @@ define(function (require, exports, module) {
     });
     
     AppInit.htmlReady(function () {
-        _instance = new CommentPostView({el: $("#comment-poster")});
+        _instance = new CommentPostView({el: $("#nco-comment-form")});
     });
 });
