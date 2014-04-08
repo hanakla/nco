@@ -14,6 +14,10 @@ define(function (require, exports, module) {
     var CommentPostView = Backbone.View.extend({
 //        el: $("#comment-poster") // インスタンス化するときに注入される
         
+        $comment: null,
+        
+        lastPost: null,
+        
         events: {
             "focusin .nco-comment-form-group textarea": "onFormFocus",
             "focusout .nco-comment-form-group textarea": "onFormFocus",
@@ -24,8 +28,10 @@ define(function (require, exports, module) {
         },
         
         initialize: function () {
-            _.bindAll(this, "onFormFocus", "onFormKeydown",
-                "openMultiline", "onPostComment");
+            _.bindAll(this, "onFormFocus",
+                "onFormKeydown", "onPostComment");
+            
+            this.$comment = this.$el.find("[name='comment']");
             this.$alert = this.$el.find(".nco-comment-error");
         },
         
@@ -57,15 +63,24 @@ define(function (require, exports, module) {
         // コメントを投稿した時
         onPostComment: function () {
             var self = this,
-                $comment = this.$el.find("[name='comment']");
+                $comment = this.$comment;
             
             var iyayo = this.$el.find("[name='184']")[0].checked,
                 comment = $comment.val(),
                 command = (iyayo ? "184" : null);
             
+            if (this.lastPost === comment) {
+                this.alert("同じメッセージを連続で送信できません。", 2400);
+                return;
+            }
+            
+            this.alert("送信中...");
+            
             ChannelManager.pushComment(comment, command)
                 .done(function () {
                     $comment.val("");
+                    self.alert(false);
+                    self.lastPost = comment;
                 })
                 .fail(function (err) {
                     var message = err.message,
@@ -78,19 +93,44 @@ define(function (require, exports, module) {
                     
                     self.alert(message, showTime);
                 });
-            
             return false;
         },
         
         //
         // メソッド
         //
+        // フォームを有効にする
+        enabled: function () {
+            this.$comment.removeAttr("disabled");
+            this.$el.find("button").removeAttr("disabled");
+            this.$comment[0].focus();
+        },
+        
+        // フォームを無効にする
+        disabled: function () {
+            this.$comment.attr("disabled", "");
+            this.$el.find("button").attr("disabled", "");
+        },
+        
+        // エラーメッセージを表示
         alert: function (message, duration) {
-            var $a = this.$alert;
-            duration = duration !== void 0 ? duration : 3000;
+            var self = this,
+                $a = this.$alert;
             
+            if (message === false) {
+                $a.removeClass("show");
+                this.enabled();
+                return;
+            }
+            
+            this.disabled();
             $a.text(message).addClass("show");
-            setTimeout(function () { $a.removeClass("show"); }, duration);
+            
+            typeof duration === "number" &&
+                setTimeout(function () {
+                    $a.removeClass("show");
+                    self.enabled();
+                }, duration);
         }
     });
     
