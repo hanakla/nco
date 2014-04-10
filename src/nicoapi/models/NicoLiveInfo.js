@@ -113,6 +113,8 @@ define(function (require, exports, module) {
         
         // 自動アップデートイベントをリスニング
         _updateEventer.on("checkout", this._autoUpdate);
+        
+        _instances[liveId] = this;
     }
     
     // Backbone.Modelを継承
