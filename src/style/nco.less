@@ -65,6 +65,7 @@ a:active {
 @import "./window/_shell.less";
 @import "./toolbar/_nav.less";
 @import "./dialogs/_request-selection.less";
+@import "./view/_comment.less";
 
 //
 // ログインモーダル
@@ -73,80 +74,3 @@ a:active {
     margin-top: 60px;
 }
 
-/**
- * コンテンツ
- */
-#content {
-    order: 1;
-    -webkit-box-flex: 1.0;
-    overflow: auto;
-}
-
-#comment-view {
-    padding-bottom: 20px;
-    
-    [data-mypost] {
-        background-color: #ffa;
-    }
-    
-    // 複数行コメント
-    .nco-comment-ml {
-        position: relative;
-        
-        &::after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-        
-        pre {
-            display: block;
-            height: 1.42857143em;
-            padding: 0;
-            margin: 0;
-            border: none;
-            overflow: hidden;
-            float: left;
-
-            font-family: inherit;
-            font-size: 14px;
-            line-height: 1.42857143;
-
-            word-break: break-all;
-            word-wrap: break-word;
-            white-space: normal;
-
-            color: @text-color;
-            background-color: transparent;
-            border-radius: 0;
-
-            transition: height .2s ease-out;
-        }
-        
-        .nco-comment-ml-toggle {
-            position: absolute;
-            top: 0;
-            right: 0;
-            
-            color: #ccc;
-            font-size: 12px;
-            font-family: mplus-1p-light;
-            background-color: #fff;
-            
-            &::before {
-               content: "すべて表示"; 
-            }
-        }
-        
-        &.open {
-            pre {
-                height: 100%;
-                white-space: pre;
-            }
-            
-            .nco-comment-ml-toggle::before {
-                content:"閉じる"
-            }
-        }
-    }
-}
