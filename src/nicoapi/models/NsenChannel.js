@@ -586,6 +586,7 @@ define(function (require, exports, module) {
                 // 配信変更イベントを発生させる。
                 self.trigger("liveSwapped", liveInfo);
                 dfd.resolve();
+                Global.console.info("配信情報を差し替えました。");
                 
                 self.fetch();
             })
