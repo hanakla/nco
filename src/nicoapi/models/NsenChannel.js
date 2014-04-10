@@ -50,6 +50,7 @@ define(function (require, exports, module) {
         Global          = require("utils/Global"),
         NicoVideoApi    = require("../impl/NicoVideoApi"),
         NicoVideoInfo   = require("./NicoVideoInfo"),
+        NicoLiveInfo    = require("./NicoLiveInfo"),
         NicoUrl         = require("../impl/NicoUrl"),
         StringUtil      = require("utils/StringUtil");
     
@@ -108,6 +109,14 @@ define(function (require, exports, module) {
      * @param {NicoLiveInfo} liveInfo Nsenの配信を指すLiveInfoオブジェクト
      */
     function NsenChannel(liveInfo) {
+        if (!liveInfo instanceof NicoLiveInfo) {
+            throw new Error("オブジェクトはNicoLiveInfoインスタンスではありません");
+        }
+        
+        if (liveInfo.isNsen() === false) {
+            throw new Error("Nsenの放送ではありません。");
+        }
+        
         // インスタンス重複チェック
         var nsenType = liveInfo.get("stream").nsenType;
         if (_instances[nsenType] != null) {
