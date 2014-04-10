@@ -544,7 +544,7 @@ define(function (require, exports, module) {
     NsenChannel.prototype.moveToNextLive = function () {
         if (this._nextLiveId == null) {
             var err = new Error("次の放送情報を受信していません。");
-            return $.Deferred().reject(err).progress();
+            return $.Deferred().reject(err).promise();
         }
         
         var self = this,
