@@ -9,6 +9,7 @@
  *  WaitListの取得
  * 
  * Methods
+ *  - getLiveInfo():NicoLiveInfo -- 現在接続中の配信のNicoLiveInfoオブジェクトを取得します。
  *  - getCurrentVideo():NicoVideoInfo|null -- 現在再生中の動画情報を取得します。
  *  - getChannelType():string -- チャンネルの種別を取得します。（nsen/***の"***"の部分だけ）
  *  - isSkipRequestable():boolean -- 今現在、スキップリクエストを送ることができるか検証します。
@@ -16,8 +17,11 @@
  *  - cancelRequest() -- リクエストをキャンセルします。
  *  - pushGood() -- Goodを送信します。
  *  - pushSkip() -- SkipRequestを送信します。
+ *  - moveToNextLive() -- 次の配信情報を受け取っていれば、次の配信へ移動します。
  * 
  * Events
+ *  - liveSwapped:(newLive:NicoLiveInfo)
+ *      午前４時以降、インスタンス内部で参照している放送が切り変わった時に発火します。
  *  - videochanged:(video:NicoVideoInfo|null, beforeVideo:NicoVideoInfo|null)
  *      再生中の動画が変わった時に発火します。
  *      第２引数に変更後の動画の情報が渡され、第３引数には変更前の動画の情報が渡されます。
@@ -49,6 +53,7 @@ define(function (require, exports, module) {
         Backbone        = require("thirdparty/backbone"),
         Global          = require("utils/Global"),
         NicoVideoApi    = require("../impl/NicoVideoApi"),
+        NicoLiveApi     = require("../impl/NicoLiveApi"),
         NicoVideoInfo   = require("./NicoVideoInfo"),
         NicoLiveInfo    = require("./NicoLiveInfo"),
         NicoUrl         = require("../impl/NicoUrl"),
@@ -88,19 +93,6 @@ define(function (require, exports, module) {
      */
     var _instances = {};
     
-    /**
-     * イベントリスナ
-     * @type {Object.<string, Object.<string, function()>>}
-     */
-    var _listeners = {
-        "NicoLiveInfo": {
-            "sync": _onLiveInfoUpdated,
-            "closed": _onLiveClosed
-        },
-        "CommentProvider": {
-            "add": _onCommentAdded
-        }
-    };
     
     /**
      * Nsenチャンネルのハンドラです。
@@ -119,22 +111,28 @@ define(function (require, exports, module) {
         
         // インスタンス重複チェック
         var nsenType = liveInfo.get("stream").nsenType;
-        if (_instances[nsenType] != null) {
+        if (_instances[nsenType] != null && this._nextLiveId == null) {
             return _instances[nsenType];
         }
+        
+        _.bindAll(this, "_onCommentAdded", "_onLiveInfoUpdated",
+            "_onDetectionClosing", "_onLiveClosed", "_onVideoChanged");
         
         // 必要なオブジェクトを取得
         this._live = liveInfo;
         this._commentProvider = liveInfo.getCommentProvider();
         
         // イベントリスニング
-        _startListening(this);
+        this._live
+            .on("sync", this._onLiveInfoUpdated)
+            .on("closed", this._onLiveClosed);
         
-        // 再生中の動画が変わった時
-        this.on("videochanged", function () {
-            this._lastSkippedMovieId = null;
-            this.trigger("skipAvailable");
-        });
+        this._commentProvider
+            .on("add", this._onCommentAdded);
+        
+        this
+            .on("videochanged", this._onVideoChanged) // 再生中の動画が変わった時
+            .on("closing", this._onDetectionClosing); // 配信終了前イベントが発された時
         
         _instances[nsenType] = this;
 
@@ -142,10 +140,14 @@ define(function (require, exports, module) {
     }
     
     // Backbone.Eventsを継承
-    NsenChannel.prototype = Object.create(Backbone.Collection.prototype);
+    NsenChannel.prototype = Object.create(Backbone.Events);
     NsenChannel.prototype.constructor = NsenChannel;
-    NsenChannel.prototype.parentClass = Backbone.Collection.prototype;
+    NsenChannel.prototype.parentClass = Backbone.Events;
     
+    
+    //
+    // プロパティ
+    //
     /**
      * @private
      * @type {NicoLiveInfo}
@@ -180,13 +182,135 @@ define(function (require, exports, module) {
      */
     NsenChannel.prototype._lastSkippedMovieId = null;
     
+    /**
+     * 移動先の配信のID
+     * @type {string}
+     */
+    NsenChannel.prototype._nextLiveId = null;
     
+    
+    //
+    // イベントリスナ
+    //
+    /**
+     * コメントを受信した時のイベントリスナ。
+     * 制御コメントの中からNsen内イベントを通知するコメントを取得して
+     * 関係するイベントを発火させます。
+     * @param {LiveComment} comment
+     */
+    NsenChannel.prototype._onCommentAdded = function (comment) {
+        if (comment.isControl() || comment.isDistributorPost()) {
+            var com = comment.get("comment");
+
+            if (CommentRegExp.good.test(com)) {
+                // 誰かがGood押した
+                this.trigger("goodcall");
+                return;
+            }
+
+            if (CommentRegExp.mylist.test(com)) {
+                // 誰かがマイリスに追加した
+                this.trigger("mylistcall");
+                return;
+            }
+
+            if (CommentRegExp.reset.test(com)) {
+                // ページ移動リクエストを受け付けた
+                var liveId = CommentRegExp.reset.exec(com);
+                liveId = liveId[1];
+                this.trigger("closing", liveId);
+            }
+        }
+    };
+    
+    /**
+     * 配信情報が更新された時に実行される
+     * 再生中の動画などのデータを取得する
+     * @param {NicoLiveInfo} live
+     */
+    NsenChannel.prototype._onLiveInfoUpdated = function (live) {
+        var self = this,
+            beforeVideo = this._playingMovie,
+            content = live.get("stream").contents[0],
+            videoId;
+
+        videoId = content && content.content.match(/^smile:((?:sm|nm)[1-9][0-9]*)/);
+        videoId = videoId ? videoId[1] : null;
+
+        if (!videoId) {
+            Global.console.info("再生中の動画が不明です。");
+            this._playingMovie = null;
+            self.trigger("videochanged", null, beforeVideo);
+            return;
+        }
+
+        if (!this._playingMovie || this._playingMovie.id !== videoId) {
+
+            // 直前の再生中動画と異なれば情報を更新
+            NicoVideoApi.getVideoInfo(videoId)
+                .done(function (movie) {
+                    self._playingMovie = movie;
+                    self.trigger("videochanged", movie, beforeVideo);
+                });
+
+            // 次に動画が変わるタイミングで配信情報を更新させる
+            if (content.duration !== -1) {
+                var date = new Date(),
+                    changeAt = (content.startTime.getTime() + (content.duration * 1000)),
+                    timeLeft = changeAt - date.getTime() + 2000; // 再生終了までの残り時間
+
+                setTimeout(function () { live.fetch(); }, timeLeft);
+            }
+        }
+    };
+    
+    /**
+     * チャンネルの内部放送IDの変更を検知するリスナ
+     * @param {string} nextLiveId
+     */
+    NsenChannel.prototype._onDetectionClosing = function (nextLiveId) {
+        this._nextLiveId = nextLiveId;
+    };
+    
+    /**
+     * 放送が終了した時のイベントリスナ
+     */
+    NsenChannel.prototype._onLiveClosed = function () {
+        this.trigger("closed");
+        
+        this._live = null;
+        this._commentProvider = null;
+        this.off();
+        
+        _stopListening(this);
+    };
+    
+    /**
+     * 再生中の動画が変わった時のイベントリスナ
+     */
+    NsenChannel.prototype._onVideoChanged = function () {
+        this._lastSkippedMovieId = null;
+        this.trigger("skipAvailable");
+    };
+    
+    
+    //
+    // メソッド
+    //
     /**
      * チャンネルの種類を取得します。
      * @return {string} "vocaloid", "toho"など
      */
     NsenChannel.prototype.getChannelType = function () {
         return this._live.get("stream").nsenType;
+    };
+    
+    /**
+     * 現在接続中の放送のNicoLiveInfoオブジェクトを取得します。
+     * @return {NicoLiveInfo}
+     */
+    NsenChannel.prototype.getLiveInfo = function () {
+        return this._live;
     };
     
     /**
@@ -416,131 +540,64 @@ define(function (require, exports, module) {
         return deferred.promise();
     };
     
-    
     /**
-     * 関係イベントのリスニングを開始します。
-     * @param {NsenChannel} self
+     * 次のチャンネル情報を受信していれば、その配信へ移動します。
+     * @return {jQuery.Promise} 成功すればresolveされ、失敗した時にrejectされます。
      */
-    function _startListening(self) {
-        if (self._live != null) {
-            _.each(_listeners.NicoLiveInfo, function (fn, ev) {
-                self._live.on(ev, fn);
-            });
+    NsenChannel.prototype.moveToNextLive = function () {
+        if (this._nextLiveId == null) {
+            var err = new Error("次の放送情報を受信していません。");
+            return $.Deferred().reject(err).progress();
         }
         
-        if (self._commentProvider) {
-            _.each(_listeners.CommentProvider, function (fn, ev) {
-                self._commentProvider.on(ev, fn);
-            });
-        }
-    }
-    
-    /**
-     * 関係イベントのリスニングを止めます。
-     * @param {NsenChannel} self
-     */
-    function _stopListening(self) {
-        if (self._live != null) {
-            _.each(_listeners.NicoLiveInfo, function (fn, ev) {
-                self._live.off(ev, fn);
-            });
-        }
-        
-        if (self._commentProvider != null) {
-            _.each(_listeners.CommentProvider, function (fn, ev) {
-                self._commentProvider.off(ev, fn);
-            });
-        }
-    }
-    
-    
-    //
-    // イベントリスナ
-    //
-    /**
-     * コメントを受信した時のイベントリスナ。
-     * 制御コメントの中からNsen内イベントを通知するコメントを取得して
-     * 関係するイベントを発火させます。
-     * @param {LiveComment} comment
-     */
-    function _onCommentAdded(comment) {
-        if (comment.isControl() || comment.isDistributorPost()) {
-            var com = comment.get("comment");
-
-            if (CommentRegExp.good.test(com)) {
-                // 誰かがGood押した
-                this.trigger("goodcall");
-                return;
-            }
-
-            if (CommentRegExp.mylist.test(com)) {
-                // 誰かがマイリスに追加した
-                this.trigger("mylistcall");
-                return;
-            }
-
-            if (CommentRegExp.reset.test(com)) {
-                // ページ移動リクエストを受け付けた
-                var liveId = CommentRegExp.reset.exec(com);
-                liveId = liveId[0];
-                this.trigger("closing", liveId);
-            }
-        }
-    }
-    
-    /**
-     * 放送が終了した時のイベントリスナ
-     */
-    function _onLiveClosed() {
-        this.trigger("closed");
-        
-        this._live = null;
-        this._commentProvider = null;
-        this.off();
-        
-        _stopListening(this);
-    }
-    
-    /**
-     * 配信情報が更新された時に実行される
-     * 再生中の動画などのデータを取得する
-     * @param {NicoLiveInfo} live
-     */
-    function _onLiveInfoUpdated(live) {
         var self = this,
-            beforeVideo = this._playingMovie,
-            content = live.get("stream").contents[0],
-            videoId;
+            dfd = $.Deferred(),
+            liveId = this._nextLiveId;
+        
+        // 放送情報を取得
+        NicoLiveApi.getLiveInfo(liveId)
+            .done(function (liveInfo) {
+                // 放送情報の取得に成功した
+                
+                // イベントリスニングを停止
+                self._live
+                    .off("sync", self._onLiveInfoUpdated)
+                    .off("closed", self._onLiveClosed);
 
-        videoId = content && content.content.match(/^smile:((?:sm|nm)[1-9][0-9]*)/);
-        videoId = videoId ? videoId[1] : null;
+                self._commentProvider
+                    .off("add", self._onCommentAdded);
+                
+                // オブジェクトを破棄
+                self._live != null && self._live.dispose();
+                self._live = null;
+                self._commentProvider = null;
+                
+                // オブジェクトを保持
+                self._live = liveInfo;
+                self._commentProvider = liveInfo.getCommentProvider();
 
-        if (!videoId) {
-            Global.console.info("再生中の動画が不明です。");
-            this._playingMovie = null;
-            self.trigger("videochanged", null, beforeVideo);
-            return;
-        }
+                // イベントリスニング開始
+                self._live
+                    .on("sync", self._onLiveInfoUpdated)
+                    .on("closed", self._onLiveClosed);
 
-        if (!this._playingMovie || this._playingMovie.id !== videoId) {
-
-            // 直前の再生中動画と異なれば情報を更新
-            NicoVideoApi.getVideoInfo(videoId)
-                .done(function (movie) {
-                    self._playingMovie = movie;
-                    self.trigger("videochanged", movie, beforeVideo);
-                });
-
-            // 次に動画が変わるタイミングで配信情報を更新させる
-            if (content.duration !== -1) {
-                var date = new Date(),
-                    changeAt = (content.startTime.getTime() + (content.duration * 1000)),
-                    timeLeft = changeAt - date.getTime() + 2000; // 再生終了までの残り時間
-
-                setTimeout(function () { live.fetch(); }, timeLeft);
-            }
-        }
-    }
+                self._commentProvider
+                    .on("add", self._onCommentAdded);
+                
+                self._nextLiveId = null;
+                
+                // 配信変更イベントを発生させる。
+                self.trigger("liveSwapped", liveInfo);
+                dfd.resolve();
+                
+                self.fetch();
+            })
+            .fail(function (err) {
+                dfd.reject(err);
+            });
+        
+        return dfd.promise();
+    };
     
     
     module.exports = NsenChannel;
