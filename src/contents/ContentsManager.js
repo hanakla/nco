@@ -9,7 +9,7 @@
  *      受け取ったtd要素にコンテンツを設定してください（同期非同期問わない）
  *      generatorはコンテンツの生成をキャンセルできません。（しないでください）
  *      
- *      td要素には data-generator-id属性が付与され、それにジェネレータのidが設定されます。
+ *      td要素には nco-col-generator-id属性が付与され、それにジェネレータのidが設定されます。
  * 
  * - addFilter(id:string, filter:function(el:HTMLTableRowElement, comment:LiveComment)):boolean
  *      フィルターを登録します。
@@ -107,7 +107,7 @@ define(function (require, exports, module) {
             var el = document.createElement("td");
             
             fn(el, comment);
-            el.setAttribute("data-data-generator-id", id);
+            el.setAttribute("nco-col-generator-id", id);
             
             tr.appendChild(el);
         });
