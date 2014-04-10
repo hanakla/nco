@@ -57,5 +57,5 @@ define(function (require, exports, module) {
     }
     
     exports.getLiveInfo = getLiveInfo;
-    exports.NsenChannelFrom = nsenChannelFrom;
+    exports.nsenChannelFrom = nsenChannelFrom;
 });
