@@ -278,11 +278,8 @@ define(function (require, exports, module) {
     NsenChannel.prototype._onLiveClosed = function () {
         this.trigger("closed");
         
-        this._live = null;
-        this._commentProvider = null;
-        this.off();
-        
-        _stopListening(this);
+        // 放送情報を差し替え
+        this.moveToNextLive();
     };
     
     /**
