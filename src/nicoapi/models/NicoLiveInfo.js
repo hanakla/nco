@@ -402,6 +402,9 @@ define(function (require, exports, module) {
         }
     };
     
+    // 別名
+    NicoLiveInfo.prototype.dispose = NicoLiveInfo.prototype.destroy;
+    
     // Backbone.Modelのメソッドを無効化
     NicoLiveInfo.prototype.sync = _.noop;
     NicoLiveInfo.prototype.save = _.noop;
