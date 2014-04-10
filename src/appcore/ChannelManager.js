@@ -45,6 +45,9 @@
  *      SkipRequestが送信できるか確認できます。
  *      (スキップリクエストが利用可能になったことをを通知する"skipAvailable"イベントを利用できます。）
  * 
+ *  - moveToNextLive():$.Promise
+ *      次の配信の情報を受け取っていれば、次の配信へ切り替えを行います。
+ * 
  * Events
  *  - channelChanged:(viewName:string, id:string, ch: NsenChannel)
  *      チャンネルが変更された時に発火します。
@@ -53,6 +56,9 @@
  *      ch - 新しくアクティブ化されたチャンネルのハンドラオブジェクト
  *  
  *  # Nsen
+ *   - liveSwapped:(newLive:NicoLiveInfo)
+ *      午前４時過ぎ以降、内部で接続している放送が切り替えられたときに発火します。
+ * 
  *  - videochanged:(next:NicoVideoInfo|null, before:NicoVideoInfo|null, ch:NsenChannel)
  *      再生中の動画が変わった時に発火します。
  *      第２引数に変更後の動画の情報が渡され、
@@ -141,6 +147,7 @@ define(function (require, exports, module) {
             }
         },
         nsen: {
+            "liveSwapped": _onLiveSwapped,
             "videochanged": function (before, after) { 
                 exports.trigger("videochanged", before, after, _nsenChannel);
             },
@@ -204,6 +211,28 @@ define(function (require, exports, module) {
      */
     function _isNotInitialized() {
         return _nsenChannel === null;
+    }
+    
+    /**
+     * 配信が切り替えられた時のリスナ
+     * 古い関連オブジェクトと関係を切り、新しい関連オブジェクトと関係を繋ぎます。
+     * @private
+     */
+    function _onLiveSwapped() {
+        // 古い配信のイベントリスニングを停止
+        _.each(_listeners.live, function (fn, ev) { _live.off(ev, fn); });
+        _.each(_listeners.comment, function (fn, ev) { _commentProvider.off(ev, fn); });
+        
+        // オブジェクトを差し替え
+        _live = _nsenChannel.getLiveInfo();
+        _commentProvider = _live.getCommentProvider();
+
+        // 新しい配信のイベントをリスニング
+        _.each(_listeners.live, function (fn, ev) { _live.on(ev, fn); });
+        _.each(_listeners.comment, function (fn, ev) { _commentProvider.on(ev, fn); });
+        
+        // イベントを発火
+        exports.trigger("liveSwapped", _live);
     }
     
     /**
@@ -384,6 +413,18 @@ define(function (require, exports, module) {
     }
     
     /**
+     * 次のチャンネル情報を受信していれば、その配信へ移動します。
+     * @return {jQuery.Promise} 成功すればresolveされ、失敗した時にrejectされます。
+     */
+    function moveToNextLive() {
+        if (_isNotInitialized) {
+            return $.Deferred().reject().promise();
+        }
+        
+        return _nsenChannel.moveToNextLive();
+    }
+    
+    /**
      * 起動直前のチャンネルを復元
      */
     if (AppModel.get("currentCh")) {
@@ -406,4 +447,6 @@ define(function (require, exports, module) {
     exports.pushGood = pushGood;
     exports.pushSkip = pushSkip;
     exports.isSkipRequestable = isSkipRequestable;
+    
+    exports.moveToNextLive = moveToNextLive;
 });
