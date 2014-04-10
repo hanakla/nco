@@ -83,7 +83,8 @@ define(function (require, exports, module) {
     var CommentRegExp = {
         good: /^\/nspanel show goodClick/i,
         mylist: /^\/nspanel show mylistClick/i,
-        reset: /^\/reset (lv[0-9]*)/i
+        reset: /^\/reset (lv[0-9]*)/i,
+        videoChange : /^\/play smile:((?:sm|nm)[1-9][0-9]*) main/,
     };
     
     
@@ -135,7 +136,12 @@ define(function (require, exports, module) {
             .on("closing", this._onDetectionClosing); // 配信終了前イベントが発された時
         
         _instances[nsenType] = this;
-
+        
+        // 少し時間をおいてコメントからの動画変更検出を有効にする
+        // （こうしないと過去ログからドバーッと動画変更履歴を検出してしまう）
+        var self = this;
+        setTimeout(function () { self._acceptVideoChangeDetectionFromComments = true; }, 1000);
+        
         this.fetch();
     }
     
@@ -188,6 +194,8 @@ define(function (require, exports, module) {
      */
     NsenChannel.prototype._nextLiveId = null;
     
+    NsenChannel.prototype._acceptVideoChangeDetectionFromComments = false;
+    
     
     //
     // イベントリスナ
@@ -220,6 +228,17 @@ define(function (require, exports, module) {
                 liveId = liveId[1];
                 this.trigger("closing", liveId);
             }
+            
+            if (CommentRegExp.videoChange.test(com)) {
+                // 動画の再生リクエストを受け付けた
+                if (this._acceptVideoChangeDetectionFromComments === true) {
+                    var videoId = CommentRegExp.videoChange.exec(com);
+                    videoId = videoId != null ? videoId[1] : null;
+
+                    videoId != null && this._onVideoChangeDetected(videoId);
+                }
+            }
+            
         }
     };
     
@@ -229,39 +248,43 @@ define(function (require, exports, module) {
      * @param {NicoLiveInfo} live
      */
     NsenChannel.prototype._onLiveInfoUpdated = function (live) {
-        var self = this,
-            beforeVideo = this._playingMovie,
-            content = live.get("stream").contents[0],
+        var content = live.get("stream").contents[0],
             videoId;
 
         videoId = content && content.content.match(/^smile:((?:sm|nm)[1-9][0-9]*)/);
-        videoId = videoId ? videoId[1] : null;
+        videoId = videoId != null ? videoId[1] : null;
 
-        if (!videoId) {
-            Global.console.info("再生中の動画が不明です。");
-            this._playingMovie = null;
-            self.trigger("videochanged", null, beforeVideo);
+        if (videoId == null) {
+            Global.console.info("再生中の動画が不明です。", content = live.get("stream"));
+            this._onVideoChangeDetected(null);
             return;
         }
 
         if (!this._playingMovie || this._playingMovie.id !== videoId) {
-
             // 直前の再生中動画と異なれば情報を更新
-            NicoVideoApi.getVideoInfo(videoId)
-                .done(function (movie) {
-                    self._playingMovie = movie;
-                    self.trigger("videochanged", movie, beforeVideo);
-                });
-
-            // 次に動画が変わるタイミングで配信情報を更新させる
-            if (content.duration !== -1) {
-                var date = new Date(),
-                    changeAt = (content.startTime.getTime() + (content.duration * 1000)),
-                    timeLeft = changeAt - date.getTime() + 2000; // 再生終了までの残り時間
-
-                setTimeout(function () { live.fetch(); }, timeLeft);
-            }
+            this._onVideoChangeDetected(videoId);
         }
+    };
+    
+    /**
+     * 再生中の動画の変更を検知した時に呼ばれるメソッド
+     * @param {string} videoId
+     */
+    NsenChannel.prototype._onVideoChangeDetected = function (videoId) {
+        var self = this,
+            beforeVideo = this._playingMovie;
+        
+        if (videoId == null) {
+            self.trigger("videochanged", null, beforeVideo);
+            self._playingMovie = null;
+            return;
+        }
+        
+        NicoVideoApi.getVideoInfo(videoId)
+            .done(function (video) {
+                self._playingMovie = video;
+                self.trigger("videochanged", video, beforeVideo);
+            });
     };
     
     /**

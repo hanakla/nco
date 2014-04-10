@@ -99,7 +99,7 @@ define(function (require, exports, module) {
                     model.trigger("sync", model, res, options);
                 })
                 .fail(function (xhr, status, err) {
-                    console.error("動画情報の取得に失敗しました。", arguments);
+                    Global.console.error("動画情報の取得に失敗しました。", arguments);
                     
                     if (xhr.status === 503) {
                         dfd.reject("たぶんニコニコ動画がメンテナンス中です。", model);
