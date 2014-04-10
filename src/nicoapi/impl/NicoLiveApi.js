@@ -1,23 +1,24 @@
 /*jslint node: true, vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, expr: true */
+/*global $, define*/
 
 /**
- * ニコニコ生放送APIのラッピングを行います。
+ * ニコニコ生放送APIラッパークラスエントランス
  */
 define(function (require, exports, module) {
     "use strict";
     
-    var Global          = require("utils/Global"),
-        NicoAuthApi     = require("./NicoAuthApi"),
-        NicoLiveInfo    = require("../models/NicoLiveInfo");
+    var NicoAuthApi     = require("./NicoAuthApi"),
+        NicoLiveInfo    = require("../models/NicoLiveInfo"),
+        NsenChannel     = require("../models/NsenChannel");
     
     /**
      * 指定された放送の情報を取得します。
      * @param {string} liveId 放送ID
      * @return {$.Promise} jQuery.Promiseオブジェクト。
-     * 番組情報が取得できればNicoLiveInfoオブジェクトとともにresolveされます。
-     * 取得中にエラーが発生した場合、エラーメッセージとともにrejectされます。
+     *    番組情報が取得できればNicoLiveInfoオブジェクトとともにresolveされます。
+     *    取得中にエラーが発生した場合、エラーメッセージとともにrejectされます。
      */
-    function _getLiveInfo(liveId) {
+    function getLiveInfo(liveId) {
         if (typeof liveId !== "string" || liveId === "") {
             throw new Error("liveIdは文字列である必要があります。");
         }
@@ -45,5 +46,16 @@ define(function (require, exports, module) {
         return deferred.promise();
     }
     
-    exports.getLiveInfo = _getLiveInfo;
+    
+    /**
+     * NicoLiveInfoオブジェクトからNsenChannelのインスタンスを取得します。
+     * @param {NicoLiveInfo} obj
+     * @return {NsenChannel}
+     */
+    function nsenChannelFrom(obj) {
+        return new NsenChannel(obj);
+    }
+    
+    exports.getLiveInfo = getLiveInfo;
+    exports.nsenChannelFrom = nsenChannelFrom;
 });

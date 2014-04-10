@@ -1,4 +1,5 @@
 /*jslint node: true, vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, expr: true */
+/*global define, $ */
 
 /**
  * Nsenのチャンネル状態などを管理します。
@@ -44,6 +45,9 @@
  *      SkipRequestが送信できるか確認できます。
  *      (スキップリクエストが利用可能になったことをを通知する"skipAvailable"イベントを利用できます。）
  * 
+ *  - moveToNextLive():$.Promise
+ *      次の配信の情報を受け取っていれば、次の配信へ切り替えを行います。
+ * 
  * Events
  *  - channelChanged:(viewName:string, id:string, ch: NsenChannel)
  *      チャンネルが変更された時に発火します。
@@ -52,6 +56,9 @@
  *      ch - 新しくアクティブ化されたチャンネルのハンドラオブジェクト
  *  
  *  # Nsen
+ *   - liveSwapped:(newLive:NicoLiveInfo)
+ *      午前４時過ぎ以降、内部で接続している放送が切り替えられたときに発火します。
+ * 
  *  - videochanged:(next:NicoVideoInfo|null, before:NicoVideoInfo|null, ch:NsenChannel)
  *      再生中の動画が変わった時に発火します。
  *      第２引数に変更後の動画の情報が渡され、
@@ -140,6 +147,7 @@ define(function (require, exports, module) {
             }
         },
         nsen: {
+            "liveSwapped": _onLiveSwapped,
             "videochanged": function (before, after) { 
                 exports.trigger("videochanged", before, after, _nsenChannel);
             },
@@ -188,11 +196,10 @@ define(function (require, exports, module) {
         }
     }
     
-    
     /**
      * 関係オブジェクトのイベントをリスニングします。
      */
-    function _listenEvent() {
+    function _startListening() {
         _.each(_listeners.live, function (fn, ev) { _live.on(ev, fn); });
         _.each(_listeners.comment, function (fn, ev) { _commentProvider.on(ev, fn); });
         _.each(_listeners.nsen, function (fn, ev) { _nsenChannel.on(ev, fn); });
@@ -207,6 +214,28 @@ define(function (require, exports, module) {
     }
     
     /**
+     * 配信が切り替えられた時のリスナ
+     * 古い関連オブジェクトと関係を切り、新しい関連オブジェクトと関係を繋ぎます。
+     * @private
+     */
+    function _onLiveSwapped() {
+        // 古い配信のイベントリスニングを停止
+        _.each(_listeners.live, function (fn, ev) { _live.off(ev, fn); });
+        _.each(_listeners.comment, function (fn, ev) { _commentProvider.off(ev, fn); });
+        
+        // オブジェクトを差し替え
+        _live = _nsenChannel.getLiveInfo();
+        _commentProvider = _live.getCommentProvider();
+
+        // 新しい配信のイベントをリスニング
+        _.each(_listeners.live, function (fn, ev) { _live.on(ev, fn); });
+        _.each(_listeners.comment, function (fn, ev) { _commentProvider.on(ev, fn); });
+        
+        // イベントを発火
+        exports.trigger("liveSwapped", _live);
+    }
+    
+    /**
      * チャンネルを変更します。
      * @param {string} chId チャンネルID(nsen/***)
      * @return {$.Promise}
@@ -217,7 +246,7 @@ define(function (require, exports, module) {
         
         if (!ch) {
             Global.console.error("存在しないチャンネルです。(id: %s)", chId);
-            return dfd.reject({message:"存在しないチャンネルです。(id: " + chId + ")"}).promise();
+            return dfd.reject(new Error("存在しないチャンネルです。(id: " + chId + ")")).promise();
         }
         
         NicoApi.Live.getLiveInfo(ch.id)
@@ -226,9 +255,9 @@ define(function (require, exports, module) {
                 
                 _live = liveInfo;
                 _commentProvider = liveInfo.getCommentProvider();
-                _nsenChannel = liveInfo.asNsen();
+                _nsenChannel = NicoApi.Live.nsenChannelFrom(_live);
                 
-                _listenEvent(); // 現在のチャンネルをイベントリスニング
+                _startListening(); // 現在のチャンネルをイベントリスニング
                 
                 // AppModel廃止時に削除
                 AppModel.set("currentCh", ch.id);
@@ -240,12 +269,11 @@ define(function (require, exports, module) {
         return dfd.promise();
     }
     
-    
     /**
      * 現在再生中の動画を取得します。
      * チャンネルが選択されていない場合などでnullを返すことがあります。
      * 基本的にはこのメソッドを用いず、代わりに"videochanged"イベントをリスニングしてください。
-     * @return {NicoVideoInfo|null}
+     * @return {?NicoVideoInfo}
      */
     function getCurrentVideo() {
         if (_isNotInitialized()) {
@@ -305,7 +333,7 @@ define(function (require, exports, module) {
         } else {
             Global.console.error("不正な引数です。読み込み済みNicoVideoInfoか、動画IDである必要があります。", movie);
             waiter = $.Deferred()
-                .reject({message: "不正な引数です。読み込み済みNicoVideoInfoか、動画IDである必要があります。"})
+                .reject(new Error("不正な引数です。読み込み済みNicoVideoInfoか、動画IDである必要があります。"))
                 .promise();
         }
         
@@ -325,7 +353,6 @@ define(function (require, exports, module) {
         return _nsenChannel.cancelRequest();
     }
     
-    
     /**
      * コメントを送信します。
      * @param {string} message 送信するコメント
@@ -334,8 +361,8 @@ define(function (require, exports, module) {
      */
     function pushComment(message, command) {
         if (_isNotInitialized()) {
-            var o = {result: false, message: "チャンネルが選択されていません"};
-            return $.Deferred().reject(o).promise();
+            var err = new Error("チャンネルが選択されていません");
+            return $.Deferred().reject(err).promise();
         }
         
         var dfd = $.Deferred();
@@ -345,7 +372,7 @@ define(function (require, exports, module) {
                 dfd.resolve();
             })
             .fail(function (err) {
-                dfd.reject({result: false, message: err.message});
+                dfd.reject(err);
             });
         
         return dfd.promise();
@@ -364,27 +391,37 @@ define(function (require, exports, module) {
         return _nsenChannel.pushGood();
     }
     
-    
     /**
      * Skipを送信します。
      * @return {$.Promise}
      */
     function pushSkip() {
         if (_isNotInitialized()) {
-            var o = {result: false, message: "チャンネルが選択されていません"};
-            return $.Deferred().reject(o).promise();
+            var err = {result: false, message: "チャンネルが選択されていません"};
+            return $.Deferred().reject(err).promise();
         }
         
         return _nsenChannel.pushSkip();
     }
     
-    
     /**
      * スキップを再送信可能か調べます。
-     * @param {Type} 
+     * @param {boolean} 
      */
     function isSkipRequestable() {
-        return _nsenChannel && _nsenChannel.isSkipRequestable();
+        return !!(_nsenChannel && _nsenChannel.isSkipRequestable());
+    }
+    
+    /**
+     * 次のチャンネル情報を受信していれば、その配信へ移動します。
+     * @return {jQuery.Promise} 成功すればresolveされ、失敗した時にrejectされます。
+     */
+    function moveToNextLive() {
+        if (_isNotInitialized()) {
+            return $.Deferred().reject().promise();
+        }
+        
+        return _nsenChannel.moveToNextLive();
     }
     
     /**
@@ -410,4 +447,6 @@ define(function (require, exports, module) {
     exports.pushGood = pushGood;
     exports.pushSkip = pushSkip;
     exports.isSkipRequestable = isSkipRequestable;
+    
+    exports.moveToNextLive = moveToNextLive;
 });

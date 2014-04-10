@@ -6,8 +6,7 @@ define(function (require, exports, module) {
     var _           = require("thirdparty/lodash"),
         AppInit     = require("utils/AppInit"),
         Backbone    = require("thirdparty/backbone"),
-        ChannelManager = require("appcore/ChannelManager"),
-        Global      = require("utils/Global");
+        ChannelManager = require("appcore/ChannelManager");
     
     var _instance;
     
