@@ -417,7 +417,7 @@ define(function (require, exports, module) {
      * @return {jQuery.Promise} 成功すればresolveされ、失敗した時にrejectされます。
      */
     function moveToNextLive() {
-        if (_isNotInitialized) {
+        if (_isNotInitialized()) {
             return $.Deferred().reject().promise();
         }
         
