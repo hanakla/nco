@@ -107,9 +107,9 @@ define(function (require, exports, module) {
         if (_instances[liveId] != null) {
             return _instances[liveId];
         }
+        Backbone.Model.call(this, {id: liveId});
         
         _.bindAll(this, "_autoUpdate", "_onClosed");
-        Backbone.Model.call(this, {id: liveId});
         
         // 自動アップデートイベントをリスニング
         _updateEventer.on("checkout", this._autoUpdate);
@@ -322,7 +322,7 @@ define(function (require, exports, module) {
                 
                 // 最初に同期したらCommentProviderを取得
                 if (self._commentProvider == null) {
-                    self._commentProvider = new CommentProvider(null, {live: self});
+                    self._commentProvider = new CommentProvider(self);
                     
                     // 配信終了イベントをリスニング
                     self._commentProvider.on("closed", self._onClosed);
@@ -400,6 +400,7 @@ define(function (require, exports, module) {
         }
     };
     
+    // Backbone.Modelのメソッドを無効化
     NicoLiveInfo.prototype.sync = _.noop;
     NicoLiveInfo.prototype.save = _.noop;
     
