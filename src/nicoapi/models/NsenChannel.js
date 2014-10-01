@@ -49,7 +49,7 @@
 define(function (require, exports, module) {
     "use strict";
     
-    var _               = require("thirdparty/lodash"),
+    var _               = require("thirdparty/underscore"),
         Backbone        = require("thirdparty/backbone"),
         Global          = require("utils/Global"),
         NicoVideoApi    = require("../impl/NicoVideoApi"),

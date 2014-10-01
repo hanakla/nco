@@ -2,7 +2,7 @@
 define(function (require, exports, module) {
     "use strict";
     
-    var _           = require("thirdparty/lodash"),
+    var _           = require("thirdparty/underscore"),
         Global      = require("utils/Global"),
         FileSystem  = Global.require("fs"),
         Path        = Global.require("path"),

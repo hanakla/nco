@@ -27,7 +27,7 @@ define(function (require, exports, module) {
     var INIT_GET_RESPONSES = 200,
         SEND_TIMEOUT = 3000;
     
-    var _           = require("thirdparty/lodash"),
+    var _           = require("thirdparty/underscore"),
         Backbone    = require("thirdparty/backbone"),
         Global      = require("utils/Global"),
         LiveComment = require("./LiveComment"),
@@ -36,8 +36,8 @@ define(function (require, exports, module) {
         StringUtil  = require("utils/StringUtil"),
         
         // Node.jsモジュール
-        Net         = Global.require("net"),
-        cheerio     = Global.require("cheerio");
+        Net         = Global.requireNm("net"),
+        cheerio     = Global.requireNm("cheerio");
     
     var CHAT_RESULT = {
         SUCCESS: 0,

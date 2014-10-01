@@ -31,7 +31,7 @@
 define(function (require, exports, module) {
     "use strict";
     
-    var _ = require("thirdparty/lodash");
+    var _ = require("thirdparty/underscore");
     
     /**
      * 簡略なMyList情報モデル

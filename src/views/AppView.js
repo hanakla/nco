@@ -3,7 +3,7 @@
 define(function (require, exports, module) {
     "use strict";
     
-    var _           = require("thirdparty/lodash"),
+    var _           = require("thirdparty/underscore"),
         AppInit     = require("utils/AppInit"),
         Global      = require("utils/Global"),
         Backbone    = require("thirdparty/backbone"),
@@ -18,11 +18,10 @@ define(function (require, exports, module) {
         
         nsenChannels = require("text!nicoapi/NsenChannels.json"),
         htmlMainView = require("text!htmlContent/main-view.html"),
-        mylistItemTpl = _.template((function () {/*
-            <% _.each(lists, function (list) { %>
-                <li data-id='<%= list.get("id") %>'><a href='#'><%= list.get("name") %></a></li>
-            <% }) %>
-        */}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1].replace(/\n/g, ""));
+        mylistItemTpl = _.template(
+            '<% _.each(lists, function (list) { %>' +
+                '<li data-id=\'<%= list.get("id") %>\'><a href=\'#\'><%= list.get("name") %></a></li>' +
+            '<% }) %>');
     
     /**
      * 初期化
@@ -266,7 +265,7 @@ define(function (require, exports, module) {
         mylistAdded: function (result) {
             var $el = this.$el.find(".custom-nav-mylist .response-indicator");
             
-            $el.addClass("active " + (result ? "success" : "fail"))
+            $el.addClass("active " + (result ? "success" : "fail"));
             
             if ($el.attr("data-timerid") !== void 0) {
                 clearTimeout($el.attr("data-timerid")|0);

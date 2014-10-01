@@ -36,14 +36,13 @@
 define(function (require, exports, module) {
     "use strict";
     
-    var _               = require("thirdparty/lodash"),
+    var _               = require("thirdparty/underscore"),
         ContentsManager = require("contents/ContentsManager");
     
     var NL = /\n/,
-        TPL_ML = _.template((function () {/*
-        <pre><%=comment%></pre>
-        <a class="nco-comment-ml-toggle" href="#"></a>
-        */}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1]);
+        TPL_ML = _.template(
+        '<pre><%=comment%></pre>' +
+        '<a class="nco-comment-ml-toggle" href="#"></a>');
     
     ////
     // 標準コメント列

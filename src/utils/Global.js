@@ -14,7 +14,7 @@ define(function (require, exports, module) {
     
     // Backboneくんが駄々をこねるので
     // lodashをunderscore.jsの代替(window._)として割り当て
-    global.underscore = global._ = require("thirdparty/lodash");
+    global.underscore = global._ = require("thirdparty/underscore");
     
     // node-webkit上のnode由来のAPIをnco.nodeApiに公開
     if (global.root) {
@@ -39,7 +39,7 @@ define(function (require, exports, module) {
      * Node.jsモジュールを要求します。
      * @param {string} モジュール名
      */
-    global.nco.require = global.require;
+    global.nco.require = global.requireNm = global.require;
     
     /**
      * Ncoのコアモジュールを取得します。

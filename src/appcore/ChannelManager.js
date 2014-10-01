@@ -106,7 +106,7 @@
 define(function (require, exports, module) {
     "use strict";
     
-    var _        = require("thirdparty/lodash"),
+    var _        = require("thirdparty/underscore"),
         Global   = require("utils/Global"),
         AppModel = require("models/AppModel"), // そのうち削除
         Backbone = require("thirdparty/backbone"),
@@ -242,7 +242,7 @@ define(function (require, exports, module) {
      */
     function changeChannel(chId) {
         var dfd = $.Deferred(),
-            ch = _.find(nsenChannels, {id: chId});
+            ch = _.findWhere(nsenChannels, {id: chId});
         
         if (!ch) {
             Global.console.error("存在しないチャンネルです。(id: %s)", chId);

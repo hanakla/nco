@@ -3,7 +3,7 @@
 define(function (require, exports, module) {
     "use strict";
     
-    var _                 = require("thirdparty/lodash"),
+    var _                 = require("thirdparty/underscore"),
         AppInit             = require("utils/AppInit"),
         Backbone            = require("thirdparty/backbone"),
         NicoMyListApi       = require("nicoapi/NicoApi").MyList,

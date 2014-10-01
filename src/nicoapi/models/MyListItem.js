@@ -35,7 +35,7 @@
 define(function (require, exports, module) {
     "use strict";
     
-    var _               = require("thirdparty/lodash"),
+    var _               = require("thirdparty/underscore"),
         NicoVideoInfo   = require("./NicoVideoInfo"),
         StringUtil      = require("utils/StringUtil");
     

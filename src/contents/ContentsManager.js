@@ -36,17 +36,16 @@
 define(function (require, exports, module) {
     "use strict";
     
-    var _               = require("thirdparty/lodash"),
+    var _               = require("thirdparty/underscore"),
         Backbone        = require("thirdparty/backbone"),
         ChannelManager  = require("appcore/ChannelManager"),
         Global          = require("utils/Global");
     
-    var _tmpl = _.template((function () {/*
-            <tr data-userid="<%=user.id%>" data-premium="<%=user.isPremium%>"
-                data-date="<%=date.getTime()%>" data-score="<%=user.score%>"
-                data-command="<%=command%>" <%=isMyPost?"data-mypost":""%>>
-            </tr>
-        */}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1]);
+    var _tmpl = _.template(
+            '<tr data-userid="<%=user.id%>" data-premium="<%=user.isPremium%>"' +
+                'data-date="<%=date.getTime()%>" data-score="<%=user.score%>"' +
+                'data-command="<%=command%>" <%=isMyPost?"data-mypost":""%>>' +
+            '</tr>');
     
     /**
      * カラムジェネレータのid-functionマップ

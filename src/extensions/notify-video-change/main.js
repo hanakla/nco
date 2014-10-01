@@ -3,7 +3,7 @@
 define(function (require, exports, module) {
     "use strict";
     
-    var _           = nco.getModule("thirdparty/lodash"),
+    var _           = nco.getModule("thirdparty/underscore"),
         ChannelManager = nco.getModule("appcore/ChannelManager"),
         ContentsManager = nco.getModule("contents/ContentsManager"),
         

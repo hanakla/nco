@@ -1,6 +1,6 @@
 /*jslint node: true, vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
 define(function (require, exports, module) {
-    var _ = require("thirdparty/lodash"),
+    var _ = require("thirdparty/underscore"),
         NicoApi = require("nicoapi/NicoApi"),
         
         modalLogin = require("text!htmlContent/modal-login.html");

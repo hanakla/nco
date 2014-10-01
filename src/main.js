@@ -5,7 +5,8 @@ requirejs.config({
     },
     
     shim : {
-        "thirdparty/backbone" : { exports: "Backbone" }
+        "thirdparty/backbone" : { exports: "Backbone" },
+        "thirdparty/underscore" : {exports: "_" }
     }
 });
 

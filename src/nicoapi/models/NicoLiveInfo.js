@@ -75,7 +75,7 @@ define(function (require, exports, module) {
     
     var UPDATE_INTERVAL = 10000;
     
-    var _           = require("thirdparty/lodash"),
+    var _           = require("thirdparty/underscore"),
         Backbone    = require("thirdparty/backbone"),
         CommentProvider = require("./CommentProvider"),
         Global      = require("utils/Global"),
