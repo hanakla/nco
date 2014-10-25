@@ -1,0 +1,8 @@
+.DS_Store
+/_release/
+/_compiled/
+/_cache/
+node_modules/
+
+!**/.gitkeep
+!.gitkeep
