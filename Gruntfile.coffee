@@ -6,7 +6,6 @@ module.exports = (grunt) ->
     os      = require "os"
     path    = require "path"
     spawn   = require("child_process").spawn
-    webpack = require 'webpack'
 
     debug = ->
         DS      = path.sep
@@ -68,40 +67,6 @@ module.exports = (grunt) ->
                     
                     fileExclusionRegExp: /^(node_modules)/
                     #removeCombined: true
-        webpack     :
-            options :
-                target      : "node-webkit"
-                progress    : true
-                entry       :
-                    nco     : "_compile/nco.coffee"
-
-                module  : [
-                    { test : /\.coffee$/, loader : "coffee-loader"},
-                    { test : /\.jade$/, loader : "jade-loader"},
-                    { test : /\.styl$/, loader : "stylus-loader"}
-                ]
-                
-
-                output  :
-                    path        : path.join __dirname, "_compiled/"
-                    publicPath  : "_compiled/"
-                    filename    : "[name].js"
-                    chunkFileName   : "[chunkhash].js"
-
-                resolve :
-                    root    : path.join(__dirname, "_compiled")
-
-                    modulesDirectories  : ["node_modules", "vendor"]
-
-                    extensions  : ["", ".coffee", ".js"]
-
-                plugins : [
-                    new webpack.ProvidePlugin
-                        $   : "jquery"
-                        _   : "underscore"
-                        Backbone    : "backbone"
-                        Marionette  : "backbone.marionette"
-                ]
 
         nodewebkit  :
             src     : ["./_compiled/**/*"] # Your node-webkit app
@@ -119,16 +84,15 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks "grunt-contrib-clean"
     grunt.loadNpmTasks 'grunt-contrib-coffee'
     grunt.loadNpmTasks "grunt-cleanempty"
-    #grunt.loadNpmTasks "grunt-contrib-requirejs"
+    grunt.loadNpmTasks "grunt-contrib-requirejs"
     grunt.loadNpmTasks "grunt-node-webkit-builder"
-    grunt.loadNpmTasks "grunt-webpack"
 
     # regist Tasks
     grunt.registerTask "debug", debug
     grunt.registerTask "release", [
         "clean:compiled",
         "copy:srcToWork",
-        "webpack",
+        "requirejs",
         "copy:nodeModules",
         "clean:beforeBuild",
         "cleanempty:beforeBuild",

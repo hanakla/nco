@@ -27,13 +27,7 @@
     "grunt-contrib-coffee": "^0.11.1",
     "grunt-contrib-copy": "^0.6.0",
     "grunt-contrib-requirejs": "^0.4.4",
-    "grunt-node-webkit-builder": "^0.2.3",
-    "grunt-webpack": "^1.0.8",
-    "jade": "^1.7.0",
-    "jade-loader": "^0.7.0",
-    "stylus-loader": "^0.4.0",
-    "webpack": "^1.4.8",
-    "webpack-dev-server": "^1.6.5"
+    "grunt-node-webkit-builder": "^0.2.3"
   },
   "scripts": {
     "start": "grunt run",
