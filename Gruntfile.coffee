@@ -70,6 +70,7 @@ module.exports = (grunt) ->
                     #removeCombined: true
         webpack     :
             options :
+                target      : "node-webkit"
                 progress    : true
                 entry       :
                     nco     : "_compile/nco.coffee"
@@ -99,6 +100,7 @@ module.exports = (grunt) ->
                         $   : "jquery"
                         _   : "underscore"
                         Backbone    : "backbone"
+                        Marionette  : "backbone.marionette"
                 ]
 
         nodewebkit  :
