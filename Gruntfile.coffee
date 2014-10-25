@@ -35,7 +35,13 @@ module.exports = (grunt) ->
                 cwd     : "src/node_modules"
                 src     : "**"
                 dest    : "compiled/node_modules/"
-            
+        coffee      :
+            compile     :
+                expand  : true
+                cwd     : "src"
+                src     : "*.coffee"
+                dest    : "compiled/",
+                ext     : ".js"
         clean       :
             compiled        : ["compiled/*"]
             beforeBuild: [
@@ -75,6 +81,7 @@ module.exports = (grunt) ->
     # loadTasks
     grunt.loadNpmTasks "grunt-contrib-copy"
     grunt.loadNpmTasks "grunt-contrib-clean"
+    grunt.loadNpmTasks 'grunt-contrib-coffee'
     grunt.loadNpmTasks "grunt-cleanempty"
     grunt.loadNpmTasks "grunt-contrib-requirejs"
     grunt.loadNpmTasks "grunt-node-webkit-builder"

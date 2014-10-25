@@ -15,13 +15,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/0674272bac/nco.git"
+    "url": "https://github.com/Ragg-/nco.git"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-cleanempty": "^1.0.0",
     "grunt-cli": "^0.1.13",
     "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-coffee": "^0.11.1",
     "grunt-contrib-copy": "^0.6.0",
     "grunt-contrib-requirejs": "^0.4.4",
     "grunt-node-webkit-builder": "^0.2.3"
