@@ -41,11 +41,7 @@ define(function (require, exports, module) {
         ChannelManager  = require("appcore/ChannelManager"),
         Global          = require("utils/Global");
     
-    var _tmpl = _.template(
-            '<tr data-userid="<%=user.id%>" data-premium="<%=user.isPremium%>"' +
-                'data-date="<%=date.getTime()%>" data-score="<%=user.score%>"' +
-                'data-command="<%=command%>" <%=isMyPost?"data-mypost":""%>>' +
-            '</tr>');
+    var _tmpl = _.template(require("text!htmlContent/comment-item.html"));
     
     /**
      * カラムジェネレータのid-functionマップ
