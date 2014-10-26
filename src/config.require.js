@@ -1,4 +1,4 @@
-requirejs.config({
+requirejs({
     paths: {
         cs: "vendor/require/cs",
         text: "vendor/require/text",
@@ -6,6 +6,7 @@ requirejs.config({
         styl: "vendor/require/styl",
 
         "coffee-script": "vendor/coffee-script",
+        "jade-compiler": "vendor/jade-compiler",
         stylus: "vendor/stylus",
         backbone: "vendor/backbone",
         marionette: "vendor/backbone.marionette",
