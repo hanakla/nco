@@ -3,11 +3,16 @@ define(['stylus'], function() {
   var buildMap, env, fetchText, getXhr, stylusCompiler;
 
   env = (function() {
-    var _ref;
+    var _ref, _node, _browser;
 
-    if (typeof process !== "undefined" && process !== null ? (_ref = process.versions) != null ? _ref.node : void 0 : void 0) {
+    _node = (typeof process !== "undefined" && process !== null ? (_ref = process.versions) != null ? _ref.node : void 0 : void 0);
+    _browser = ((typeof window !== "undefined" && window !== null ? window.navigator : void 0) && (typeof window !== "undefined" && window !== null ? window.document : void 0)) || typeof importScripts !== "undefined";
+
+    if (_node && _browser) {
+        return "node-webkit";
+    }else if (_node) {
       return "node";
-    } else if (((typeof window !== "undefined" && window !== null ? window.navigator : void 0) && (typeof window !== "undefined" && window !== null ? window.document : void 0)) || typeof importScripts !== "undefined") {
+  } else if (_browser) {
       return "browser";
     } else {
       throw new Error('Environment unsupported.');
@@ -19,6 +24,7 @@ define(['stylus'], function() {
         return function(path, cb) {
           return cb(fs.readFileSync(path, 'utf8'));
         };
+      case 'node-webkit':
       case 'browser':
         getXhr = function() {
           var e, progId, xhr, _i, _len, _ref;
@@ -57,6 +63,7 @@ define(['stylus'], function() {
     switch (env) {
       case 'node':
         return require.nodeRequire('stylus');
+      case 'node-webkit':
       case 'browser':
         return stylus;
     }
