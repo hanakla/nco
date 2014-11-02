@@ -1,0 +1,115 @@
+{
+  "id": "1b9bc822",
+  "cfgVersion": 1,
+  "name": "Nco styles",
+  "files": {
+    "194b9171": {
+      "id": "194b9171",
+      "pid": "1b9bc822",
+      "name": "nco.styl",
+      "input": "nco.styl",
+      "customOutput": false,
+      "type": "Stylus",
+      "config": {
+        "autoCompile": true,
+        "lineNumbers": false,
+        "nib": true,
+        "compress": true,
+        "autoprefixer": false
+      }
+    }
+  },
+  "imports": {
+    "73b027ed": {
+      "id": "73b027ed",
+      "pid": "1b9bc822",
+      "path": "_config.styl",
+      "parents": [
+        "194b9171"
+      ]
+    },
+    "43defcf3": {
+      "id": "43defcf3",
+      "pid": "1b9bc822",
+      "path": "components/NcoControl.styl",
+      "parents": [
+        "194b9171"
+      ]
+    },
+    "ddeb62fe": {
+      "id": "ddeb62fe",
+      "pid": "1b9bc822",
+      "path": "components/NcoShell.styl",
+      "parents": [
+        "194b9171"
+      ]
+    },
+    "8b99c1f0": {
+      "id": "8b99c1f0",
+      "pid": "1b9bc822",
+      "path": "components/NcoComments.styl",
+      "parents": [
+        "194b9171"
+      ]
+    },
+    "ffe1ff88": {
+      "id": "ffe1ff88",
+      "pid": "1b9bc822",
+      "path": "components/NcoNotifier.styl",
+      "parents": [
+        "194b9171"
+      ]
+    },
+    "31062e23": {
+      "id": "31062e23",
+      "pid": "1b9bc822",
+      "path": "_animations.styl",
+      "parents": [
+        "194b9171"
+      ]
+    },
+    "0c81d37d": {
+      "id": "0c81d37d",
+      "pid": "1b9bc822",
+      "path": "components/NcoLogin.styl",
+      "parents": [
+        "194b9171"
+      ]
+    }
+  },
+  "images": {},
+  "config": {
+    "watch": true,
+    "liveRefresh": false,
+    "liveRefreshDelay": 0,
+    "filterPatterns": "*/*",
+    "useCustomServer": false,
+    "customServerUrl": "",
+    "cssPath": "",
+    "jsPath": "js/",
+    "htmlPath": "",
+    "minJsPath": "min/",
+    "htmlExtension": ".html",
+    "cssPathType": "RELATIVE_FILESDIR",
+    "htmlPathType": "RELATIVE_FILESDIR",
+    "jsPathType": "REPLACE_TYPE",
+    "minJsPathType": "RELATIVE_FILEDIR",
+    "htmlTypes": "jade, haml, slim, markdown, md",
+    "cssTypes": "less, sass, stylus, scss, styl",
+    "jsTypes": "coffee, coffeescript, coffeescripts, ls, livescript, livescripts",
+    "cssPreprocessorPath": "",
+    "htmlPreprocessorPath": "_jade/",
+    "jsPreprocessorPath": "",
+    "minJsPreprocessorPath": "",
+    "autoprefixerBrowsers": "",
+    "ftpHost": "",
+    "ftpPort": "21",
+    "ftpRemotePath": "",
+    "ftpIgnorePreprocessorFiles": true,
+    "ftpType": "FTP",
+    "ftpExcludePatterns": "",
+    "ftpSecure": false,
+    "ftpPassword": "",
+    "ftpUsername": ""
+  }
+}

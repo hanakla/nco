@@ -11,8 +11,17 @@ requirejs({
         backbone: "vendor/backbone",
         marionette: "vendor/backbone.marionette",
         underscore: "vendor/underscore",
-        jquery: "vendor/jquery"
+        jquery: "vendor/jquery",
     },
+
+    map : {
+        "*": {
+            // 古いAPI用
+            "thirdparty/backbone" : "vendor/backbone",
+            "thirdparty/underscore" : "vendor/underscore"
+        }
+    },
+
     shim: {
         backbone: {
             deps: ["underscore", "jquery"],

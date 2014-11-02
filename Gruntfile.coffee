@@ -11,25 +11,25 @@ module.exports = (grunt) ->
         DS      = path.sep
         bin     = NWPATH[os.type()]
         proc    = null
-        
+
         try
             if bin?
-                proc = spawn bin, ["--debug", "src" + DS], {detached: true}
+                proc = spawn bin, ["--enable-experimental-web-platform-features", "--debug", "src" + DS], {detached: true}
             else
                 grunt.fail.fatal "Unsupported environment (#{os.type()})"
-        
+
         catch e
             console.error e
 
 
     grunt.initConfig
-        copy        : 
+        copy        :
             srcToWork   :
                 expand  : true
                 cwd     : "src"
                 src     : "**"
                 dest    : "_compiled/"
-            
+
             nodeModules :
                 expand  : true
                 cwd     : "src/node_modules"
@@ -61,10 +61,10 @@ module.exports = (grunt) ->
                     appDir      : "src/"
                     baseUrl     : "./"
                     dir         : "_compiled/"
-                    
+
                     mainConfigFile: "src/main.js"
                     name        : "nco"
-                    
+
                     fileExclusionRegExp: /^(node_modules)/
                     #removeCombined: true
 

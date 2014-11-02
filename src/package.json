@@ -1,41 +1,37 @@
 {
-    "name": "Nco",
-    "version": "0.0.0",
-    "description": "ニコニコ動画 Nsen用コメントビューワ",
-    "homepage": "https://github.com/Ragg-/nco",
-    
-    "author": "Ragg (https://twitter.com/_ragg_)",
-    
-    "issues": {
-        "url": "https://github.com/Ragg-/nco/issues"
-    },
-    
-    "licenses": [
-        {
-          "type": "MIT",
-          "url": "https://github.com/Ragg-/nco/blob/master/LICENSE"
-        }
-    ],
-    
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/Ragg-/nco.git"
-    },
-    
-    
-    "main": "entry.html",
-
-    "devDependencies": {
-    },
-    "single-instance": false,
-    
-    "window": {
-        "title": "Nco",
-        "width": 800,
-        "height": 500,
-        "min_width": 400,
-        "min_height": 600,
-        "toolbar": false,
-        "frame": false
+  "name": "Nco",
+  "version": "0.0.0",
+  "description": "ニコニコ動画 Nsen用コメントビューワ",
+  "homepage": "https://github.com/Ragg-/nco",
+  "author": "Ragg (https://twitter.com/_ragg_)",
+  "issues": {
+    "url": "https://github.com/Ragg-/nco/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/Ragg-/nco/blob/master/LICENSE"
     }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ragg-/nco.git"
+  },
+  "main": "entry.html",
+  "chrome-args": "--enable-experimental-web-platform-features",
+  "js-flags": "--harmony_collections",
+  "devDependencies": {
+    "cheerio": "^0.17.0",
+    "node-nicovideo-api": "0.0.1"
+  },
+  "single-instance": false,
+  "window": {
+    "title": "Nco",
+    "width": 800,
+    "height": 500,
+    "min_width": 400,
+    "min_height": 600,
+    "toolbar": false,
+    "frame": false
+  }
 }

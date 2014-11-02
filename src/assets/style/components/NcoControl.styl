@@ -1,0 +1,84 @@
+.NcoControl
+    position relative
+
+    &_subControls
+        position absolute
+        height 0
+        overflow visible
+
+    &_actions
+        width 100%
+        height 32px
+        padding 0 16px
+
+        background-color $color_main
+        border-bottom 1px solid #ddd
+
+        user-select none
+
+        &_btn
+            width 40px
+            height 32px
+
+            background-color rgba(#eee, .5)
+            border none
+            outline none
+
+            &.skip
+                &::before
+                    content ""
+            &.good
+            &.mylist
+            &.skip
+            &.reload
+                no ne
+
+    &_comment
+        position relative
+        width 100%
+        height 40px
+        padding 4px
+
+        &.focused
+            &_opt
+                display inline-block
+
+        $_contentHeight = (@height - 8px)
+
+        &_opt
+            position absolute
+            bottom 100%
+            display none
+            height 32px
+
+            font-size $fsz_sm
+
+            &_184
+                line-height 1
+
+        &_input
+            display block
+            width 100%
+            height $_contentHeight
+            padding 6px 4px
+
+            border none
+            border-radius 2px 4px 4px 2px
+            background-color lighten($color_main, 50%)
+
+            transition-property background-color
+            transition-duration .2s
+
+            font-size $fsz_sm
+            font-family "mplus-2p"
+            // line-height 32px
+
+            resize none
+            outline none
+
+            &::-webkit-input-placeholder
+                color rgba(85, 85, 85, .5)
+
+
+            &:focus
+                background-color white
