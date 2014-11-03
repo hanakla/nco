@@ -166,14 +166,14 @@ define (require, exports, module) ->
 
                     # オブジェクトを差し替え
                     @_listeners         = {}
-                    @_live              = _nsenChannel.getLiveInfo()
-                    @_commentProvider   = _live.getCommentProvider()
+                    @_live              = @_nsenChannel.getLiveInfo()
+                    @_commentProvider   = @_live.getCommentProvider()
 
                     # 新しい配信のイベントをリスニング
                     @_startListening()
 
                     # イベントを発火
-                    @trigger "streamChanged", _live
+                    @trigger "streamChanged", @_live
 
                 videochanged    : (before, after) ->
                     @trigger "videoChanged", before, after
@@ -216,19 +216,19 @@ define (require, exports, module) ->
         # 関係オブジェクトのイベントをリスニングします。
         ###
         _startListening     : () ->
-            _.each @::_listeners.live, (fn, event) ->
+            _.each ChannelMediator::_listeners.live, (fn, event) ->
                  @_listeners.live[event] = _.bind fn, @
                  @_live.on event, fn
                  return
             , @
 
-            _.each @::_listeners.comment, (fn, event) ->
+            _.each ChannelMediator::_listeners.comment, (fn, event) ->
                 @_listeners.comment[event] = _.bind fn, @
                 @_commentProvider.on event, fn
                 return
             , @
 
-            _.each @::_listeners.nsen, (fn, event) ->
+            _.each ChannelMediator::_listeners.nsen, (fn, event) ->
                 @_listeners.nsen[event] = _.bind fn, @
                 @_nsenChannel.on event, fn
                 return
@@ -238,21 +238,24 @@ define (require, exports, module) ->
         ###*
         # 関係オブジェクトのイベントリスニングを停止します。
         ###
-        _stopListening      : () ->
-            _.each _listeners.live, (fn, ev) ->
-                @_live.off ev, fn
-                return
-            , @
+        _stopListening      :  ->
+            if @_live?
+                _.each @_listeners.live, (fn, ev) ->
+                    @_live.off ev, fn
+                    return
+                , @
 
-            _.each _listeners.comment, (fn, ev) ->
-                @_commentProvider.off ev, fn
-                return
-            , @
+            if @_commentProvider?
+                _.each @_listeners.comment, (fn, ev) ->
+                    @_commentProvider.off ev, fn
+                    return
+                , @
 
-            _.each _listeners.nsen, (fn, ev) ->
-                @_nsenChannel.off ev, fn
-                return
-            , @
+            if @_nsenChannel?
+                _.each @_listeners.nsen, (fn, ev) ->
+                    @_nsenChannel.off ev, fn
+                    return
+                , @
 
 
         setLiveApi          : (api) ->
@@ -265,34 +268,37 @@ define (require, exports, module) ->
         # @return {$.Promise}
         ###
         changeChannel       : (chId) ->
-            dfd     = $.Deferred()
-            ch      = _.findWhere nsenChannels, {id: chId}
+                self    = @
+                dfd     = $.Deferred()
+                ch      = _.findWhere nsenChannels, {id: chId}
 
-            if not ch
-                console.error "存在しないチャンネルです。(id: %s)", chId
-                return dfd.reject("存在しないチャンネルです。(id: " + chId + ")").promise()
+                if not ch
+                    console.error "存在しないチャンネルです。(id: %s)", chId
+                    return dfd.reject("存在しないチャンネルです。(id: " + chId + ")").promise()
 
-            unless @_liveApi?
-                console.error "ログインされていません"
-                return dfd.reject("ログインしていません").promise()
+                unless @_liveApi?
+                    console.error "ログインされていません"
+                    return dfd.reject("ログインしていません").promise()
 
-            @_liveApi.getLiveInfo ch.id
-                .then (liveInfo) ->
-                    _stopListening() # 前のチャンネルのイベントリスニングを停止
+                console.log
+                @_liveApi.getLiveInfo ch.id
+                    .then (liveInfo) ->
+                        try
+                            self._stopListening() # 前のチャンネルのイベントリスニングを停止
 
-                    _live               = liveInfo
-                    _commentProvider    = liveInfo.getCommentProvider()
-                    _nsenChannel        = NicoLive.nsenChannelFrom(_live)
+                            self._live               = liveInfo
+                            self._commentProvider    = liveInfo.commentProvider()
+                            self._nsenChannel        = self._liveApi.getNsenChannelHandlerFor self._live
 
-                    _startListening() # 現在のチャンネルをイベントリスニング
+                            self._startListening() # 現在のチャンネルをイベントリスニング
 
-                    # AppModel廃止時に削除
-                    #AppModel.set "currentCh", ch.id
+                            dfd.resolve()
+                            self.trigger "channelChanged", ch.name, ch.id, self._nsenChannel
 
-                    dfd.resolve()
-                    exports.trigger "channelChanged", ch.name, ch.id, _nsenChannel
+                        catch e
+                            console.log e
 
-            return dfd.promise()
+                return dfd.promise()
 
 
         ###*
