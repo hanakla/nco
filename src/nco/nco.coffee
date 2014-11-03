@@ -60,12 +60,12 @@ define (require, exports, module) ->
 
                         if memory
                             NcoConfigure.set
+                                session : api.session.getSessionId()
                                 user    : user
                                 pass    : pass
 
                         self.trigger "login"
                         dfr.resolve()
-
 
                     ,(err) ->
                         dfr.reject err
@@ -105,7 +105,11 @@ define (require, exports, module) ->
             self = @
             @on "login", ->
                 ChannelManager.setLiveApi self._api.live
-                ChannelManager.changeChannel "nsen/vocaloid"
+                ChannelManager.changeChannel "nsen/toho"
+
+                ChannelManager.on "receiveComment", (comment) ->
+                    console.info "%c%s", "color: #25beff", comment.get "comment"
+
 
     ncoApi = new NcoAPI()
 
@@ -113,7 +117,6 @@ define (require, exports, module) ->
     ncoApi.addInitializer ->
         user = NcoConfigure.get "user"
         pass = NcoConfigure.get "pass"
-
 
         if user? and pass?
             ncoApi.request "login", user, pass

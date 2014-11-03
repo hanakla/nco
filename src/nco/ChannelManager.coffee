@@ -143,15 +143,17 @@ define (require, exports, module) ->
         ###
         _listeners  :
             # NicoLiveInfo object event listeners
-            live        : {}
+            live        :
+                sync        : ->
+                    console.log "live info sync"
 
             # CommentProvider object event listeners
             comment     :
                 add         : (comment) ->
-                    exports.trigger "receiveComment", comment
+                    @trigger "receiveComment", comment
 
                 receive     : (response) ->
-                    exports.trigger "receiveRawXML",  response
+                    @trigger "receiveRawXML",  response
 
             # NsenChannel object event listeners
             nsen    :
@@ -179,31 +181,31 @@ define (require, exports, module) ->
                     @trigger "videoChanged", before, after
 
                 sendRequest     : (video) ->
-                    @trigger "sendRequest", video, _nsenChannel
+                    @trigger "sendRequest", video
 
                 cancelRequest  : (video) ->
                     @trigger "cancelRequest", video
 
                 sendGood        : ->
-                    @trigger "sendGood", _nsenChannel
+                    @trigger "sendGood", @_nsenChannel
 
                 sendSkip        : ->
-                    @trigger "sendSkip", _nsenChannel
+                    @trigger "sendSkip", @_nsenChannel
 
                 receiveGood     : ->
-                    @trigger "receiveGood", _nsenChannel
+                    @trigger "receiveGood", @_nsenChannel
 
                 receiveMyList   : ->
-                    @trigger "receiveMyList", _nsenChannel
+                    @trigger "receiveMyList", @_nsenChannel
 
                 skipAvailable   : ->
-                    @trigger "skipAvailable", _nsenChannel
+                    @trigger "skipAvailable", @_nsenChannel
 
                 closing         : ->
-                    @trigger "closing", _nsenChannel
+                    @trigger "closing", @_nsenChannel
 
                 ended           : ->
-                    @trigger "closed", _nsenChannel
+                    @trigger "closed", @_nsenChannel
 
 
         dispose         : () ->
@@ -216,6 +218,8 @@ define (require, exports, module) ->
         # 関係オブジェクトのイベントをリスニングします。
         ###
         _startListening     : () ->
+            console.info "ChannelManager: リスナーを接続します"
+
             _.each ChannelMediator::_listeners.live, (fn, event) ->
                  @_listeners.live[event] = _.bind fn, @
                  @_live.on event, fn
@@ -234,11 +238,14 @@ define (require, exports, module) ->
                 return
             , @
 
+            console.info "ChannelManager: リスナーを接続しました"
+
 
         ###*
         # 関係オブジェクトのイベントリスニングを停止します。
         ###
         _stopListening      :  ->
+            console.info "ChannelManager: リスナーを切断します。"
             if @_live?
                 _.each @_listeners.live, (fn, ev) ->
                     @_live.off ev, fn
@@ -257,6 +264,8 @@ define (require, exports, module) ->
                     return
                 , @
 
+            console.info "ChannelManager: リスナーを切断しました。"
+
 
         setLiveApi          : (api) ->
             @_liveApi = api
@@ -268,37 +277,38 @@ define (require, exports, module) ->
         # @return {$.Promise}
         ###
         changeChannel       : (chId) ->
-                self    = @
-                dfd     = $.Deferred()
-                ch      = _.findWhere nsenChannels, {id: chId}
+            self    = @
+            dfd     = $.Deferred()
+            ch      = _.findWhere nsenChannels, {id: chId}
 
-                if not ch
-                    console.error "存在しないチャンネルです。(id: %s)", chId
-                    return dfd.reject("存在しないチャンネルです。(id: " + chId + ")").promise()
+            if not ch
+                console.error "存在しないチャンネルです。(id: %s)", chId
+                return dfd.reject("存在しないチャンネルです。(id: " + chId + ")").promise()
 
-                unless @_liveApi?
-                    console.error "ログインされていません"
-                    return dfd.reject("ログインしていません").promise()
+            unless @_liveApi?
+                console.error "ログインされていません"
+                return dfd.reject("ログインしていません").promise()
 
-                console.log
-                @_liveApi.getLiveInfo ch.id
-                    .then (liveInfo) ->
-                        try
-                            self._stopListening() # 前のチャンネルのイベントリスニングを停止
+            @_liveApi.getLiveInfo ch.id
+                .then (liveInfo) ->
+                    try
+                        self._stopListening() # 前のチャンネルのイベントリスニングを停止
 
-                            self._live               = liveInfo
-                            self._commentProvider    = liveInfo.commentProvider()
-                            self._nsenChannel        = self._liveApi.getNsenChannelHandlerFor self._live
+                        self._live               = liveInfo
+                        self._commentProvider    = liveInfo.commentProvider()
+                        self._nsenChannel        = self._liveApi.getNsenChannelHandlerFor self._live
 
-                            self._startListening() # 現在のチャンネルをイベントリスニング
+                        self._startListening() # 現在のチャンネルをイベントリスニング
 
-                            dfd.resolve()
-                            self.trigger "channelChanged", ch.name, ch.id, self._nsenChannel
+                        dfd.resolve()
+                        self.trigger "channelChanged", ch.name, ch.id, self._nsenChannel
 
-                        catch e
-                            console.log e
+                        console.info "ChannelManager: チャンネルの変更に成功しました"
 
-                return dfd.promise()
+                    catch e
+                        console.error "生放送情報の取得に失敗しました。", e.stack
+
+            return dfd.promise()
 
 
         ###*
