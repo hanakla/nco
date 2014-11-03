@@ -71,6 +71,10 @@ define(function (require, module, exports) {
             // global.require.cache = [];
         };
 
+        window.addEventListener("beforeunload", function() {
+            window.clearModuleCache()
+        });
+
         Object.defineProperty(window, "cmc", {
             get : function () {
                 window.clearModuleCache();
