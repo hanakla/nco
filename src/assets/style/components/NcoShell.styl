@@ -73,29 +73,30 @@
             border-radius 50px
 
             outline none
-            zoom 1.3
+            zoom 1
 
             &.close
                 background-color $shell_close
 
-                &::before, &::after
-                    content ""
-                    position absolute
-                    top 50%
-                    left 50%
-                    margin -1px 0 0 -4px
+                &:hover
+                    &::before, &::after
+                        content ""
+                        position absolute
+                        top 50%
+                        left 50%
+                        margin -1px 0 0 -4px
 
-                    width 8px
-                    border-top 2px solid rgba(#222, .8)
-                    transform rotateZ(45deg)
+                        width 8px
+                        border-top 2px solid $shell_icon
+                        transform rotateZ(45deg)
 
-                &::after
-                    transform rotateZ(-45deg)
+                    &::after
+                        transform rotateZ(-45deg)
 
             &.minimize
                 background-color $shell_minimize
 
-                &::before
+                &:hover::before
                     content ""
 
                     position absolute
@@ -105,12 +106,12 @@
                     width 8px
                     margin-left -4px
 
-                    border-top 2px solid rgba(#222, .8)
+                    border-top 2px solid $shell_icon
 
             &.maximize
                 background-color $shell_maximize
 
-                &::before
+                &:hover::before
                     content ""
 
                     position absolute
@@ -121,12 +122,12 @@
                     height 8px
                     margin -4px 0 0 -4px
 
-                    border 2px solid rgba(#222, .8)
+                    border 2px solid $shell_icon
 
             &.pin
                 background-color $shell_pin
 
-                &::before
+                &:hover::before
                     content ""
 
                     position absolute
@@ -137,4 +138,4 @@
                     height 8px
                     margin -4px 0 0 -4px
 
-                    background-color rgba(#222, .8)
+                    background-color $shell_icon
