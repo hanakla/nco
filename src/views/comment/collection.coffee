@@ -1,20 +1,9 @@
 define (require, exports, module) ->
-    Marionette  = require "marionette"
+    Backbone    = require "backbone"
 
-    ChannelManager = require "cs!nco/ChannelManager"
+    NicoAPI     = window.require("node-nicovideo-api")
 
-    CommentView = require "cs!./commentView"
+    class CommentCollection extends Backbone.Collection
+        model   : NicoAPI.Live.NicoLiveComment
 
-    class CommentCollectionView extends Marionette.CollectionView
-        childView   : CommentView
-
-        initialize  : ->
-            console.dir(ChannelManager)
-            ChannelManager.changeChannel "nsen/vocaloid"
-            ChannelManager.on "receiveComment", @onReceiveComment
-
-        onReceiveComment : (comment) ->
-            console.log comment
-
-
-    module.exports = CommentCollectionView
+    module.exports = CommentCollection

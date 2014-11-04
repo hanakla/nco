@@ -17,7 +17,7 @@ define (require, exports, module) ->
     NcoControl  = require "cs!views/control/layout"
     NcoLogin    = require "cs!views/login/layout"
 
-    NcoCommentCollection    = require "cs!views/comment/collection"
+    NcoCommentCollection    = require "cs!views/comment/collectionView"
 
     _instance = null
 
@@ -52,7 +52,10 @@ define (require, exports, module) ->
             $.each @getRegions(), () ->
                 @render() if $.isFunction @render
 
-            @main.comments.attachView new NcoCommentCollection
+
+            cc = new NcoCommentCollection
+            @main.comments.show cc
+
 
             return
 

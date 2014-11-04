@@ -29,7 +29,7 @@
 #      リクエストをキャンセルします。
 #      リクエストが送信されていない、もしくはキャンセルに失敗した場合はエラーオブジェクトとともにrejectされます。
 #
-#  - pushComment(message:string, command:?string):$.Promise
+#  - postComment(message:string, command:?string):$.Promise
 #      コメントを送信します。messageにはコメントを渡し、commandには"184"などのコマンドを指定できます。
 #
 #  - pushGood():$.Promise
@@ -163,19 +163,19 @@ define (require, exports, module) ->
                 ####
                 streamChanged   : () ->
                     # 前の配信のイベントリスナを切断
-                    @_stopListening()
-                    delete @_listeners
+                    #@_stopListening()
+                    #delete @_listeners
 
-                    # オブジェクトを差し替え
-                    @_listeners         = {}
-                    @_live              = @_nsenChannel.getLiveInfo()
-                    @_commentProvider   = @_live.getCommentProvider()
+                    ## オブジェクトを差し替え
+                    #@_listeners         = {}
+                    #@_live              = @_nsenChannel.getLiveInfo()
+                    #@_commentProvider   = @_live.getCommentProvider()
 
-                    # 新しい配信のイベントをリスニング
-                    @_startListening()
+                    ## 新しい配信のイベントをリスニング
+                    #@_startListening()
 
-                    # イベントを発火
-                    @trigger "streamChanged", @_live
+                    ## イベントを発火
+                    #@trigger "streamChanged", @_live
 
                 videochanged    : (before, after) ->
                     @trigger "videoChanged", before, after
@@ -187,25 +187,25 @@ define (require, exports, module) ->
                     @trigger "cancelRequest", video
 
                 sendGood        : ->
-                    @trigger "sendGood", @_nsenChannel
+                    #@trigger "sendGood", @_nsenChannel
 
                 sendSkip        : ->
-                    @trigger "sendSkip", @_nsenChannel
+                    #@trigger "sendSkip", @_nsenChannel
 
                 receiveGood     : ->
-                    @trigger "receiveGood", @_nsenChannel
+                    #@trigger "receiveGood", @_nsenChannel
 
                 receiveMyList   : ->
-                    @trigger "receiveMyList", @_nsenChannel
+                    #@trigger "receiveMyList", @_nsenChannel
 
                 skipAvailable   : ->
-                    @trigger "skipAvailable", @_nsenChannel
+                    #@trigger "skipAvailable", @_nsenChannel
 
                 closing         : ->
                     @trigger "closing", @_nsenChannel
 
                 ended           : ->
-                    @trigger "closed", @_nsenChannel
+                    #@trigger "closed", @_nsenChannel
 
 
         dispose         : () ->
@@ -221,19 +221,19 @@ define (require, exports, module) ->
             console.info "ChannelManager: リスナーを接続します"
 
             _.each ChannelMediator::_listeners.live, (fn, event) ->
-                 @_listeners.live[event] = _.bind fn, @
+                 @_listeners.live[event] = fn = _.bind fn, @
                  @_live.on event, fn
                  return
             , @
 
             _.each ChannelMediator::_listeners.comment, (fn, event) ->
-                @_listeners.comment[event] = _.bind fn, @
+                @_listeners.comment[event] = fn = _.bind fn, @
                 @_commentProvider.on event, fn
                 return
             , @
 
             _.each ChannelMediator::_listeners.nsen, (fn, event) ->
-                @_listeners.nsen[event] = _.bind fn, @
+                @_listeners.nsen[event] = fn = _.bind fn, @
                 @_nsenChannel.on event, fn
                 return
             , @
@@ -291,7 +291,6 @@ define (require, exports, module) ->
 
             @_liveApi.getLiveInfo ch.id
                 .then (liveInfo) ->
-                    try
                         self._stopListening() # 前のチャンネルのイベントリスニングを停止
 
                         self._live               = liveInfo
@@ -300,13 +299,12 @@ define (require, exports, module) ->
 
                         self._startListening() # 現在のチャンネルをイベントリスニング
 
-                        dfd.resolve()
-                        self.trigger "channelChanged", ch.name, ch.id, self._nsenChannel
+                        #dfd.resolve()
+                        #self.trigger "channelChanged", ch.name, ch.id, self._nsenChannel
 
-                        console.info "ChannelManager: チャンネルの変更に成功しました"
+                        #console.info "ChannelManager: チャンネルの変更に成功しました"
 
-                    catch e
-                        console.error "生放送情報の取得に失敗しました。", e.stack
+                        #console.error "生放送情報の取得に失敗しました。", e.stack
 
             return dfd.promise()
 
@@ -343,7 +341,7 @@ define (require, exports, module) ->
             if not @_nsenChannel?
                 return null
 
-            return _.clone _commentProvider.models
+            return _.clone @_commentProvider.models
 
 
         #
@@ -392,18 +390,18 @@ define (require, exports, module) ->
         # @param {?string} command 同時に送るコマンド(184, shitaなど)
         # @return {$.Promise}
         #
-        pushComment         : (message, command) ->
+        postComment         : (message, command) ->
             if not @_nsenChannel?
                 m = "チャンネルが選択されていません"
                 return $.Deferred().reject(m).promise()
 
             dfd = $.Deferred()
 
-            _commentProvider.postComment(message, command)
-                .done ->
+            @_commentProvider.postComment(message, command)
+                .then ->
                     dfd.resolve()
-                .fail (err) ->
-                    dfd.reject(err)
+                , (err) ->
+                    dfd.reject err
 
             return dfd.promise()
 

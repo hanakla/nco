@@ -38,7 +38,7 @@ define (require, exports, module) ->
                     nwWindow.maximize()
 
                 exit        : ->
-                    NodeWebkit.App.quit()
+                    #NodeWebkit.App.quit()
                     return
 
             return
@@ -69,6 +69,17 @@ define (require, exports, module) ->
 
                     ,(err) ->
                         dfr.reject err
+
+                    return dfr.promise()
+
+                reuseSession    : (sessionId) ->
+                    dfr = $.Deferred()
+                    self._api = new NicoAPI
+
+                    self._api.session.setSessionId sessionId
+                    self._api.loginThen ->
+                        console.info "Login by old session."
+                        self.trigger "login"
 
                     return dfr.promise()
 
@@ -103,12 +114,10 @@ define (require, exports, module) ->
 
         _initSelfListeners  : ->
             self = @
+
             @on "login", ->
                 ChannelManager.setLiveApi self._api.live
                 ChannelManager.changeChannel "nsen/toho"
-
-                ChannelManager.on "receiveComment", (comment) ->
-                    console.info "%c%s", "color: #25beff", comment.get "comment"
 
 
     ncoApi = new NcoAPI()
@@ -117,13 +126,19 @@ define (require, exports, module) ->
     ncoApi.addInitializer ->
         user = NcoConfigure.get "user"
         pass = NcoConfigure.get "pass"
+        sessId = NcoConfigure.get "session"
+
+        ncoApi.on "login", ->
+            console.info "Auto login success"
+        , ->
+            console.info "Auto login failed"
+
+        if sessId?
+            ncoApi.request "reuseSession", sessId
+            return
 
         if user? and pass?
-            ncoApi.request "login", user, pass
-                .then ->
-                    console.info "Auto login success"
-                , ->
-                    console.info "Auto login failed"
+            ncoApi.request "login", user, pass, true
 
     ncoApi.start()
     module.exports = window.nco = ncoApi
