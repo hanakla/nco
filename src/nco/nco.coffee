@@ -5,7 +5,7 @@ define (require, exports, module) ->
     NodeWebkit  = require "cs!utils/nw"
 
     ChannelManager  = require "cs!nco/ChannelManager"
-    NcoConfigure    = require "cs!models/NcoConfigure"
+    NcoConfigure    = require "cs!nco/config"
 
     class NcoAPI extends Marionette.Application
 
