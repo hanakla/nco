@@ -1,6 +1,8 @@
 define (require, exports, module) ->
     Marionette = require "marionette"
 
+    NcoAPI          = require "cs!nco/nco"
+
     class NcoViewShell extends Marionette.LayoutView
         template: require "jade!./view"
 
@@ -11,13 +13,22 @@ define (require, exports, module) ->
             pin     : ".NcoShell_ctrl .pin"
 
         events  :
-            "click @ui.close" : "close"
+            "click @ui.close"   : "_onClickClose"
+            "click @ui.max"     : "_onClickMaximize"
+            "click @ui.min"     : "_onClickMinimize"
+            "click @ui.pin"     : "_onClickPin"
 
-        onClickClose    : ->
+        _onClickClose       : ->
+            NcoAPI.execute "close"
 
-        onClickMaximize : ->
-        onClickMinimize : ->
-        onClickPin      : ->
+        _onClickMaximize    : ->
+            NcoAPI.execute "maximize"
+
+        _onClickMinimize    : ->
+            NcoAPI.execute "minimize"
+
+        _onClickPin         : ->
+            NcoAPI.execute "toggleAlwaysOnTop"
 
 
     return NcoViewShell
