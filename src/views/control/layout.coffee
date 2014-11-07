@@ -1,4 +1,5 @@
 define (require, exports, module) ->
+    $           = require "jquery"
     Marionette  = require "marionette"
 
     #ActionView    = require "cs!./action-view"
@@ -13,6 +14,7 @@ define (require, exports, module) ->
             mylist      : ".mylist"
             request     : ".request"
             reload      : ".reload"
+            commentArea : ".NcoControl_comment"
             input       : ".NcoControl_comment_input"
 
         events      :
@@ -60,9 +62,25 @@ define (require, exports, module) ->
 
         _showOption      : ->
             @ui.commentArea.addClass "focus"
+            $(document).one "click", {self: @}, @_globalClickListener
 
         _hideOption      : ->
             @$el.find(".NcoControl_comment_opt").removeClass "show"
 
+        _keepFocusInInput: ->
+            @ui.input[0].focus()
+
+        ###*
+        # 領域外クリックを検出して
+        # コメント入力欄のフォーカス状態を解除するリスナ
+        ###
+        _globalClickListener : (e)->
+            self = e.data.self
+            $parents = $(e.target).parents()
+
+            if $parents.filter(self.ui.commentArea).length is 0
+                self.ui.commentArea.removeClass "focus"
+            else
+                $(document).one "click", {self}, arguments.callee
 
     return NcoControlLayout
