@@ -16,12 +16,16 @@ define (require, exports, module) ->
             input       : ".NcoControl_comment_input"
 
         events      :
-            "keydown @ui.input" : "onSubmitComment"
-            "click @ui.skip"    : "onClickSkip"
-            "click @ui.good"    : "onClickGood"
-            "click @ui.mylist"  : "onClickMylist"
-            "click @ui.request" : "onClickRequest"
-            "click @ui.reload"  : "onClickReload"
+            "keydown @ui.input" : "_onSubmitComment"
+            "focus @ui.input"   : "_showOption"
+            "blur @ui.input"    : "_hideOption"
+            "click [name='comment_184']": "_memory184State"
+            "click @ui.commentArea": "_keepFocusInInput"
+            "click @ui.skip"    : "_onClickSkip"
+            "click @ui.good"    : "_onClickGood"
+            "click @ui.mylist"  : "_onClickMylist"
+            "click @ui.request" : "_onClickRequest"
+            "click @ui.reload"  : "_onClickReload"
 
         regions     :
             actions     : ".NcoControl_actions"
@@ -31,28 +35,34 @@ define (require, exports, module) ->
         initialize  : (option) ->
             #@actions.attachView new ActionView
 
-        onSubmitComment : (e) ->
+        _onSubmitComment : (e) ->
             if e.keyCode is 13 and e.shiftKey is false
                 console.log "submit"
                 ChannelManager.postComment @ui.input.val()
                 @ui.input.val ""
                 return false
 
-        onClickReload   : ->
+        _onClickReload   : ->
             console.log "reloadin"
             location.reload()
 
-        onClickGood     : ->
+        _onClickGood     : ->
             ChannelManager.pushGood()
 
-        onClickSkip     : ->
+        _onClickSkip     : ->
             ChannelManager.pushSkip()
 
-        onClickRequest  : ->
+        _onClickRequest  : ->
             nco.exec "openRequest"
 
-        onClickMylist   : ->
+        _onClickMylist   : ->
             nco.exec "addToMylist"
+
+        _showOption      : ->
+            @ui.commentArea.addClass "focus"
+
+        _hideOption      : ->
+            @$el.find(".NcoControl_comment_opt").removeClass "show"
 
 
     return NcoControlLayout
