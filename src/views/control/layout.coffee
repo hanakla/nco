@@ -35,8 +35,11 @@ define (require, exports, module) ->
             subControls : ".NcoControl_subControls"
 
         initialize  : (option) ->
-            @$el.find("[name='comment_184']")[0]?.
-                checked = NcoConfig.get "comment.184"
+            # DOMの生成に遅延があるため、setTimeoutで処理を遅らせる
+            setTimeout =>
+                @$el.find("[name='comment_184']")[0]?.
+                    checked = NcoConfig.get "comment.184"
+            , 10
 
         _memory184State  : ->
             NcoConfig.set "comment.184"
