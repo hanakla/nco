@@ -319,7 +319,7 @@ define (require, exports, module) ->
             if not @_nsenChannel?
                 return null
 
-            return _nsenChannel.getCurrentVideo()
+            return @_nsenChannel.getCurrentVideo()
 
 
         #
@@ -330,7 +330,7 @@ define (require, exports, module) ->
             if not @_nsenChannel?
                 return null
 
-            return _nsenChannel.getChannelType()
+            return @_nsenChannel.getChannelType()
 
 
         #
@@ -354,15 +354,17 @@ define (require, exports, module) ->
                 m = "チャンネルが選択されていません"
                 return $.Deferred().reject(m).promise()
 
-            waiter = null
+            self    = @
+            waiter  = null
 
             if typeof movie is "string"
                 waiter = NicoApi.Video.getVideoInfo(movie)
                     .then (videoInfo) ->
-                        return _nsenChannel.sendRequest(videoInfo)
+                        self._nsenChannel.sendRequest videoInfo
+                        return
 
             else if movie.isCorrect()
-                waiter = _nsenChannel.sendRequest(movie)
+                waiter = @_nsenChannel.sendRequest movie
             else
                 console.error("不正な引数です。読み込み済みNicoVideoInfoか、動画IDである必要があります。", movie)
                 waiter = $.Deferred()
@@ -381,7 +383,7 @@ define (require, exports, module) ->
                 m = "チャンネルが選択されていません"
                 return $.Deferred().reject(m).promise()
 
-            return _nsenChannel.cancelRequest()
+            return @_nsenChannel.cancelRequest()
 
 
         #
@@ -414,7 +416,12 @@ define (require, exports, module) ->
                 m = "チャンネルが選択されていません"
                 return $.Deferred().reject(m).promise()
 
-            return _nsenChannel.pushGood()
+            console.log "send good"
+
+            return @_nsenChannel.pushGood().then ->
+                console.log "done"
+            , ->
+                console.error "fail", arguments
 
         #
         # Skipを送信します。
@@ -425,7 +432,7 @@ define (require, exports, module) ->
                 m = "チャンネルが選択されていません"
                 return $.Deferred().reject(m).promise()
 
-            return _nsenChannel.pushSkip()
+            return @_nsenChannel.pushSkip()
 
 
         #
@@ -433,7 +440,7 @@ define (require, exports, module) ->
         # @param {boolean}
         #
         isSkipRequestable   : () ->
-            return !!(_nsenChannel && _nsenChannel.isSkipRequestable())
+            return !!(@_nsenChannel && @_nsenChannel.isSkipRequestable())
 
 
         #
@@ -445,7 +452,7 @@ define (require, exports, module) ->
                 m = "チャンネルが選択されていません"
                 return $.Deferred().reject(m).promise()
 
-            return _nsenChannel.moveToNextLive()
+            return @_nsenChannel.moveToNextLive()
 
 
     module.exports = new ChannelMediator()
