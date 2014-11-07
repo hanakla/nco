@@ -2,17 +2,20 @@ define (require, exports, module) ->
     Marionette = require "marionette"
 
     NcoAPI          = require "cs!nco/nco"
+    ChannelManager  = require "cs!nco/ChannelManager"
 
     class NcoViewShell extends Marionette.LayoutView
         template: require "jade!./view"
 
         ui      :
+            channel : ".NcoShell_nelchan_select"
             close   : ".NcoShell_ctrl .close"
             max     : ".NcoShell_ctrl .maximize"
             min     : ".NcoShell_ctrl .minimize"
             pin     : ".NcoShell_ctrl .pin"
 
         events  :
+            "change @ui.channel": "_onChangeChannel"
             "click @ui.close"   : "_onClickClose"
             "click @ui.max"     : "_onClickMaximize"
             "click @ui.min"     : "_onClickMinimize"
@@ -30,5 +33,7 @@ define (require, exports, module) ->
         _onClickPin         : ->
             NcoAPI.execute "toggleAlwaysOnTop"
 
+        _onChangeChannel    : ->
+            ChannelManager.changeChannel @ui.channel.val()
 
     return NcoViewShell
