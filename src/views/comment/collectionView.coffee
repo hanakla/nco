@@ -14,8 +14,13 @@ define (require, exports, module) ->
 
         initialize  : ->
             @collection = new Backbone.Collection
-            _.bindAll @, "onReceiveComment"
-            ChannelManager.on "receiveComment", @onReceiveComment
+            _.bindAll @
+                , "_onReceiveComment"
+                , "_onChannelChanged"
+
+            ChannelManager
+                .on "receiveComment", @_onReceiveComment
+                .on "channelChanged", @_onChannelChanged
 
             _.each ChannelManager.getComments(), (m) ->
                 @onReceiveComment m
@@ -27,7 +32,11 @@ define (require, exports, module) ->
         scrollToBottom  : ->
             #@$el.
 
-        onReceiveComment : (comment) ->
+        _onChannelChanged: ->
+            @collection.reset()
+
+
+        _onReceiveComment : (comment) ->
             unless comment.isControl()
                 @collection.models.push comment
                 @_onCollectionAdd comment
