@@ -1,8 +1,11 @@
 define (require, exports, module) ->
-    Marionette = require "marionette"
+    _           = require "underscore"
+    Marionette  = require "marionette"
 
     NcoAPI          = require "cs!nco/nco"
     ChannelManager  = require "cs!nco/ChannelManager"
+
+    NsenChannelDefinition = require "text!nco/NsenChannels.json"
 
     class NcoViewShell extends Marionette.LayoutView
         template: require "jade!./view"
@@ -20,6 +23,19 @@ define (require, exports, module) ->
             "click @ui.max"     : "_onClickMaximize"
             "click @ui.min"     : "_onClickMinimize"
             "click @ui.pin"     : "_onClickPin"
+
+        initialize          : ->
+            setTimeout =>
+                channels = JSON.parse NsenChannelDefinition
+                tpl = _.template "<option value='<%- id %>'><%- name %>"
+                buffer = []
+                _.each channels, (obj, index) ->
+                    buffer.push tpl(obj)
+
+                @ui.channel.html buffer.join("")
+            , 0
+
+
 
         _onClickClose       : ->
             NcoAPI.execute "close"
