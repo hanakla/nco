@@ -2,8 +2,8 @@ define (require, exports, module) ->
     $           = require "jquery"
     Marionette  = require "marionette"
 
-    #ActionView    = require "cs!./action-view"
-    ChannelManager = require "cs!nco/ChannelManager"
+    ChannelManager  = require "cs!nco/ChannelManager"
+    NcoConfig       = require "cs!nco/config"
 
     class NcoControlLayout extends Marionette.LayoutView
         template    : require "jade!./view"
@@ -35,7 +35,12 @@ define (require, exports, module) ->
             subControls : ".NcoControl_subControls"
 
         initialize  : (option) ->
-            #@actions.attachView new ActionView
+            @$el.find("[name='comment_184']")[0]?.
+                checked = NcoConfig.get "comment.184"
+
+        _memory184State  : ->
+            NcoConfig.set "comment.184"
+            , @ui.commentArea.find("[name='comment_184']")[0]?.checked
 
         _onSubmitComment : (e) ->
             if e.keyCode is 13 and e.shiftKey is false
