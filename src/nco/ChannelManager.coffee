@@ -291,20 +291,21 @@ define (require, exports, module) ->
 
             @_liveApi.getLiveInfo ch.id
                 .then (liveInfo) ->
-                        self._stopListening() # 前のチャンネルのイベントリスニングを停止
+                    self._stopListening() # 前のチャンネルのイベントリスニングを停止
 
-                        self._live               = liveInfo
-                        self._commentProvider    = liveInfo.commentProvider()
-                        self._nsenChannel        = self._liveApi.getNsenChannelHandlerFor self._live
+                    self._live               = liveInfo
+                    self._commentProvider    = liveInfo.commentProvider()
+                    self._nsenChannel        = self._liveApi.getNsenChannelHandlerFor self._live
 
-                        self._startListening() # 現在のチャンネルをイベントリスニング
+                    self._startListening() # 現在のチャンネルをイベントリスニング
 
-                        #dfd.resolve()
-                        #self.trigger "channelChanged", ch.name, ch.id, self._nsenChannel
+                    dfd.resolve()
+                    self.trigger "channelChanged", ch.name, ch.id, self._nsenChannel
 
-                        #console.info "ChannelManager: チャンネルの変更に成功しました"
+                    console.info "ChannelManager: チャンネルの変更に成功しました"
 
-                        #console.error "生放送情報の取得に失敗しました。", e.stack
+                , (err) ->
+                    console.info "生放送情報の取得に失敗しました。", err
 
             return dfd.promise()
 
