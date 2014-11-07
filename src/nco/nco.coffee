@@ -1,3 +1,45 @@
+#
+# Ncoの操作を行うAPI郡
+#
+# Command
+#   Example: nco.execute "commandName"[, arg1[, arg2...]]
+#
+#   minimize()
+#       ウィンドウを最小化します。
+#
+#   maximize()
+#       ウィンドウを最大化します。
+#
+#   exit()
+#       アプリケーションを終了します。
+#
+# Request - Response
+#   Exapmple: nco.request "commandName"[, arg1[, arg2...]]
+#
+#   login(user: string, pass: string, memory: boolean = false) : $.Promise
+#       ニコニコ動画へログインを行います。
+#       memoryにtrueが指定された時、ログイン成功時に受け取ったセッションIDを保存します。
+#
+#   reuseSession(sessionId: string) : $.Promise
+#       セッションIDからニコニコ動画へログインします。
+#
+#   checkLogged(): $.Promise
+#       ログインされているかチェックし、resolve / rejectで結果を返します。
+#       resolveされた時はログイン済み、ログインしていない場合はrejectされます。
+#
+#   nicoApi(): $.Promise
+#       Ncoの現在のインスタンスで利用しているnicoオブジェクトをresolveで返します。
+#       未ログインなど、nicoオブジェクトが初期化されていない時はrejectされます。
+#
+#   module(): Any
+#       Ncoのコアモジュールを読み込みます。
+#
+# Events
+#
+#   alwaysOnTop:enabled() / alwaysOnTop:disabled()
+#       ウィンドウの最前面固定の状態が変わった時にどちらかが呼び出されます。
+#
+#
 define (require, exports, module) ->
     $           = require "jquery"
     Marionette  = require "marionette"
