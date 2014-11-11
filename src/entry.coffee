@@ -1,3 +1,9 @@
 define (require, exports, module) ->
-    nwutil = require "utils/nwutil"
-    nco = require "cs!nco/_nco-bootstrap"
+    nwutil      = require "utils/nwutil"
+    NcoViewAPI  = require "cs!nco/_nco-bootstrap"
+    NcoAPI      = require "cs!nco/nco"
+
+    # Login check
+    NcoAPI.request "checkLogged"
+        .catch ->
+            NcoViewAPI.execute "requestLogin"

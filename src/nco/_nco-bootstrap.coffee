@@ -68,13 +68,5 @@ define (require, exports, module) ->
 
     _instance = new NcoBootstrapper()
 
-    # Login check
-    _instance.addInitializer ->
-        NcoAPI.request "checkLogged"
-            .then ->
-                null
-            , ->
-                _instance.login.open()
-
 
     _instance.start()
