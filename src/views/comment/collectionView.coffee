@@ -36,20 +36,20 @@ define (require, exports, module) ->
 
 
         _onReceiveComment : (comment) ->
-            unless comment.isControl()
-                @collection.models.push comment
-                @_onCollectionAdd comment
+            if comment.isControl()
+                return
 
-                content = @$el[0]
+            @collection.models.push comment
+            @_onCollectionAdd comment
 
-                # 要素を追加すると計算結果が乱れるので
-                # 先に最下部判定しておく
-                #if (content.scrollHeight - (@$el.scrollTop() + @$el.height()) < 100)
-                    #scroll = true
+            scroll  = false
+            $elp    = @$el.parent()
+            elp     = @el.parentElement
 
-                # ページ最下部にいる時だけ自動スクロールする
-                $p = @$el.parent()
-                $p.stop(false, true).animate {scrollTop: $p[0].scrollHeight}, 200
+            # 最下部判定
+            # ページ最下部にいる時だけ自動スクロールする
+            if elp?.scrollHeight - ($elp.scrollTop() + $elp.height()) < 100
+                $elp.stop(false, true).animate {scrollTop: elp.scrollHeight}, 200
 
             return
 
