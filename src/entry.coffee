@@ -5,5 +5,5 @@ define (require, exports, module) ->
 
     # Login check
     NcoAPI.request "checkLogged"
-        .catch ->
+        .fail ->
             NcoViewAPI.execute "requestLogin"
