@@ -6,7 +6,6 @@ define (require, exports, module) ->
     ChannelManager = require "cs!nco/ChannelManager"
 
     CommentView = require "cs!./commentView"
-    CommentCollection   = require "cs!./collection.coffee"
 
     class CommentCollectionView extends Marionette.CollectionView
         childView   : CommentView
