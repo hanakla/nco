@@ -17,45 +17,31 @@ define (require, exports, module) ->
     NcoControl  = require "cs!views/control/layout"
     NcoLogin    = require "cs!views/login/layout"
 
-    NcoCommentCollection    = require "cs!views/comment/collectionView"
-
     _instance = null
 
     class NcoBootstrapper extends Marionette.Application
+        container   : "#nco-container"
+
+        regions     :
+            login       : "#nco-login"
+            shell       : "#nco-shell"
+            main        : "#nco-main"
+            control     : "#nco-control"
+
+
         initialize      : ->
             $(document.body).html baseView()
 
-            @_initRegions()
             @_initViews()
             @_initEventListeners()
 
 
-        _initRegions    : ->
-            # Init regions
-            @addRegions
-                login :
-                    el          : "#nco-login"
-                    regionClass : NcoLogin
-                shell   :
-                    el          : "#nco-shell"
-                    regionClass : NcoShell
-                main    :
-                    el          : "#nco-main"
-                    regionClass : NcoMain
-                control :
-                    el          : "#nco-control"
-                    regionClass : NcoControl
-
-
         _initViews      : ->
             # すべてのリージョンを描画する
-            $.each @getRegions(), () ->
-                @render() if $.isFunction @render
-
-
-            cc = new NcoCommentCollection
-            @main.comments.show cc
-
+            @login.show new NcoLogin
+            @shell.show new NcoShell
+            @main.show new NcoMain
+            @control.show new NcoControl
 
             return
 
