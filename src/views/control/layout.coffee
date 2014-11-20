@@ -91,4 +91,4 @@ define (require, exports, module) ->
             else
                 $(document).one "click", {self}, arguments.callee
 
-    return NcoControlLayout
+    module.exports = NcoControlLayout
