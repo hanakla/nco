@@ -5,8 +5,11 @@ define (require, exports, module) ->
     ChannelManager  = require "cs!nco/ChannelManager"
     NcoConfig       = require "cs!nco/config"
 
+    RequestLayoutView       = require "cs!./request/layout"
+
     class NcoControlLayout extends Marionette.LayoutView
         template    : require "jade!./view"
+        className   : "NcoControl"
 
         ui          :
             skip        : ".skip"
@@ -32,10 +35,12 @@ define (require, exports, module) ->
         regions     :
             actions     : ".NcoControl_actions"
             comment     : ".NcoControl_comment"
-            subControls : ".NcoControl_subControls"
+            requestSelection    : ".NcoControl_request"
 
 
         onShow          : ->
+            # ビューを表示
+            @requestSelection.show new RequestLayoutView
 
             # フォーム状態を復元
             @$el.find("[name='comment_184']")[0]?.checked = NcoConfig.get "comment.184"
@@ -63,7 +68,8 @@ define (require, exports, module) ->
             ChannelManager.pushSkip()
 
         _onClickRequest  : ->
-            nco.exec "openRequest"
+            @requestSelection.currentView.open()
+            #nco.exec "openRequest"
 
         _onClickMylist   : ->
             nco.exec "addToMylist"
