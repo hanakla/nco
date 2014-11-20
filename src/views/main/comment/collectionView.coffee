@@ -42,14 +42,14 @@ define (require, exports, module) ->
             @collection.models.push comment
             @_onCollectionAdd comment
 
-            scroll  = false
-            $elp    = @$el.parent()
-            elp     = @el.parentElement
+            #scroll  = false
+            #$elp    = @$el.parent()
+            #elp     = @el.parentElement
 
             # 最下部判定
             # ページ最下部にいる時だけ自動スクロールする
-            if elp?.scrollHeight - ($elp.scrollTop() + $elp.height()) < 100
-                $elp.stop(false, true).animate {scrollTop: elp.scrollHeight}, 200
+            # if elp?.scrollHeight - ($elp.scrollTop() + $elp.height()) < 100
+            #     $elp.stop(false, true).animate {scrollTop: elp.scrollHeight}, 200
 
             return
 
