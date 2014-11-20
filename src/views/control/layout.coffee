@@ -34,12 +34,12 @@ define (require, exports, module) ->
             comment     : ".NcoControl_comment"
             subControls : ".NcoControl_subControls"
 
-        initialize  : (option) ->
-            # DOMの生成に遅延があるため、setTimeoutで処理を遅らせる
-            setTimeout =>
-                @$el.find("[name='comment_184']")[0]?.
-                    checked = NcoConfig.get "comment.184"
-            , 10
+
+        onShow          : ->
+
+            # フォーム状態を復元
+            @$el.find("[name='comment_184']")[0]?.checked = NcoConfig.get "comment.184"
+
 
         _memory184State  : ->
             NcoConfig.set "comment.184"
