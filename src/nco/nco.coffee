@@ -158,7 +158,7 @@ define (require, exports, module) ->
             self = @
 
             @on "login", ->
-                ChannelManager.setLiveApi self._api.live
+                ChannelManager.setApi self._api
                 ChannelManager.changeChannel "nsen/toho"
 
 

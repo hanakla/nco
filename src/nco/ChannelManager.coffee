@@ -108,8 +108,6 @@ define (require, exports, module) ->
     NicoApi     = global.require "node-nicovideo-api"
 
     nsenChannels = JSON.parse require "text!./NsenChannels.json"
-
-
     _instance = null
 
 
@@ -117,7 +115,7 @@ define (require, exports, module) ->
         _.extend @::, Backbone.Events
 
 
-        _liveApi             : null
+        _api             : null
 
         ###*
         # 現在アクティブなチャンネルの配信情報オブジェクト
@@ -267,8 +265,8 @@ define (require, exports, module) ->
             console.info "ChannelManager: リスナーを切断しました。"
 
 
-        setLiveApi          : (api) ->
-            @_liveApi = api
+        setApi          : (api) ->
+            @_api = api
 
 
         ###*
@@ -285,17 +283,17 @@ define (require, exports, module) ->
                 console.error "存在しないチャンネルです。(id: %s)", chId
                 return dfd.reject("存在しないチャンネルです。(id: " + chId + ")").promise()
 
-            unless @_liveApi?
+            unless @_api?
                 console.error "ログインされていません"
                 return dfd.reject("ログインしていません").promise()
 
-            @_liveApi.getLiveInfo ch.id
+            @_api.live.getLiveInfo ch.id
                 .then (liveInfo) ->
                     self._stopListening() # 前のチャンネルのイベントリスニングを停止
 
                     self._live               = liveInfo
                     self._commentProvider    = liveInfo.commentProvider()
-                    self._nsenChannel        = self._liveApi.getNsenChannelHandlerFor self._live
+                    self._nsenChannel        = self._api.live.getNsenChannelHandlerFor self._live
 
                     self._startListening() # 現在のチャンネルをイベントリスニング
 
@@ -359,15 +357,21 @@ define (require, exports, module) ->
             waiter  = null
 
             if typeof movie is "string"
-                waiter = NicoApi.Video.getVideoInfo(movie)
-                    .then (videoInfo) ->
-                        self._nsenChannel.sendRequest videoInfo
-                        return
+                waiter = $.Deferred()
 
-            else if movie.isCorrect()
+                self._api.video.getVideoInfo movie
+                    .then (videoInfo) ->
+                        self._nsenChannel.pushRequest videoInfo
+                            .then waiter.resolve
+                            .catch waiter.reject
+
+                    .catch waiter.reject
+
+            else if movie.isCorrect?()
                 waiter = @_nsenChannel.sendRequest movie
             else
                 console.error("不正な引数です。読み込み済みNicoVideoInfoか、動画IDである必要があります。", movie)
+
                 waiter = $.Deferred()
                     .reject "不正な引数です。読み込み済みNicoVideoInfoか、動画IDである必要があります。"
                     .promise()
