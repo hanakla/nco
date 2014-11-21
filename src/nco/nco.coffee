@@ -182,5 +182,12 @@ define (require, exports, module) ->
         if user? and pass?
             ncoApi.request "login", user, pass, true
 
+
+    ncoApi.addInitializer   ->
+        window.addEventListener "beforeunload", ->
+            ncoApi._api?.dispose()
+            console.info "success dispose api object."
+        , false
+
     ncoApi.start()
     module.exports = window.nco = ncoApi
