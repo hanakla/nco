@@ -42,12 +42,21 @@ define (require, exports, module) ->
             @trigger "select"
 
 
+    class MyListItemEmptyView extends Marionette.ItemView
+        template    : ->
+        tagName     : "div"
+        className   : "NcoRequest_movies_item empty"
+
+        initialize  : ->
+            @$el.text "マイリストを選択してください。"
+
     class MylistItemCompositeView extends Marionette.CompositeView
         template    : ->
         tagName     : "ul"
         className   : "NcoRequest_movies_list"
 
         childView   : MyListItemView
+        emptyView   : MyListItemEmptyView
 
         childEvents :
             "select"    : "onItemClicked"
