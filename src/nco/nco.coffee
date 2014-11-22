@@ -159,7 +159,7 @@ define (require, exports, module) ->
 
             @on "login", ->
                 ChannelManager.setApi self._api
-                ChannelManager.changeChannel "nsen/toho"
+                ChannelManager.changeChannel NcoConfigure.get("currentCh")
 
 
     ncoApi = new NcoAPI()
@@ -188,6 +188,10 @@ define (require, exports, module) ->
             ncoApi._api?.dispose()
             console.info "success dispose api object."
         , false
+
+    ncoApi.addInitializer ->
+        ChannelManager.on "channelChanged", (name, id)->
+            NcoConfigure.set "currentCh", id
 
     ncoApi.start()
     module.exports = window.nco = ncoApi
