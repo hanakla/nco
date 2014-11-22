@@ -24,17 +24,15 @@ define (require, exports, module) ->
             "click @ui.min"     : "_onClickMinimize"
             "click @ui.pin"     : "_onClickPin"
 
-        initialize          : ->
-            setTimeout =>
-                channels = JSON.parse NsenChannelDefinition
-                tpl = _.template "<option value='<%- id %>'><%- name %>"
-                buffer = []
-                _.each channels, (obj, index) ->
-                    buffer.push tpl(obj)
+        onShow              : ->
+            channels = JSON.parse NsenChannelDefinition
+            tpl = _.template "<option value='<%- id %>'><%- name %>"
+            buffer = []
 
-                @ui.channel.html buffer.join("")
-            , 0
+            _.each channels, (obj, index) ->
+                buffer.push tpl(obj)
 
+            @ui.channel.html buffer.join("")
 
 
         _onClickClose       : ->
