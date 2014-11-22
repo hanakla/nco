@@ -24,6 +24,10 @@ define (require, exports, module) ->
             "click @ui.min"     : "_onClickMinimize"
             "click @ui.pin"     : "_onClickPin"
 
+
+        initialize          : ->
+            @listenTo ChannelManager, "channelChanged", @_onNotifiedChannelChange
+
         onShow              : ->
             channels = JSON.parse NsenChannelDefinition
             tpl = _.template "<option value='<%- id %>'><%- name %>"
@@ -34,6 +38,12 @@ define (require, exports, module) ->
 
             @ui.channel.html buffer.join("")
 
+
+        _onNotifiedChannelChange    : (name, id) ->
+            @ui.channel.find("option").each (i) ->
+                if this.value is ch
+                    self.ui.channel[0].selectedIndex = i
+                    return false
 
         _onClickClose       : ->
             NcoAPI.execute "close"
