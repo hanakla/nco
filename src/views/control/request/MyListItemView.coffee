@@ -79,6 +79,8 @@ define (require, exports, module) ->
                 ChannelManager.pushRequest selectedId
                     .done ->
                         self.trigger "requested"
+                    .fail ->
+                        # TODO Implement error notification.
 
             else
                 @children.each (view) ->
