@@ -4,6 +4,7 @@ define (require, exports, module) ->
 
     NcoAPI          = require "cs!nco/nco"
     ChannelManager  = require "cs!nco/ChannelManager"
+    NcoConfigure    = require "cs!nco/config"
 
     NsenChannelDefinition = require "text!nco/NsenChannels.json"
 
@@ -29,14 +30,24 @@ define (require, exports, module) ->
             @listenTo ChannelManager, "channelChanged", @_onNotifiedChannelChange
 
         onShow              : ->
+            # チャンネル一覧をセレクトボックスへ設定
             channels = JSON.parse NsenChannelDefinition
-            tpl = _.template "<option value='<%- id %>'><%- name %>"
             buffer = []
+            tpl = _.template "<option value='<%- id %>'><%- name %>"
 
             _.each channels, (obj, index) ->
                 buffer.push tpl(obj)
 
             @ui.channel.html buffer.join("")
+            buffer = undefined
+
+            # 最後に選択されたチャンネルを復元
+            self    = @
+            ch      = NcoConfigure.get "currentCh"
+            @ui.channel.find("option").each (i) ->
+                if this.value is ch
+                    self.ui.channel[0].selectedIndex = i
+                    return false
 
 
         _onNotifiedChannelChange    : (name, id) ->
