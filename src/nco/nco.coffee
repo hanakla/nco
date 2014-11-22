@@ -189,5 +189,9 @@ define (require, exports, module) ->
             console.info "success dispose api object."
         , false
 
+    ncoApi.addInitializer ->
+        ChannelManager.on "channelChanged", (name, id)->
+            NcoConfigure.set "currentCh", id
+
     ncoApi.start()
     module.exports = window.nco = ncoApi
