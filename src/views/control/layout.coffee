@@ -6,6 +6,7 @@ define (require, exports, module) ->
     NcoConfig       = require "cs!nco/config"
 
     RequestLayoutView       = require "cs!./request/layout"
+    MylistSelectionView     = require "cs!./mylist/listSelectionView"
 
     class NcoControlLayout extends Marionette.LayoutView
         template    : require "jade!./view"
@@ -36,11 +37,13 @@ define (require, exports, module) ->
             actions     : ".NcoControl_actions"
             comment     : ".NcoControl_comment"
             requestSelection    : ".NcoControl_request"
+            mylistSelection     : ".NcoControl_mylist"
 
 
         onShow          : ->
             # ビューを表示
             @requestSelection.show new RequestLayoutView
+            @mylistSelection.show new MylistSelectionView
 
             # フォーム状態を復元
             @$el.find("[name='comment_184']")[0]?.checked = NcoConfig.get "comment.184"
@@ -72,7 +75,8 @@ define (require, exports, module) ->
             #nco.exec "openRequest"
 
         _onClickMylist   : ->
-            nco.exec "addToMylist"
+            @mylistSelection.currentView.open()
+            #nco.exec "addToMylist"
 
         _showOption      : ->
             @ui.commentArea.addClass "focus"

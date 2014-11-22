@@ -83,6 +83,14 @@
       "parents": [
         "194b9171"
       ]
+    },
+    "82a7b73b": {
+      "id": "82a7b73b",
+      "pid": "1b9bc822",
+      "path": "components/NcoMylist.styl",
+      "parents": [
+        "194b9171"
+      ]
     }
   },
   "images": {},
