@@ -28,6 +28,7 @@ define (require, exports, module) ->
 
         initialize          : ->
             @listenTo ChannelManager, "channelChanged", @_onNotifiedChannelChange
+            @listenTo NcoAPI, "changeAlwaysOnTop", @_onPinStateChanged
 
         onShow              : ->
             # チャンネル一覧をセレクトボックスへ設定
@@ -56,19 +57,29 @@ define (require, exports, module) ->
                     self.ui.channel[0].selectedIndex = i
                     return false
 
+
+        _onPinStateChanged  : (state)->
+            @ui.pin.toggleClass "fixed", state
+
+
         _onClickClose       : ->
             NcoAPI.execute "close"
+
 
         _onClickMaximize    : ->
             NcoAPI.execute "maximize"
 
+
         _onClickMinimize    : ->
             NcoAPI.execute "minimize"
+
 
         _onClickPin         : ->
             NcoAPI.execute "toggleAlwaysOnTop"
 
+
         _onChangeChannel    : ->
             ChannelManager.changeChannel @ui.channel.val()
 
-    return NcoViewShell
+
+    module.exports = NcoViewShell

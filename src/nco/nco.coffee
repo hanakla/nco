@@ -36,8 +36,8 @@
 #
 # Events
 #
-#   alwaysOnTop:enabled() / alwaysOnTop:disabled()
-#       ウィンドウの最前面固定の状態が変わった時にどちらかが呼び出されます。
+#   changeAlwaysOnTop(state: boolean)
+#       ウィンドウの最前面固定の状態が変わった時に発火します。
 #
 #
 define (require, exports, module) ->
@@ -70,6 +70,7 @@ define (require, exports, module) ->
             @commands.setHandlers
                 toggleAlwaysOnTop   : ->
                     nwWindow.setAlwaysOnTop (alwaysOnTop = !alwaysOnTop)
+                    self.trigger "changeAlwaysOnTop", alwaysOnTop
                     return
 
                 minimize    : ->
