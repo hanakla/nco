@@ -159,7 +159,7 @@ define (require, exports, module) ->
 
             @on "login", ->
                 ChannelManager.setApi self._api
-                ChannelManager.changeChannel "nsen/toho"
+                ChannelManager.changeChannel NcoConfigure.get("currentCh")
 
 
     ncoApi = new NcoAPI()
