@@ -4,6 +4,7 @@ define (require, exports, module) ->
 
     ChannelManager  = require "cs!nco/ChannelManager"
     NcoConfig       = require "cs!nco/config"
+    NodeWebkit      = require "cs!utils/nw"
 
     RequestLayoutView       = require "cs!./request/layout"
     MylistSelectionView     = require "cs!./mylist/listSelectionView"
@@ -17,6 +18,7 @@ define (require, exports, module) ->
             good        : ".good"
             mylist      : ".mylist"
             request     : ".request"
+            openNsen    : ".openNsen"
             reload      : ".reload"
             commentArea : ".NcoControl_comment"
             input       : ".NcoControl_comment_input"
@@ -31,6 +33,7 @@ define (require, exports, module) ->
             "click @ui.good"    : "_onClickGood"
             "click @ui.mylist"  : "_onClickMylist"
             "click @ui.request" : "_onClickRequest"
+            "click @ui.openNsen": "_onClickOpenNsen"
             "click @ui.reload"  : "_onClickReload"
 
         regions     :
@@ -73,6 +76,11 @@ define (require, exports, module) ->
         _onClickRequest  : ->
             @requestSelection.currentView.open()
             #nco.exec "openRequest"
+
+        _onClickOpenNsen : ->
+            id = ChannelManager.getChannelType()
+            NodeWebkit.Shell.openExternal "http://live.nicovideo.jp/watch/nsen/#{id}"
+            return
 
         _onClickMylist   : ->
             @mylistSelection.currentView.open()
