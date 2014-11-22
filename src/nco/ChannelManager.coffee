@@ -376,7 +376,7 @@ define (require, exports, module) ->
                     .reject "不正な引数です。読み込み済みNicoVideoInfoか、動画IDである必要があります。"
                     .promise()
 
-            return waiter
+            return waiter.promise()
 
 
         #
