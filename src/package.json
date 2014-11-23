@@ -22,7 +22,7 @@
   "js-flags": "--harmony_collections",
   "devDependencies": {
     "cheerio": "^0.17.0",
-    "node-nicovideo-api": "0.0.1"
+    "node-nicovideo-api": "0.0.5"
   },
   "single-instance": false,
   "window": {
