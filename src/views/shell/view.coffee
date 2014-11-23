@@ -63,7 +63,7 @@ define (require, exports, module) ->
 
 
         _onClickClose       : ->
-            NcoAPI.execute "close"
+            NcoAPI.execute "exit"
 
 
         _onClickMaximize    : ->

@@ -81,7 +81,7 @@ define (require, exports, module) ->
                     nwWindow.maximize()
 
                 exit        : ->
-                    #NodeWebkit.App.quit()
+                    NodeWebkit.App.quit()
                     return
 
             return
