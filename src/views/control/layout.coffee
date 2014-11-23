@@ -20,6 +20,7 @@ define (require, exports, module) ->
             request     : ".request"
             openNsen    : ".openNsen"
             reload      : ".reload"
+            alert       : ".NcoControl_comment_alert"
             commentArea : ".NcoControl_comment"
             input       : ".NcoControl_comment_input"
 
@@ -52,14 +53,36 @@ define (require, exports, module) ->
             @$el.find("[name='comment_184']")[0]?.checked = NcoConfig.get "comment.184"
 
 
+        _showError      : do ->
+            timerId = null
+
+            return (msg) ->
+                $alert = @ui.alert
+                $alert
+                    .text msg
+                    .fadeIn
+                        duration    : 300
+                        done        : ->
+                            if timerId isnt null
+                                clearTimeout timerId
+
+                            setTimeout ->
+                                $alert.fadeOut 300
+                            , 1000
+
+
+
         _memory184State  : ->
             NcoConfig.set "comment.184"
             , @ui.commentArea.find("[name='comment_184']")[0]?.checked
 
         _onSubmitComment : (e) ->
             if e.keyCode is 13 and e.shiftKey is false
-                console.log "submit"
+                self = @
                 ChannelManager.postComment @ui.input.val()
+                    .then null, (msg) ->
+                        self._showError msg
+
                 @ui.input.val ""
                 return false
 
