@@ -1,19 +1,20 @@
 .NcoShell
+    $ribbon_height = 1px
     clearfix()
 
-    height (48 + 2)px
+    height (48 + $ribbon_height)px
     padding 8px
 
-    line-height (@height - 16px) // height - padding(top+bottom)
+    line-height (@height - $ribbon_height - 16px) // height - padding(top+bottom)
     overflow hidden
 
     background-color $color_bg
-    box-shadow 0 0 5px rgba(190, 190, 190, 0.5)
-    border-bottom 2px solid transparent
+    //box-shadow 0 0 5px rgba(190, 190, 190, 0.5)
+    border-bottom $ribbon_height solid transparent
 
     transition border-color 1s ease-out
 
-    $_contentHeight = (@height - 16px)
+    $_contentHeight = (@height - $ribbon_height - 16px)
 
     &.ch-
         &vocaloid
