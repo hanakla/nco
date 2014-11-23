@@ -52,10 +52,17 @@ define (require, exports, module) ->
 
 
         _onNotifiedChannelChange    : (name, id) ->
+            self = @
             @ui.channel.find("option").each (i) ->
-                if this.value is ch
+                if this.value is id
                     self.ui.channel[0].selectedIndex = i
                     return false
+
+            id = id.replace(/^nsen\//, "")
+            @$el
+                .find ".NcoShell"
+                .removeClass "ch-vocaloid ch-toho ch-nicoindies ch-sing ch-play ch-pv ch-hotaru ch-allgenre"
+                .addClass "ch-#{id}"
 
 
         _onPinStateChanged  : (state)->

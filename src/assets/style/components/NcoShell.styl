@@ -1,7 +1,7 @@
 .NcoShell
     clearfix()
 
-    height 48px
+    height (48 + 2)px
     padding 8px
 
     line-height (@height - 16px) // height - padding(top+bottom)
@@ -9,8 +9,20 @@
 
     background-color $color_bg
     box-shadow 0 0 5px rgba(190, 190, 190, 0.5)
+    border-bottom 2px solid transparent
+
+    transition border-color 1s ease-out
 
     $_contentHeight = (@height - 16px)
+
+    &.ch-
+        &vocaloid
+            border-color rgba($color_ch_vocaloid, .9)
+        &toho
+            border-color rgba($color_ch_toho, .9)
+        &hotaru
+            border-color rgba($color_ch_hotaru, .9)
+
 
 
     &_nelchan
