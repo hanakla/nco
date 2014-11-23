@@ -1,0 +1,11 @@
+.NcoNowPlaying_header 再生中の動画
+
+.NcoNowPlaying_detailBox
+    img.NcoNowPlaying_thumb(src=attr("thumbnail"))
+    .NcoNowPlaying_detail
+        .NcoNowPlaying_detail_title=attr("title")
+        .NcoNowPlaying_detail_user 投稿: #{attr("user.name")}
+        .NcoNowPlaying_detail_views 再生数: #{format(attr("count.view"))}
+        .NcoNowPlaying_detail_comments コメント数: #{format(attr("count.comments"))}
+        .NcoNowPlaying_detail_mylist マイリスト数: #{format(attr("count.mylist"))}
+        //- .NcoNowPlaying_detail_view 投稿日: #{attr("count.views")}

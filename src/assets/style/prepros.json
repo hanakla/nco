@@ -28,6 +28,14 @@
         "194b9171"
       ]
     },
+    "31062e23": {
+      "id": "31062e23",
+      "pid": "1b9bc822",
+      "path": "_animations.styl",
+      "parents": [
+        "194b9171"
+      ]
+    },
     "43defcf3": {
       "id": "43defcf3",
       "pid": "1b9bc822",
@@ -60,14 +68,6 @@
         "194b9171"
       ]
     },
-    "31062e23": {
-      "id": "31062e23",
-      "pid": "1b9bc822",
-      "path": "_animations.styl",
-      "parents": [
-        "194b9171"
-      ]
-    },
     "0c81d37d": {
       "id": "0c81d37d",
       "pid": "1b9bc822",
@@ -88,6 +88,14 @@
       "id": "82a7b73b",
       "pid": "1b9bc822",
       "path": "components/NcoMylist.styl",
+      "parents": [
+        "194b9171"
+      ]
+    },
+    "2dbcafc7": {
+      "id": "2dbcafc7",
+      "pid": "1b9bc822",
+      "path": "components/NcoNowPlaying.styl",
       "parents": [
         "194b9171"
       ]
