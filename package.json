@@ -1,0 +1,53 @@
+{
+  "name": "nco",
+  "productName": "Nco",
+  "description": "Comment viewer for niconico's Nsen",
+  "version": "0.1.0",
+  "homepage": "https://github.com/Ragg-/nco",
+  "author": "Ragg <ragg.devpr@gmail.com>",
+  "license": "MIT",
+  "main": "entry.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "coffee-loader": "^0.7.2",
+    "coffee-script": "^1.9.2",
+    "cson-loader": "0.0.5",
+    "electron-connect": "^0.2.1",
+    "electron-packager": "^5.0.1",
+    "gulp": "^3.8.10",
+    "gulp-changed": "^1.2.1",
+    "gulp-coffee": "^2.2.0",
+    "gulp-electron": "0.0.8",
+    "gulp-if": "^1.2.5",
+    "gulp-imagemin": "^2.2.1",
+    "gulp-jade": "^1.0.1",
+    "gulp-load-plugins": "^1.0.0-rc.1",
+    "gulp-plumber": "^1.0.1",
+    "gulp-prettify": "^0.3.0",
+    "gulp-stylus": "^2.0.5",
+    "gulp-uglify": "^1.2.0",
+    "gulp-util": "^3.0.1",
+    "gulp-watch": "^4.3.4",
+    "gulp-webpack": "^1.4.0",
+    "jade": "^1.9.2",
+    "jade-loader": "^0.7.1",
+    "json-loader": "^0.5.1",
+    "loader-utils": "^0.2.10",
+    "nib": "^1.0.4",
+    "webpack": "^1.9.7"
+  },
+  "dependencies": {
+    "coffee-script": "^1.9.2",
+    "electron-kit": "0.0.1",
+    "yargs": "^3.9.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ragg-/nco.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Ragg-/nco/issues"
+  }
+}
