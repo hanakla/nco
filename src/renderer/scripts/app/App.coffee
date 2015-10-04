@@ -36,6 +36,7 @@ class App extends Application
         @menu = new MenuManager
         @config = new ConfigManager
             configDirPath : Electron.getDataPath()
+            configFileName : "config.json"
         @config.load()
 
         @nsenStream = new NsenStream
