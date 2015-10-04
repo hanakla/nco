@@ -1,7 +1,8 @@
 webpack = require "webpack"
+webpackTargetElectronRenderer = require "webpack-target-electron-renderer"
 option  = require "./gulp.coffee"
 
-module.exports =
+config =
     watchDelay  : 500
 
     output      :
@@ -11,8 +12,6 @@ module.exports =
 
     devtool     : "#source-map"
 
-    target      : "atom"
-
     resolve     :
         root            : [
             "#{option.sourceDir}/renderer/scripts"
@@ -20,7 +19,7 @@ module.exports =
         extensions      : ["", ".coffee", ".js"]
         modulesDirectories  : [
             "bower_components"
-            "node_modules"
+            # "node_modules"
         ]
         alias               :
             bower   : "bower_components"
@@ -42,3 +41,7 @@ module.exports =
         new webpack.optimize.AggressiveMergingPlugin
         new webpack.optimize.DedupePlugin
     ]
+
+config.target = webpackTargetElectronRenderer(config)
+
+module.exports = config

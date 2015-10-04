@@ -5,9 +5,9 @@ pjson   = require path.join(__dirname, "../../package.json")
 module.exports =
     dir         : config.buildDir
     name        : pjson.name
-    platform    : "win32"
-    arch        : "x64"
-    version     : "0.30.0"
+    platform    : "darwin"
+    arch        : "all"
+    version     : "0.33.4"
 
     out                 : "publish/"
     icon                : null
@@ -17,7 +17,7 @@ module.exports =
     ignore              : null
     prune               : true
     overwrite           : true
-    asar                : true
+    asar                : false
     "sign"              : null
     "version-string"    :
         CompanyName         : pjson.author

@@ -1,0 +1,24 @@
+.NcoLogin
+    .NcoLogin_backface
+        form.NcoLogin_modal(onsubmit="return false")
+            h1 ニコニコ動画へログイン
+
+            .NcoLogin_form
+                .NcoLogin_form_group
+                    label.NcoLogin_form_label(for="nco-login-form-email") メールアドレス
+                    input#nco-login-form-email.NcoLogin_form_input(type="text", name="email")
+
+                .NcoLogin_form_group
+                    label.NcoLogin_form_label(for="nco-login-form-password") パスワード
+                    input#nco-login-form-password.NcoLogin_form_input(type="password", name="password")
+
+                .NcoLogin_form_group
+                    .NcoLogin_form_label
+                    label.NcoLogin_form_label.container
+                        input(type="checkbox", name="memory")
+                        | ログイン情報を保存する
+
+                .NcoLogin_error
+
+            .NcoLogin_modal_footer
+                button.NcoLogin_form_submit ログイン

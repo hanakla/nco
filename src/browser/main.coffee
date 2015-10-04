@@ -44,7 +44,9 @@ do ->
         return
 
     app.on "ready", ->
-        global.app = new App(args)
+        global.app = new App
+            devMode : args.devMode
+            defaultTemplate : require "./config/menus/#{process.platform}"
         global.app.command.dispatch "app:new-window"
 
     return

@@ -4,3 +4,9 @@
 module.exports =
     width   : 700
     height  : 500
+
+    frame : false
+    "title-bar-style" : "hidden"
+    "web-preferences" :
+        "direct-write"  : true
+        "experimental-features" : true

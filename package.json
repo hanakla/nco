@@ -12,15 +12,14 @@
   },
   "devDependencies": {
     "coffee-loader": "^0.7.2",
-    "coffee-script": "^1.9.2",
-    "cson-loader": "0.0.5",
-    "electron-connect": "^0.2.1",
+    "cson-loader": "0.1.0",
+    "electron-connect": "^0.3.3",
     "electron-packager": "^5.0.1",
     "gulp": "^3.8.10",
     "gulp-changed": "^1.2.1",
     "gulp-coffee": "^2.2.0",
-    "gulp-electron": "0.0.8",
-    "gulp-if": "^1.2.5",
+    "gulp-electron": "0.0.9",
+    "gulp-if": "^2.0.0",
     "gulp-imagemin": "^2.2.1",
     "gulp-jade": "^1.0.1",
     "gulp-load-plugins": "^1.0.0-rc.1",
@@ -36,11 +35,14 @@
     "json-loader": "^0.5.1",
     "loader-utils": "^0.2.10",
     "nib": "^1.0.4",
-    "webpack": "^1.9.7"
+    "webpack": "^1.9.7",
+    "webpack-target-electron-renderer": "^0.1.0"
   },
   "dependencies": {
     "coffee-script": "^1.9.2",
-    "electron-kit": "0.0.1",
+    "electron-kit": "0.1.0",
+    "event-kit": "^1.3.0",
+    "node-nicovideo-api": "^0.1.1",
     "yargs": "^3.9.0"
   },
   "repository": {

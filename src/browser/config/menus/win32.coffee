@@ -4,7 +4,7 @@ packageJson = require "../../../package.json"
 #   menuitem    : https://github.com/atom/electron/blob/02bdace366f38271b5c186412f42810ecb06e99e/docs/api/menu-item.md
 #   accelerator : https://github.com/atom/electron/blob/02bdace366f38271b5c186412f42810ecb06e99e/docs/api/accelerator.md
 
-module.exports = do ->
+module.exports = (options) ->
     menus = []
 
     menus.push {
@@ -79,7 +79,7 @@ module.exports = do ->
                 accelerator : "F12"
             }
         ]
-    } if global.app.isDevMode()
+    } if options.devMode
 
     menus.push {
         label: "Help"

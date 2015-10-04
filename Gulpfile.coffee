@@ -82,21 +82,32 @@ g.task "vendor_js", ->
         .pipe $.changed("#{gulpOption.buildDir}/renderer/#{gulpOption.js.vendorJsDir}/")
         .pipe g.dest("#{gulpOption.buildDir}/renderer/#{gulpOption.js.vendorJsDir}/")
 
+g.task "fonts", ->
+    g.src ["src/renderer/fonts/**"]
+        .pipe $.plumber()
+        .pipe g.dest("#{gulpOption.buildDir}/renderer/fonts/")
+
 #
 # Stylus Task
 #
-g.task "stylus", ->
-    g.src genPaths("styl", ".styl")
-        .pipe $.plumber()
-        .pipe $.changed("#{gulpOption.buildDir}/renderer/css/")
-        .pipe $.stylus(envRequireConfig("stylus.coffee"))
-        .pipe g.dest("#{gulpOption.buildDir}/renderer/css/")
-
+g.task "styles", ->
+    [
+        g.src genPaths("style", ".styl")
+            .pipe $.plumber()
+            .pipe $.changed("#{gulpOption.buildDir}/renderer/css/")
+            .pipe $.stylus(envRequireConfig("stylus.coffee"))
+            .pipe g.dest("#{gulpOption.buildDir}/renderer/css/")
+    ,
+        g.src genPaths("style", ".css")
+            .pipe $.plumber()
+            .pipe $.changed("#{gulpOption.buildDir}/renderer/css/")
+            .pipe g.dest("#{gulpOption.buildDir}/renderer/css/")
+    ]
 #
 # Jade Task
 #
 g.task "jade", ->
-    g.src genPaths("", "jade", ["!#{gulpOption.sourceDir}/coffee/**/*.jade"])
+    g.src genPaths("", "jade", ["!#{gulpOption.sourceDir}/scripts/**/*.jade"])
         .pipe $.plumber()
         .pipe $.changed("#{gulpOption.buildDir}/renderer/")
         .pipe $.jade()
@@ -107,11 +118,11 @@ g.task "jade", ->
 # Image minify Task
 #
 g.task "images", ->
-    g.src genPaths("img", "{png,jpg,jpeg,gif}")
+    g.src genPaths("images", "{png,jpg,jpeg,gif}")
         .pipe $.plumber()
-        .pipe $.changed("#{gulpOption.buildDir}/renderer/img/")
+        .pipe $.changed("#{gulpOption.buildDir}/renderer/images/")
         .pipe $.imagemin(envRequireConfig("imagemin.coffee"))
-        .pipe g.dest("#{gulpOption.buildDir}/renderer/img/")
+        .pipe g.dest("#{gulpOption.buildDir}/renderer/images/")
 
 #
 # package.json copy Task
@@ -154,9 +165,14 @@ g.task "watch", ->
         g.start ["vendor_js"]
 
     $.watch [
-        "#{rendererSrcRoot}/styl/**/*.styl"
+        "#{rendererSrcRoot}/fonts/**"
     ], ->
-        g.start ["stylus"]
+        g.start ["fonts"]
+
+    $.watch [
+        "#{rendererSrcRoot}/style/**/*.{styl,css}"
+    ], ->
+        g.start ["styles"]
 
     $.watch [
         "#{rendererSrcRoot}/**/*.jade"
@@ -170,7 +186,7 @@ g.task "watch", ->
         g.start ["package-json"]
 
     $.watch [
-        "#{rendererSrcRoot}/img/**/*.{png,jpg,jpeg,gif}"
+        "#{rendererSrcRoot}/images/**/*.{png,jpg,jpeg,gif}"
     ], ->
         g.start ["images"]
 
@@ -182,12 +198,16 @@ g.task "packaging", (cb) ->
 #
 # build
 #
+g.task "production_npm", (cb) ->
+    npmProcess = spawn "npm", ["install"], {cwd: gulpOption.buildDir, stdio: "inherit", env: process.env}
+    npmProcess.on "exit", (status) ->
+        cb()
+    return
+
 g.task "production", (cb) ->
     BUILD_ENV = "production"
     gulpOption  = envRequireConfig "gulp.coffee"
-
-    g.start ["build", "packaging"]
-
+    g.start ["build", "production_npm", "packaging"]
     return
 
 #
@@ -247,7 +267,7 @@ g.task "electron-dev", do ->
 #
 # Define default
 #
-g.task "build", ["webpack", "stylus", "jade", "images", "copy-browser-files", "package-json"]
+g.task "build", ["webpack", "styles", "jade", "images", "fonts", "copy-browser-files", "package-json"]
 g.task "publish", ["production"]
 g.task "dev", ["build", "watch"]
 g.task "default", ["self-watch", "electron-dev"]
