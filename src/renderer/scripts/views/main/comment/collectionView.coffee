@@ -59,7 +59,9 @@ class CommentCollectionView extends Marionette.View
             classList.push("NcoComments_item-self") if comment.isPostBySelf()
             classList.push("NcoComments_item-distributor") if comment.isPostByDistributor()
 
-            $comment = $(itemViewTemplate({classList, comment}))
+            hasNewLine = /\n/g.test(comment.comment)
+
+            $comment = $(itemViewTemplate({classList, comment, hasNewLine}))
             @$el.append $comment
 
             if (@el.scrollHeight - (@el.scrollTop + @el.clientHeight)) < 200
