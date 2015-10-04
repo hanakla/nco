@@ -18,6 +18,13 @@ class CommentCollectionView extends Marionette.View
         app.nsenStream.onDidChangeStream =>
             @_listenLiveEvents()
 
+        app.contextMenu.add "body", [
+             {
+                label   : 'コピー',
+                role    : 'copy'
+            }
+        ]
+
         # @collection = new Backbone.Collection
         # _.bindAll @
         #     , "_onReceiveComment"
