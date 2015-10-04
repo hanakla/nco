@@ -6,7 +6,7 @@ module.exports =
 class PlayingMovieView extends Marionette.ItemView
     template    : playingView
 
-    className   : "NcoNotifier_item info NcoNowplaying show"
+    className   : "NcoNotifier_item info NcoNowPlaying show"
 
     events      :
         "click .NcoNowPlaying_detail_title" : "_clickTitleLink"
