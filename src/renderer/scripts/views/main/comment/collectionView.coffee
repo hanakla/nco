@@ -68,8 +68,16 @@ class CommentCollectionView extends Marionette.View
                 @$el.animate {scrollTop: @el.scrollHeight}, 10
 
             if comment.isPostByAnonymous()
+                $user = $ """
+                <div class="NcoComments_user">
+                    <h5 class="NcoComments_user_name">#{comment.get("user.id")}</h5>
+                </div>
+                """
+
                 $comment.find(".NcoComments_item_thumbnail")
                     .attr("src", "./images/anonymous_user.png")
+                    .data("powertipjq", $user)
+                    .powerTip({placement: "e", mouseOnToPopup: true})
 
                 return
 
@@ -77,7 +85,7 @@ class CommentCollectionView extends Marionette.View
             .then (user) ->
                 $user = $(tooltipTemplate({user}))
 
-                $tip = $comment.find(".NcoComments_item_thumbnail")
+                $comment.find(".NcoComments_item_thumbnail")
                     .attr("src", user.get("thumbnailURL"))
                     .data("powertipjq", $user)
                     .powerTip({placement: "e", mouseOnToPopup: true})
