@@ -135,7 +135,7 @@ g.task "package-json", (cb) ->
         delete json.devDependencies
         newString = JSON.stringify json, null, "  "
 
-        fs.mkdirSync(gulpOption.buildDir)
+        fs.existsSync(gulpOption.buildDir) or fs.mkdirSync(gulpOption.buildDir)
         fs.writeFileSync path.join(gulpOption.sourceDir, "package.json"), newString, {encoding: "utf8"}
         fs.writeFileSync path.join(gulpOption.buildDir, "package.json"), newString, {encoding: "utf8"}
 
