@@ -3,6 +3,7 @@
 /_compiled/
 /_cache/
 node_modules/
+/src/assets/style/nco.css
 
 !**/.gitkeep
 !.gitkeep

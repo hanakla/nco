@@ -1,0 +1,118 @@
+.NcoMylist
+    position absolute
+    bottom 100%
+
+    display none
+    width 18em
+    max-width 100%
+    margin-left 5px
+    overflow hidden
+
+    background-color #fff
+    box-shadow 0 0 10px rgba(#444, .5)
+
+    &.show
+        display block
+
+    // ヘッダー
+    &_header
+        margin-bottom 8px
+        padding 8px
+        background-color #444
+        color #fff
+
+    // 閉じるボタン
+    &_closing //.fa.fa-times
+        display block
+        width 16px
+        height 16px
+        margin-right 16px
+        float left
+
+        font-size 12px !important
+        text-align center
+        line-height 16px !important
+        text-indent -1px
+
+        cursor pointer
+
+        transition-property background-color
+        transition .1s ease-out
+
+        &:hover
+            background-color $color_danger
+
+    // リスト
+    $listHeight = 28px
+
+    &_listWrapper
+        position relative
+        width 95%
+        height $listHeight
+        margin 0 auto
+        margin-bottom 8px
+
+        &::after
+            content ''
+            position absolute
+            top 0
+            right 0
+            z-index 1
+            margin-top ($listHeight / 2 - 2px)
+            margin-right (16px / 2 - 2px)
+
+            border 4px solid transparent
+            border-color #bbb transparent transparent transparent
+
+    &_list
+        -webkit-appearance none
+        border 1px solid #ddd
+        background-color transparent
+        border-radius 0
+        outline none
+
+        position relative
+        z-index 10
+
+        width 100%
+        height $listHeight
+        padding 4px 8px
+        padding-right 24px // 内 8pxはアイコンとの間隔
+        //border-bottom 1px solid #bbb
+
+        font-family "mplus-2p-regular"
+        font-size 14px
+        line-height 1
+
+    // 追加ボタン
+    &_btnAdd
+        display block
+        width 95%
+        padding 8px 0
+        margin 0 auto 4px
+        border none
+
+        font-size 12px
+        text-align center
+
+        background-color $color_primary
+        color #fff
+        outline none
+
+    // アラート
+    .NcoMylist_alert
+        display none
+        width 95%
+        margin 0 auto 16px
+        padding 8px
+
+        transition height .2s ease-out
+
+        &.error
+            color $color_danger
+
+        &.success
+            color $color_success
+
+        &.show
+            display block

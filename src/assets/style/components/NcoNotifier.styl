@@ -1,0 +1,37 @@
+.NcoNotifier
+    position absolute
+    top 0
+    left 0
+    z-index 10
+
+    width 100%
+    height 0
+    overflow visible
+
+    &_item
+        //animation-name NcoNotifierSlidein
+        display none
+        padding 8px 16px
+
+        color black
+        background rgba(#fff, .95)
+        transform translateY(-100%)
+        transform-origin top right
+        // background rgba($color_accent, .8)
+
+        &.show
+            display block
+            animation NcoNotifierSlidein 6s ease-in-out
+
+        &.lock
+            display block
+            transform translateY(0%)
+            animation-name none !important
+
+        &.warn
+            color #fff
+            background hsla(0, 80%, 70%, .95)
+
+        &.info
+            color #fff
+            background rgba($color_static, .95)
