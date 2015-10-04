@@ -23,6 +23,7 @@ class NcoControlLayout extends Marionette.LayoutView
         reload      : ".reload"
         alert       : ".NcoControl_comment_alert"
         commentArea : ".NcoControl_comment"
+        anonyOpt    : "[name='comment_184']"
         input       : ".NcoControl_comment_input"
 
     events      :
@@ -96,7 +97,9 @@ class NcoControlLayout extends Marionette.LayoutView
         # keyCode 13 = Enter
         return true if e.keyCode isnt 13 or e.shiftKey is true
 
-        app.nsenStream.getStream()?.postComment @ui.input.val()
+        option = if @ui.anonyOpt[0].checked then "184" else ""
+
+        app.nsenStream.getStream()?.postComment @ui.input.val(), option
         .catch (e) => @_showError e.message
         .then => @ui.input.val ""
 
