@@ -2,8 +2,6 @@ _           = require "underscore"
 Backbone    = require "backbone"
 Marionette  = require "marionette"
 
-# CommentView = require "./commentView"
-
 itemViewTemplate = require "./commentView.jade"
 tooltipTemplate = require "./userTooltip.jade"
 
