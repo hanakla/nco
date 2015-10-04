@@ -25,7 +25,10 @@ class MylistItemView extends Marionette.View
         $el = $(e.currentTarget)
         movieId = $el.attr "data-movie-id"
 
-        return if $el.is(".requested")
+        if $el.is(".requested")
+            $el.addClass("alreadyRequested")
+            setTimeout (=> @trigger "requested"), 2000
+            return
 
         if @_selectedMovieId isnt movieId
             $el.addClass "selected"

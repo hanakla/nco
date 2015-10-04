@@ -167,6 +167,19 @@
 
                     background-color rgba($color_success, .9)
 
+            &.alreadyRequested
+                &::before
+                    content "\f00c リクエスト中です！"
+
+                    position absolute
+                    padding 4px
+
+                    color white
+                    font-size  14px
+                    font-family FontAwesome, 'mplus-2p'
+
+                    background-color rgba($color_warn, .9)
+
             &.requesting
                 &::before
                     content "\f00c リクエストを送信中..."
