@@ -29,5 +29,6 @@ class SpeechHost
         return if app.config.get("nco.speech", false) is false
 
         s = new SpeechSynthesisUtterance(text)
+        s.rate = if text.length > 100 then 14 else 8
         speechSynthesis.speak(s)
         return
