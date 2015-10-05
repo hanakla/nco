@@ -11,6 +11,7 @@ Colors = require "colors"
 NsenStream = require "./NsenStream"
 RegionManager = require "./RegionManager"
 Notification = require "utils/Notification"
+SpeechHost = require "./SpeechHost"
 
 module.exports =
 class App extends Application
@@ -40,6 +41,7 @@ class App extends Application
         @config.load()
 
         @nsenStream = new NsenStream
+        @SpeechHost = new SpeechHost
 
         $ =>
             $(document).on "click", "a", ->
