@@ -1,6 +1,6 @@
 li(class=classList.join(" "))
     img.NcoComments_item_thumbnail
     if hasNewLine
-        pre= comment.comment
+        pre!= comment
     else
-        span.NcoComments_item_content= comment.comment
+        span.NcoComments_item_content!= comment

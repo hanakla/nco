@@ -61,7 +61,14 @@ class CommentCollectionView extends Marionette.View
 
             hasNewLine = /\n/g.test(comment.comment)
 
-            $comment = $(itemViewTemplate({classList, comment, hasNewLine}))
+            content = comment.comment
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;")
+            content = content.replace(/(https?:\/\/[^\s　<>]+)/, "<a href='$&'>$&</a>")
+
+            $comment = $(itemViewTemplate({classList, comment: content, hasNewLine}))
             @$el.append $comment
 
             if (@el.scrollHeight - (@el.scrollTop + @el.clientHeight)) < 200
