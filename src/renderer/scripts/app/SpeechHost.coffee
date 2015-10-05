@@ -26,7 +26,6 @@ class SpeechHost
         return
 
     speech : (text) ->
-        console.log text
         return if app.config.get("nco.speech", false) is false
 
         s = new SpeechSynthesisUtterance(text)
