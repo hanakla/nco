@@ -17,7 +17,7 @@ module.exports = (options) ->
             }
             { type: "separator" }
             {
-                label       : "Preferences..."
+                label       : "Preferences"
                 command     : "app:show-settings"
                 accelerator : "Command+,"
             }

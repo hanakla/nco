@@ -1,0 +1,12 @@
+.NcoLogin
+    .NcoLogin_backface
+        form.NcoLogin_modal(onsubmit="return false")
+            h1 設定
+
+            .NcoLogin_form
+                .NcoLogin_form_group
+                    label.NcoLogin_form_label(for="pref-speech") 読み上げを有効
+                    input#pref-speech.NcoLogin_form_input(type="checkbox", name="email")
+
+            .NcoLogin_modal_footer
+                button.NcoLogin_form_submit 保存

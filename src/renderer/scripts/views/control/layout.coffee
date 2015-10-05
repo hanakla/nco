@@ -19,8 +19,10 @@ class NcoControlLayout extends Marionette.LayoutView
         good        : ".good"
         mylist      : ".mylist"
         request     : ".request"
+        preference  : ".preference"
         openNsen    : ".openNsen"
         reload      : ".reload"
+
         alert       : ".NcoControl_comment_alert"
         commentArea : ".NcoControl_comment"
         anonyOpt    : "[name='comment_184']"
@@ -32,10 +34,12 @@ class NcoControlLayout extends Marionette.LayoutView
         "blur @ui.input"    : "_hideOption"
         "click [name='comment_184']": "_memory184State"
         "click @ui.commentArea": "_keepFocusInInput"
+
         "click @ui.skip"    : "_onClickSkip"
         "click @ui.good"    : "_onClickGood"
         "click @ui.mylist"  : "_onClickMylist"
         "click @ui.request" : "_onClickRequest"
+        "click @ui.preference" : "_onClickPreference"
         "click @ui.openNsen": "_onClickOpenNsen"
         "click @ui.reload"  : "_onClickReload"
 
@@ -127,6 +131,10 @@ class NcoControlLayout extends Marionette.LayoutView
     _onClickMylist   : ->
         view = @mylistSelection.currentView
         if view.isOpened() then view.close() else view.open()
+
+    _onClickPreference : ->
+        app.command.dispatch "app:show-settings"
+        return
 
     _showOption      : ->
         @ui.commentArea.addClass "focus"

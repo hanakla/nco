@@ -40,6 +40,11 @@ class App extends Application
                 window = @windows.openWindow(config)
                 window.loadUrl("file://" + path.join(__dirname, "../../renderer/index.html"))
 
+            "app:show-settings" : =>
+                return unless (window = @windows.lastFocusedWindow())?
+                @command.dispatchToWindow window, "app:show-settings"
+                return
+
             "app:quit" : =>
                 app.quit()
                 return
