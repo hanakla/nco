@@ -107,7 +107,7 @@ g.task "styles", ->
 # Jade Task
 #
 g.task "jade", ->
-    g.src genPaths("", "jade", ["!#{gulpOption.sourceDir}/scripts/**/*.jade"])
+    g.src genPaths("", "jade", ["!#{gulpOption.sourceDir}/renderer/scripts/**/*.jade"])
         .pipe $.plumber()
         .pipe $.changed("#{gulpOption.buildDir}/renderer/")
         .pipe $.jade()
