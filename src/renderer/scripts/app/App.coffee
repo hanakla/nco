@@ -42,7 +42,7 @@ class App extends Application
         @config.load()
 
         @nsenStream = new NsenStream
-        @SpeechHost = new SpeechHost
+        @speechHost = new SpeechHost
         @player = new Player
 
         $ =>
