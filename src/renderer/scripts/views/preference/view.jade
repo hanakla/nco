@@ -1,12 +1,61 @@
-.NcoLogin
-    .NcoLogin_backface
-        form.NcoLogin_modal(onsubmit="return false")
+.NcoPref
+    .NcoPref_backface
+        form.NcoPref_modal(onsubmit="return false")
             h1 設定
+        
+            .NcoPref_section
+                h2.NcoPref_section_header 一般
 
-            .NcoLogin_form
-                .NcoLogin_form_group
-                    label.NcoLogin_form_label(for="pref-speech") 読み上げを有効
-                    input#pref-speech.NcoLogin_form_input(type="checkbox", name="email")
+                //-
+                    .NcoPref_form_group
+                        label.NcoPref_form_label(for="pref-auto-move") 放送終了時に自動的にチャンネルを移動
+                        input#pref-auto-move.NcoPref_form_input(type="checkbox", name="nco.autoMove")
 
-            .NcoLogin_modal_footer
-                button.NcoLogin_form_submit 保存
+                .NcoPref_form_group
+                    label.NcoPref_form_label(for="pref-speech") 読み上げを有効
+                    input#pref-speech.NcoPref_form_input(type="checkbox", name="nco.speech")
+
+            .NcoPref_section
+                h2.NcoPref_section_header プレイヤー
+
+                .NcoPref_form_group
+                    label.NcoPref_form_label(for="pref-enable-player") Nsenプレイヤーを有効
+                    input#pref-enable-player.NcoPref_form_input(type="checkbox", name="nco.player.enabled")
+                    span.NcoPref_form_anotate mp4で投稿された動画しか再生されません。
+
+                .NcoPref_form_group
+                    label.NcoPref_form_label(for="pref-player-volume") プレイヤー音量
+                    input#pref-player-volume.NcoPref_form_input(type="range", name="nco.player.volume" min="0" max="1" step="0.01")
+                    span.NcoPref_form_value(valueof="nco.player.volume")
+
+            .NcoPref_section.NcoPref_section-collapse
+                h2.NcoPref_section_header 連絡先
+
+                dl.NcoPref_address
+                    dt リポジトリ（配布元）
+                    dd: a(href="https://github.com/ragg-/nco") GitHub (ragg-/nco)
+
+                    dt 制作（連絡先）
+                    dd: a(href="http://twitter.com/_ragg_") @_ragg_
+
+            .NcoPref_section.NcoPref_section-collapse
+                h2.NcoPref_section_header オープンソース ライセンス
+
+                ul.NcoPref_licenses
+                    li: a(href="https://github.com/atom/electron/blob/master/LICENSE") Electron
+                    li: a(href="https://github.com/jashkenas/coffeescript/blob/master/LICENSE") CoffeeScript
+                    li: a(href="https://github.com/Ragg-/electron-kit/blob/master/LICENSE") electron-kit
+                    li: a(href="https://github.com/atom/event-kit/blob/master/LICENSE.md") event-kit
+                    li: a(href="https://github.com/Ragg-/node-nicovideo-api/blob/dev/LICENSE") node-nicovideo-api
+                    li: a(href="https://github.com/request/request-promise/blob/master/LICENSE") request-promise
+                    li: a(href="https://github.com/bcoe/yargs/blob/master/LICENSE") yargs
+                    li: a(href="https://jquery.org/license/") jQuery
+                    li: a(href="https://github.com/jashkenas/backbone/blob/master/LICENSE") Backbone.js
+                    li: a(href="https://github.com/marionettejs/backbone.marionette/blob/master/license.txt") Marionette.js
+                    li: a(href="https://github.com/jashkenas/underscore/blob/master/LICENSE") underscore.js
+                    li: a(href="https://lodash.com/license") lodash
+                    li: a(href="https://github.com/stevenbenner/jquery-powertip/blob/master/LICENSE.txt") PowerTip
+                    li: a(href="https://mplus-fonts.osdn.jp/mplus-outline-fonts/#license") M+ OUTLINE FONTS
+
+            .NcoPref_modal_footer
+                button.NcoPref_form_submit 保存
