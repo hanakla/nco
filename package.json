@@ -2,7 +2,7 @@
   "name": "nco",
   "productName": "Nco",
   "description": "Comment viewer for niconico's Nsen",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha4",
   "homepage": "https://github.com/Ragg-/nco",
   "author": "Ragg <ragg.devpr@gmail.com>",
   "license": "MIT",
