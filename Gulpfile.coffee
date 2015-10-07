@@ -124,6 +124,10 @@ g.task "images", ->
         .pipe $.imagemin(envRequireConfig("imagemin.coffee"))
         .pipe g.dest("#{gulpOption.buildDir}/renderer/images/")
 
+g.task "assets", ->
+    g.src "#{gulpOption.sourceDir}/assets/**"
+        .pipe g.dest("#{gulpOption.buildDir}/assets/")
+
 #
 # package.json copy Task
 #
@@ -189,6 +193,11 @@ g.task "watch", ->
         "#{rendererSrcRoot}/images/**/*.{png,jpg,jpeg,gif}"
     ], ->
         g.start ["images"]
+
+    $.watch [
+        "#{rendererSrcRoot}/assets/**"
+    ], ->
+        g.start ["assets"]
 
 
 g.task "packaging", (cb) ->
@@ -267,7 +276,7 @@ g.task "electron-dev", do ->
 #
 # Define default
 #
-g.task "build", ["webpack", "styles", "jade", "images", "fonts", "copy-browser-files", "package-json"]
+g.task "build", ["webpack", "styles", "jade", "images", "fonts", "copy-browser-files", "assets", "package-json"]
 g.task "publish", ["production"]
 g.task "dev", ["build", "watch"]
 g.task "default", ["self-watch", "electron-dev"]
