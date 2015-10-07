@@ -93,6 +93,7 @@ class App extends Application
                 @_session?.relogin()
                 .then =>
                     console.info "%cRelogin successful.", Colors.text.info
+                    @emit "did-login", @_session
                     app.command.dispatch "channel:reset-session", @_session
                     return
 
@@ -107,7 +108,8 @@ class App extends Application
                     @_session = session
                     @_saveSession()
 
-                    app.command.dispatch "channel:reset-session", session
+                    @emit "did-login", @_session
+                    app.command.dispatch "channel:reset-session", @_session
                     callback()
 
                 .catch (e) =>
@@ -145,7 +147,7 @@ class App extends Application
             else
                 @_session = restoredSession
                 app.command.dispatch "channel:reset-session", @_session
-
+                @emit "did-login", @_session
                 console.info "%c[app.restoredSession] Session restored!", Colors.text.success
         #
         # .catch (e) =>
@@ -179,3 +181,6 @@ class App extends Application
 
     onDidChangeChannel : (listener) ->
         @on "did-change-channel", listener
+
+    onDidLogin : (listener) ->
+        @on "did-login", listener
