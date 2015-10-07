@@ -23,12 +23,12 @@ class App extends Application
 
         global.app = @
 
+        @currentWindow = Remote.getGlobal("app")
+            .windows.findWindowByBrowserWindow(Remote.getCurrentWindow())
+
         @_initializeModules()
         @_handleEvents()
         @_handleCommands()
-
-        @currentWindow = Remote.getGlobal("app")
-            .windows.findWindowByBrowserWindow(Remote.getCurrentWindow())
 
         @_restoreSession()
 
