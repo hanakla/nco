@@ -42,7 +42,9 @@
     "coffee-script": "^1.9.2",
     "electron-kit": "0.1.3",
     "event-kit": "^1.3.0",
-    "node-nicovideo-api": "^0.1.2",
+    "lodash": "^3.10.1",
+    "node-nicovideo-api": "^0.2.0",
+    "request-promise": "^0.4.3",
     "yargs": "^3.9.0"
   },
   "repository": {
