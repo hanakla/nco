@@ -66,7 +66,7 @@ class CommentCollectionView extends Marionette.View
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#39;")
-            content = content.replace(/(https?:\/\/[^\s　<>]+)/, "<a href='$&'>$&</a>")
+                .replace(/(https?:\/\/[^\s　<>]+)/, "<a href='$&'>$&</a>")
 
             $comment = $(itemViewTemplate({classList, comment: content, hasNewLine}))
             @$el.append $comment
