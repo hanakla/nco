@@ -9,4 +9,3 @@ module.exports =
     "title-bar-style" : "hidden"
     "web-preferences" :
         "direct-write"  : true
-        "experimental-features" : true
