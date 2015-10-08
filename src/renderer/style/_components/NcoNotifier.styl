@@ -13,7 +13,7 @@
     &_item
         //animation-name NcoNotifierSlidein
         display none
-        height 100px
+        // height 100px
         padding 8px 16px
 
         color black
@@ -24,11 +24,14 @@
 
         pointer-events auto
 
-        &:hover
-            display block
-            transform translateY(0) !important
-            animation-name NcoNotifierLock !important
-            animation-iteration-count infinite !important
+        & + .NcoNotifier_item
+            border-top 1px solid #fff
+
+        // &:hover
+        //     display block
+        //     transform translateY(0) !important
+        //     animation-name NcoNotifierLock !important
+        //     animation-iteration-count infinite !important
 
         &.show
             display block
@@ -49,3 +52,11 @@
 
             a
                 color #fff
+
+        &_header
+            margin-bottom 8px
+
+        &_detailBox
+            position relative
+            display table-cell
+            vertical-align middle
