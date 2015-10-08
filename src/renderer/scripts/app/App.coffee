@@ -25,17 +25,17 @@ class App extends Application
         @currentWindow = Remote.getGlobal("app")
             .windows.findWindowByBrowserWindow(Remote.getCurrentWindow())
 
-        @_initializeModules()
+        @_initializeCoreModules()
         @_handleEvents()
         @_handleCommands()
 
-        # Migrater.migrate()
-
+        Migrater.migrate()
+        @_initializeNcoModules()
         @_loadServices()
 
         @_restoreSession()
 
-    _initializeModules : ->
+    _initializeCoreModules : ->
         @command = new CommandManager
         @contextMenu = new ContextMenuManager
         @menu = new MenuManager
@@ -44,6 +44,10 @@ class App extends Application
             configFileName : "config.json"
         @config.load()
 
+        return
+
+
+    _initializeNcoModules : ->
         @nsenStream = new NsenStream
 
         $ =>
@@ -51,10 +55,14 @@ class App extends Application
                 return if @href in ["#", ""]
                 app.command.dispatch "shell:open-url", @href
                 false
+
             $("body").append require("views/nco/view.jade")()
             @region = new RegionManager
 
+            @emit "did-initialize"
+
         return
+
 
 
     _handleEvents : ->
@@ -186,6 +194,9 @@ class App extends Application
     #
     # Event handler
     #
+
+    onDidInitialize : (listener) ->
+        @on "did-initialize", listener
 
     onDidChangeNetworkState : (listener) ->
         @on "did-change-network-state", listener
