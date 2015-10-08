@@ -12,7 +12,6 @@ NsenStream = require "./NsenStream"
 RegionManager = require "./RegionManager"
 Notification = require "utils/Notification"
 SpeechHost = require "./SpeechHost"
-Player = require "./player"
 
 module.exports =
 class App extends Application
@@ -44,7 +43,6 @@ class App extends Application
 
         @nsenStream = new NsenStream
         @speechHost = new SpeechHost
-        @player = new Player
 
         $ =>
             $(document).on "click", "a", ->
@@ -122,6 +120,7 @@ class App extends Application
         @_services = s = []
         s.push new (require "services/NowPlaying/NowPlaying")
         s.push new (require "services/UpdateNotifier/UpdateNotifier")
+        s.push new (require "services/Player/Player")
 
 
     #
