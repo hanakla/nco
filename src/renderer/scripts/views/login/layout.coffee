@@ -30,7 +30,7 @@ class LoginView extends Marionette.ItemView
 
         app.command.dispatch "session:login", input.email, input.password, (err) =>
             if err?
-                @_showError "ログインに失敗しました。(#{err.message})"
+                @_showError "ログインに失敗しました。(#{err.message ? err})"
             else
                 app.config.set "nco.auth.user", input.email if input.memory is "on"
                 @close()
