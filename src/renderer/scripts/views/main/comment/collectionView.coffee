@@ -40,17 +40,6 @@ class CommentCollectionView extends Marionette.View
 
         @$el.empty()
 
-        stream.onDidChangeMovie (movie) =>
-            return unless movie?
-            buf = "<li class='NcoComments_item NcoNowPlaying'>"
-            buf += require("../nowPlaying/nowPlayingView.jade")
-                isPlaying : -> true
-                attr: (path) -> movie.get(path)
-                format  : (val) => Intl.NumberFormat("en-US").format val
-            buf += "</li>"
-
-            @$el.append(buf)
-
         stream.onDidReceiveComment (comment) =>
             classList = []
             classList.push("NcoComments_item-control") if comment.isControlComment()
