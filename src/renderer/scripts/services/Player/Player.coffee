@@ -42,6 +42,7 @@ class Player
         nicoSession = app.getSession()
         channel = app.nsenStream.getStream()
         movie = channel?.getCurrentVideo()
+        live = channel?.getLiveInfo()
 
         return if false in [nicoSession?, channel?, movie?]
         return if app.config.get("nco.player.enabled", false) is false
@@ -60,8 +61,12 @@ class Player
                     console.error err if err?
 
             movie.fetchGetFlv()
+
         .then (result) =>
-            playContent = channel.getLiveInfo().get("stream.contents.0")
+            Promise.all([result, live.fetch()])
+
+        .then ([result]) =>
+            playContent = live.get("stream.contents.0")
             elapsedFromStart = (Date.now() - playContent.startTime) / 1000 | 0
 
             if @_mp4player.src is ""
