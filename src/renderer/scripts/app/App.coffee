@@ -11,6 +11,7 @@ Colors = require "colors"
 NsenStream = require "./NsenStream"
 RegionManager = require "./RegionManager"
 Notification = require "utils/Notification"
+Migrater = require "./Migrater"
 
 module.exports =
 class App extends Application
@@ -27,6 +28,9 @@ class App extends Application
         @_initializeModules()
         @_handleEvents()
         @_handleCommands()
+
+        # Migrater.migrate()
+
         @_loadServices()
 
         @_restoreSession()
