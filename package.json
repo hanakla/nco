@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "coffee-script": "^1.9.2",
-    "electron-kit": "0.1.3",
+    "electron-kit": "0.1.4",
     "event-kit": "^1.3.0",
     "lodash": "^3.10.1",
     "node-nicovideo-api": "^0.2.0",
