@@ -20,14 +20,14 @@ class Player
 
         app.config.observe "nco.player.enabled", (enabled) =>
             if enabled is no
-                @_mp4player.pause()
+                @_stopMovie()
             else
-                @_loadMovie()
+                @_loadMovie(true)
 
             return
 
         app.config.observe "nco.player.volume", (volume) =>
-            @_mp4player.volume = volume
+            $(@_mp4player).animate({volume}, 1000)
 
     _handleNsenEvents : ->
         channel = app.nsenStream.getStream()
@@ -38,7 +38,7 @@ class Player
             @_loadMovie()
 
 
-    _loadMovie : ->
+    _loadMovie : (fadeIn = false)->
         nicoSession = app.getSession()
         channel = app.nsenStream.getStream()
         movie = channel?.getCurrentVideo()
@@ -69,8 +69,9 @@ class Player
             playContent = live.get("stream.contents.0")
             elapsedFromStart = (Date.now() - playContent.startTime) / 1000 | 0
 
-            if @_mp4player.src is ""
+            if @_mp4player.src is "" or fadeIn
                 volume = app.config.get("nco.player.volume")
+                @_mp4player.volume = 0
                 $(@_mp4player).animate({volume}, 2000)
 
             @_mp4player.src = result.url
@@ -79,6 +80,11 @@ class Player
 
         .catch =>
             console.log arguments
+
+    _stopMovie : ->
+        $(@_mp4player).animate {volume: 0}, 2000, =>
+            @_mp4player.pause()
+            @_mp4player.src = ""
 
 
     _translateToughCookieToElectronSettable : (cookies) ->
