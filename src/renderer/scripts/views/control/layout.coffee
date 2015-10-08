@@ -71,6 +71,8 @@ class NcoControlLayout extends Marionette.LayoutView
         @requestSelection.show new RequestLayoutView
         @mylistSelection.show new MylistSelectionView
 
+        @$(".NcoControl_actions [title]").powerTip({placement: "s"})
+
         # フォーム状態を復元
         @$el.find("[name='comment_184']")[0]?.checked = app.config.get("nco.comment.postAsAnonymous")
 
