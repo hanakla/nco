@@ -31,7 +31,6 @@ class Migrater
         @moved "nco.lastSelectChannel", "nco.nsen.lastSelectChannel"
         @moved "nco.comment.postAsAnonymous", "nco.nsen.postAsAnonymous", "nco.comment"
         @moved "nco.autoMove", "nco.nsen.autoMoveToNextLive"
-        @moved "nco.comment", "nco.services.comment"
         @moved "nco.speech", "nco.services.speech.enabled"
         @moved "nco.player", "nco.services.player"
 
