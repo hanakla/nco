@@ -6,6 +6,7 @@ class Player
         @_mp4player = document.createElement("video")
         @_mp4player.style.display = "none"
         @_mp4player.autoplay = true
+        @_mp4player.volume = 0
 
         @_handleEvents()
         @_handleNsenEvents()
@@ -57,11 +58,13 @@ class Player
                     console.error err if err?
 
             movie.fetchGetFlv()
-
         .then (result) =>
             playContent = channel.getLiveInfo().get("stream.contents.0")
             elapsedFromStart = (Date.now() - playContent.startTime) / 1000 | 0
 
+            if @_mp4player.src is ""
+                volume = app.config.get("nco.player.volume")
+                $(@_mp4player).animate({volume}, 2000)
 
             @_mp4player.src = result.url
             @_mp4player.currentTime = elapsedFromStart
