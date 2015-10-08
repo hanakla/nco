@@ -15,6 +15,9 @@ class CommentCollectionView extends Marionette.View
         app.nsenStream.onDidChangeStream =>
             @_listenLiveEvents()
 
+        app.command.on "comments:clear", =>
+            @$el.empty()
+
         app.contextMenu.add "body", [
              {
                 label   : 'コピー',
