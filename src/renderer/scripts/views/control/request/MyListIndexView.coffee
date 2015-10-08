@@ -1,6 +1,6 @@
 _ = require "lodash"
 
-itemView = require "./myListIndexItemView.jade"
+itemViewTemplate = require "./myListIndexView.jade"
 
 module.exports =
 class MylistIndexView extends Marionette.View
@@ -9,10 +9,6 @@ class MylistIndexView extends Marionette.View
 
     events      :
         "click li" : "onItemSelected"
-
-    initialize  : ->
-        # @collection = new Backbone.Collection
-
 
     onItemSelected : (e) ->
         @$("li").removeClass "selected"
@@ -25,7 +21,11 @@ class MylistIndexView extends Marionette.View
     open : ->
         app.getSession()?.mylist.fetchOwnedListIndex()
         .then (lists) =>
-            @$el.empty().append lists.map((list) => itemView({list})).join("")
+            @$el.empty()
+            @$el.append """
+            <li class="NcoRequest_mylists_item NcoRequest_mylists_item-inputMovieId" data-mylist-id="inputMovieId">動画IDを入力</li>
+            """
+            @$el.append lists.map((list) => itemViewTemplate({list})).join("")
 
     clear : ->
         @$el.empty()

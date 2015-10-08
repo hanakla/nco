@@ -1,0 +1,21 @@
+.NcoRequest_requesting
+    if movie !== null
+        h2.NcoRequest_requesting_header リクエスト中の動画
+
+        .NcoRequest_requesting_body
+            img.NcoRequest_requesting_thumb(src=movie.get("thumbnail"))
+            
+            .NcoRequest_requesting_description
+                .NcoRequest_requesting_title= movie.get("title")
+                .NcoRequest_requesting_id= movie.id
+
+    else
+        h2.NcoRequest_requesting_header リクエスト中の動画はありません。
+
+        form.NcoForm.NcoRequest_putMovieId
+            .NcoForm_group
+                input.NcoForm_input(type="text" name="movieId" placeholder="動画ID / 動画URL")
+
+            .cfx
+                button.left.NcoForm_submit リクエスト
+                .left.NcoForm_message.NcoRequest_putMovieId_message

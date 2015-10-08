@@ -1,7 +1,9 @@
 _ = require "lodash"
 Nico = global.require "node-nicovideo-api"
 
-itemViewTemplate    = require "./MyListItemView.jade"
+currentRequestTemplate = require "./currentRequestView.jade"
+movieIdFormTemplate = require "./movieIdPutView.jade"
+itemViewTemplate = require "./myListItemView.jade"
 
 module.exports =
 class MylistItemView extends Marionette.View
@@ -14,11 +16,47 @@ class MylistItemView extends Marionette.View
 
     events :
         "click li" : "onItemClicked"
+        "submit .NcoForm" : "onPutMovieId"
 
     _lastSelectedId : null
 
     initialize      : ->
         # @collection = new Backbone.Collection
+
+    _humanizeRequestError : (code) ->
+        return switch code
+            when Nico.Nsen.RequestError.NO_LOGIN
+                "ログインしていません。"
+            when Nico.Nsen.RequestError.CLOSED
+                "現在リクエストを受け付けていません。"
+            when Nico.Nsen.RequestError.REQUIRED_TAG
+                "リクエストに必要なタグが登録されていません。"
+            when Nico.Nsen.RequestError.TOO_LONG
+                "動画が長過ぎます。"
+            when Nico.Nsen.RequestError.REQUESTED
+                "この動画はリクエストされたばかりです。"
+
+    onPutMovieId : ->
+        $input = @$("[name='movieId']")
+        movieId = $input.val()
+        movieId = /((?:sm|nm)[0-9]+$)/.exec(movieId)?[1]
+
+        unless movieId?
+            @$(".NcoForm_message").text "正しい動画IDを入力してください"
+
+        app.nsenStream.getStream()?.pushRequest(movieId)
+        .then =>
+            @trigger "requested"
+
+        .catch (e) =>
+            message = @_humanizeRequestError(e.code)
+
+            @$(".NcoForm_message").text message
+
+            $.powerTip.show($input)
+            setTimeout (-> $.powerTip.hide($input)), 1500
+
+        false
 
 
     onItemClicked   : (e) ->
@@ -44,17 +82,7 @@ class MylistItemView extends Marionette.View
             @trigger "requested"
 
         .catch (e) =>
-            switch e.code
-                when Nico.Nsen.RequestError.NO_LOGIN
-                    message = "ログインしていません。"
-                when Nico.Nsen.RequestError.CLOSED
-                    message = "現在リクエストを受け付けていません。"
-                when Nico.Nsen.RequestError.REQUIRED_TAG
-                    message = "リクエストに必要なタグが登録されていません。"
-                when Nico.Nsen.RequestError.TOO_LONG
-                    message = "動画が長過ぎます。"
-                when Nico.Nsen.RequestError.REQUESTED
-                    message = "この動画はリクエストされたばかりです。"
+            message = @_humanizeRequestError(e.code)
 
             $el.removeClass("requesting")
             .data("powertip", (-> message))
@@ -63,8 +91,14 @@ class MylistItemView extends Marionette.View
             $.powerTip.show($el)
             setTimeout (-> $.powerTip.hide($el)), 1500
 
+    _displayMovieIdPutForm : ->
+        @$el.empty().html movieIdFormTemplate()
 
     displayItemList : (mylistId) ->
+        if mylistId is "inputMovieId"
+            @_displayMovieIdPutForm()
+            return
+
         # console.log mylistId
         app.getSession()?.mylist.getHandlerFor(mylistId)
         .then (list) =>
@@ -74,6 +108,14 @@ class MylistItemView extends Marionette.View
             return unless movie?
             @$("li[data-movie-id='#{movie.id}']").addClass "requested"
 
+        return
+
+    index : ->
+        nsenCh = app.nsenStream.getStream()
+
+        if nsenCh?
+            movie = nsenCh.getRequestedMovie()
+            @$el.empty().html currentRequestTemplate({movie})
         return
 
     clear : ->
