@@ -9,6 +9,9 @@ class CommentCollectionView extends Marionette.View
 
     initialize  : ->
 
+        app.command.on "comments:add", (content, classList = []) =>
+            @_addComment {content, classList}
+
         app.nsenStream.onDidChangeStream =>
             @_listenLiveEvents()
 
