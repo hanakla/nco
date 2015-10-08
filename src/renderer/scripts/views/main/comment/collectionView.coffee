@@ -49,8 +49,7 @@ class CommentCollectionView extends Marionette.View
             @$el.append(buf)
 
         stream.onDidReceiveComment (comment) =>
-
-            classList = ["NcoComments_item"]
+            classList = []
             classList.push("NcoComments_item-control") if comment.isControlComment()
             classList.push("NcoComments_item-self") if comment.isPostBySelf()
             classList.push("NcoComments_item-distributor") if comment.isPostByDistributor()
@@ -64,12 +63,9 @@ class CommentCollectionView extends Marionette.View
                 .replace(/'/g, "&#39;")
                 .replace(/(https?:\/\/[^\s　<>]+)/, "<a href='$&'>$&</a>")
 
-            $comment = $(itemViewTemplate({classList, comment: content, hasNewLine}))
-            @$el.append $comment
+            $comment = $ itemViewTemplate {hasNewLine, comment : content}
 
-            if (@el.scrollHeight - (@el.scrollTop + @el.clientHeight)) < 200
-                @$el.animate {scrollTop: @el.scrollHeight}, 10
-
+            # setup user info tooltipTemplate
             if comment.isPostByAnonymous()
                 $user = $ """
                 <div class="NcoComments_user">
@@ -77,25 +73,37 @@ class CommentCollectionView extends Marionette.View
                 </div>
                 """
 
-                $comment.find(".NcoComments_item_thumbnail")
+                $comment.filter(".NcoComments_item_thumbnail")
                     .attr("src", "./images/anonymous_user.png")
                     .data("powertipjq", $user)
                     .powerTip({placement: "e", mouseOnToPopup: true})
 
-                return
+            else
+                app.getSession()?.user.getUserInfo(comment.get("user.id"))
+                .then (user) ->
+                    $user = $(tooltipTemplate({user}))
 
-            app.getSession().user.getUserInfo(comment.get("user.id"))
-            .then (user) ->
-                $user = $(tooltipTemplate({user}))
+                    $comment.filter(".NcoComments_item_thumbnail")
+                        .attr("src", user.get("thumbnailURL"))
+                        .data("powertipjq", $user)
+                        .powerTip({placement: "e", mouseOnToPopup: true})
 
-                $comment.find(".NcoComments_item_thumbnail")
-                    .attr("src", user.get("thumbnailURL"))
-                    .data("powertipjq", $user)
-                    .powerTip({placement: "e", mouseOnToPopup: true})
+            @_addComment({content: $comment, classList})
+
 
 
     scrollToBottom  : ->
         #@$el.
+
+    _addComment : (options) ->
+        {content, classList} = _.defaults options, {classList: []}
+
+        $comment = $("<li class='NcoComments_item'>").addClass(classList.join(" ")).append content
+        @$el.append $comment
+
+        if (@el.scrollHeight - (@el.scrollTop + @el.clientHeight)) < 200
+            @$el.animate {scrollTop: @el.scrollHeight}, 10
+
 
     _onChannelChanged: ->
         @collection.reset()
