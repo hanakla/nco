@@ -46,6 +46,8 @@ class Player
         return unless nicoSession? or channel? or movie?
         return if app.config.get("nco.player.enabled", false) is false
 
+        # 動画を取得（再生する）するための`nicohistory`クッキーを取得するために
+        # 動画ページへアクセスする
         Request.get
             resolveWithFullResponse : true
             url : "http://www.nicovideo.jp/watch/#{movie.id}"
