@@ -5,12 +5,14 @@ NsenChannels = require "./NsenChannels"
 
 Colors = require "colors"
 
+CONFIG_LAST_SELECT_CHANNEL = "nco.nsen.lastSelectChannel"
+
 module.exports =
 class ChannelManager extends Emitter
     constructor : ->
         super
 
-        @_channelId = app.config.get("nco.lastSelectChannel")
+        @_channelId = app.config.get(CONFIG_LAST_SELECT_CHANNEL)
         @_activeStream = null
 
         # @_handleEvents()
@@ -82,7 +84,7 @@ class ChannelManager extends Emitter
         console.info "%c[NsenStream] Channel changing to #{channel}", Colors.text.info
 
         @_channelId = channel
-        app.config.set "nco.lastSelectChannel", channel
+        app.config.set CONFIG_LAST_SELECT_CHANNEL, channel
 
         @_session.live.getNsenChannelHandlerFor(@_channelId)
         .then (nsenCh) =>

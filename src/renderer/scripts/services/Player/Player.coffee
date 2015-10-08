@@ -1,5 +1,8 @@
 Request = global.require "request-promise"
 
+CONFIG_PLAYER_ENABLED = "nco.services.player.enabled"
+CONFIG_PLAYER_VOLUME = "nco.services.player.volume"
+
 module.exports =
 class Player
     constructor : ->
@@ -18,7 +21,7 @@ class Player
         app.nsenStream.onDidChangeStream =>
             @_handleNsenEvents()
 
-        app.config.observe "nco.player.enabled", (enabled) =>
+        app.config.observe CONFIG_PLAYER_ENABLED, (enabled) =>
             if enabled is no
                 @_stopMovie()
             else
@@ -26,7 +29,7 @@ class Player
 
             return
 
-        app.config.observe "nco.player.volume", (volume) =>
+        app.config.observe CONFIG_PLAYER_VOLUME, (volume) =>
             $(@_mp4player).animate({volume}, 1000)
 
     _handleNsenEvents : ->
@@ -34,7 +37,7 @@ class Player
         return unless channel?
 
         channel.onDidChangeMovie (movie) =>
-            return if app.config.get("nco.player.enabled", no) is no
+            return if app.config.get(CONFIG_PLAYER_ENABLED, no) is no
             @_loadMovie()
 
 
@@ -45,7 +48,7 @@ class Player
         live = channel?.getLiveInfo()
 
         return if false in [nicoSession?, channel?, movie?]
-        return if app.config.get("nco.player.enabled", false) is false
+        return if app.config.get(CONFIG_PLAYER_ENABLED, false) is false
 
         # 動画を取得（再生する）するための`nicohistory`クッキーを取得するために
         # 動画ページへアクセスする
@@ -70,7 +73,7 @@ class Player
             elapsedFromStart = (Date.now() - playContent.startTime) / 1000 | 0
 
             if @_mp4player.src is "" or fadeIn
-                volume = app.config.get("nco.player.volume")
+                volume = app.config.get(CONFIG_PLAYER_VOLUME)
                 @_mp4player.volume = 0
                 $(@_mp4player).animate({volume}, 2000)
 

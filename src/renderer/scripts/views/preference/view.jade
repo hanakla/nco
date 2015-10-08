@@ -9,24 +9,24 @@
                 //-
                     .NcoPref_form_group
                         label.NcoPref_form_label(for="pref-auto-move") 放送終了時に自動的にチャンネルを移動
-                        input#pref-auto-move.NcoPref_form_input(type="checkbox", name="nco.autoMove")
+                        input#pref-auto-move.NcoPref_form_input(type="checkbox", name="nco.nsen.autoMoveToNextLive")
 
                 .NcoPref_form_group
                     label.NcoPref_form_label(for="pref-speech") 読み上げを有効
-                    input#pref-speech.NcoPref_form_input(type="checkbox", name="nco.speech")
+                    input#pref-speech.NcoPref_form_input(type="checkbox", name="nco.services.speech.enabled")
 
             .NcoPref_section
                 h2.NcoPref_section_header プレイヤー
 
                 .NcoPref_form_group
                     label.NcoPref_form_label(for="pref-enable-player") Nsenプレイヤーを有効
-                    input#pref-enable-player.NcoPref_form_input(type="checkbox", name="nco.player.enabled")
+                    input#pref-enable-player.NcoPref_form_input(type="checkbox", name="nco.services.player.enabled")
                     span.NcoPref_form_anotate mp4で投稿された動画しか再生されません。
 
                 .NcoPref_form_group
                     label.NcoPref_form_label(for="pref-player-volume") プレイヤー音量
-                    input#pref-player-volume.NcoPref_form_input(type="range", name="nco.player.volume" min="0" max="1" step="0.01")
-                    span.NcoPref_form_value(valueof="nco.player.volume")
+                    input#pref-player-volume.NcoPref_form_input(type="range", name="nco.services.player.volume" min="0" max="1" step="0.01")
+                    span.NcoPref_form_value(valueof="nco.services.player.volume")
 
             .NcoPref_section.NcoPref_section-collapse
                 h2.NcoPref_section_header 連絡先

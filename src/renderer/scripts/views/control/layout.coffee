@@ -9,6 +9,8 @@ Marionette  = require "marionette"
 RequestLayoutView       = require "./request/layout"
 MylistSelectionView     = require "./mylist/listSelectionView"
 
+CONFIG_POST_AS_ANONYMOUS = "nco.nsen.postAsAnonymous"
+
 module.exports =
 class NcoControlLayout extends Marionette.LayoutView
     template    : require "./view.jade"
@@ -74,7 +76,7 @@ class NcoControlLayout extends Marionette.LayoutView
         @$(".NcoControl_actions [title]").powerTip({placement: "s"})
 
         # フォーム状態を復元
-        @$el.find("[name='comment_184']")[0]?.checked = app.config.get("nco.comment.postAsAnonymous")
+        @$el.find("[name='comment_184']")[0]?.checked = app.config.get(CONFIG_POST_AS_ANONYMOUS)
 
 
     _showError      : do ->
@@ -97,7 +99,7 @@ class NcoControlLayout extends Marionette.LayoutView
 
 
     _memory184State  : ->
-        app.config.set "nco.comment.postAsAnonymous", @ui.commentArea.find("[name='comment_184']")[0]?.checked
+        app.config.set CONFIG_POST_AS_ANONYMOUS, @ui.commentArea.find("[name='comment_184']")[0]?.checked
 
     _onSubmitComment : (e) ->
         # keyCode 13 = Enter

@@ -1,10 +1,12 @@
+CONFIG_SPEECH_ENABLED = "nco.services.speech.enabled"
+
 module.exports =
 class SpeechHost
     constructor : ->
         app.nsenStream.onDidChangeStream =>
             @_listenStreamEvents()
 
-        app.config.observe "nco.speech", (value) =>
+        app.config.observe CONFIG_SPEECH_ENABLED, (value) =>
             if value is false
                 speechSynthesis.cancel()
             return
@@ -26,7 +28,7 @@ class SpeechHost
         return
 
     speech : (text) ->
-        return if app.config.get("nco.speech", false) is false
+        return if app.config.get(CONFIG_SPEECH_ENABLED, false) is false
 
         s = new SpeechSynthesisUtterance(text)
         s.rate = if text.length > 100 then 10 else 5
