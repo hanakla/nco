@@ -1,6 +1,6 @@
 Request = global.require "request-promise"
 Semver = global.require "semver"
-packageJson = global.require "../../package.json"
+packageJson = require "../../../../package.json"
 
 module.exports =
 class UpdateNotifier
