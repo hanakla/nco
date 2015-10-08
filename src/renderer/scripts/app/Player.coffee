@@ -59,13 +59,13 @@ class Player
             movie.fetchGetFlv()
 
         .then (result) =>
-            switch movie.get("movieType")
-                when "mp4"
-                    @_mp4player.src = result.url
-                    @_mp4player.play()
+            playContent = channel.getLiveInfo().get("stream.contents.0")
+            elapsedFromStart = (Date.now() - playContent.startTime) / 1000 | 0
 
-                when "flv"
-                    @_flvPlayer.setAttribute("data", result.url)
+
+            @_mp4player.src = result.url
+            @_mp4player.currentTime = elapsedFromStart
+            @_mp4player.play()
 
         .catch =>
             console.log arguments
