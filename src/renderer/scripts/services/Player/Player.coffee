@@ -43,7 +43,7 @@ class Player
         channel = app.nsenStream.getStream()
         movie = channel?.getCurrentVideo()
 
-        return unless nicoSession? or channel? or movie?
+        return if false in [nicoSession?, channel?, movie?]
         return if app.config.get("nco.player.enabled", false) is false
 
         # 動画を取得（再生する）するための`nicohistory`クッキーを取得するために

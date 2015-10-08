@@ -9,6 +9,7 @@ class NotifyNowPlaying
     _handleStreamEvents : (nsenChannel) ->
 
         nsenChannel.onDidChangeMovie (movie) =>
+            return unless movie?
 
             app.command.dispatch "comments:add", @_template
                 withHeader : true
