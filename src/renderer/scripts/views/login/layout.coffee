@@ -18,7 +18,6 @@ class LoginView extends Marionette.ItemView
 
     _initState  : ->
         @ui.form.find("input").val ""
-        console.log @ui.inputEmail
         @ui.inputEmail.val app.config.get("nco.auth.user")
         @ui.error.text ""
 
