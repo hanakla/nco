@@ -187,7 +187,7 @@ g.task "watch", ->
     $.watch [
         "package.json"
     ], ->
-        g.start ["package-json"]
+        g.start ["package-json", "production_npm"]
 
     $.watch [
         "#{rendererSrcRoot}/images/**/*.{png,jpg,jpeg,gif}"
