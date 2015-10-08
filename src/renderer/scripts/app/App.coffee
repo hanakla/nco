@@ -29,6 +29,7 @@ class App extends Application
         @_initializeModules()
         @_handleEvents()
         @_handleCommands()
+        @_loadServices()
 
         @_restoreSession()
 
@@ -116,6 +117,15 @@ class App extends Application
                     console.error e
                     callback(e)
 
+
+    _loadServices : ->
+        @_services = s = []
+        s.push new (require "services/NowPlaying/NowPlaying")
+
+
+    #
+    # App methods
+    #
 
     _saveSession : ->
         return unless @_session?
