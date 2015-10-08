@@ -120,6 +120,7 @@ class App extends Application
         s.push new (require "services/UpdateNotifier/UpdateNotifier")
         s.push new (require "services/Player/Player")
         s.push new (require "services/Speech/Speech")
+        s.push new (require "services/Comment/Comment")
 
 
     #
