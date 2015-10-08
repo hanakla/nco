@@ -121,6 +121,7 @@ class App extends Application
     _loadServices : ->
         @_services = s = []
         s.push new (require "services/NowPlaying/NowPlaying")
+        s.push new (require "services/UpdateNotifier/UpdateNotifier")
 
 
     #
