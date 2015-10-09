@@ -1,11 +1,9 @@
 _           = require "underscore"
 Marionette  = require "marionette"
 
-# NcoAPI          = require "nco/nco"
-# ChannelManager  = require "nco/ChannelManager"
-# NcoConfigure    = require "nco/config"
-
 NsenChannels = require "app/NsenChannels"
+
+CONFIG_LAST_SELECT_CHANNEL = "nco.nsen.lastSelectChannel"
 
 module.exports =
 class ShellView extends Marionette.ItemView
@@ -30,15 +28,12 @@ class ShellView extends Marionette.ItemView
         app.onDidChangeChannel =>
             @_didChangeChannel()
 
-        # @listenTo ChannelManager, "channelChanged", @_didChangeChannel
-        # @listenTo NcoAPI, "changeAlwaysOnTop", @_onPinStateChanged
-
     onRender : ->
         # チャンネル一覧をセレクトボックスへ設定
         template = _.template "<option value='<%- id %>'><%- name %>"
         @ui.channel.html _.map(NsenChannels, (obj, index) -> template(obj)).join("")
 
-        channelId = app.config.get "nco.lastSelectChannel"
+        channelId = app.config.get CONFIG_LAST_SELECT_CHANNEL
         @ui.channel.find("option").each (i, el) =>
             console.log el.value, channelId
             if el.value is channelId
