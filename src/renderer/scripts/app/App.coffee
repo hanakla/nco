@@ -28,6 +28,7 @@ class App extends Application
         @_initializeCoreModules()
         @_handleEvents()
         @_handleCommands()
+        @_restoreWindowBounds()
 
         Migrater.migrate()
         @_initializeNcoModules()
@@ -73,6 +74,10 @@ class App extends Application
 
         window.addEventListener "offline", =>
             @emit "did-change-network-state", false
+
+        window.addEventListener "beforeunload", =>
+            app.config.set "nco.window.bounds", @currentWindow.getBounds()
+            return
 
         @onDidChangeNetworkState (isOnLine) =>
             if isOnLine is no
@@ -124,6 +129,12 @@ class App extends Application
                 .catch (e) =>
                     console.error e
                     callback(e)
+
+
+    _restoreWindowBounds : ->
+        windowBounds = app.config.get "nco.window.bounds"
+        @currentWindow.setBounds windowBounds if windowBounds?
+        return
 
 
     _loadServices : ->
