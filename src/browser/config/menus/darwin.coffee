@@ -38,11 +38,6 @@ module.exports = (options) ->
         label: "File"
         submenu: [
             {
-                label       : "New Window"
-                command     : "app:new-window"
-                accelerator : "CmdOrCtrl+N"
-            }
-            {
                 label       : "Close Window"
                 command     : "window:close"
                 accelerator : "CmdOrCtrl+W"

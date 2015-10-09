@@ -11,11 +11,6 @@ module.exports = (options) ->
         label: packageJson.productName
         submenu: [
             {
-                label       : "New Window"
-                command     : "app:new-window"
-                accelerator : "CmdOrCtrl+N"
-            }
-            {
                 label       : "Close Window"
                 command     : "window:close"
                 accelerator : "CmdOrCtrl+W"
