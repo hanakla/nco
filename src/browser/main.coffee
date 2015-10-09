@@ -40,7 +40,7 @@ do ->
     args = parseCommandLine()
 
     app.on "window-all-closed", ->
-        app.quit() if process.platform isnt "darwin"
+        app.quit()
         return
 
     app.on "ready", ->
