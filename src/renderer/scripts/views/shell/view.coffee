@@ -25,6 +25,13 @@ class ShellView extends Marionette.ItemView
 
 
     initialize : ->
+        app.contextMenu.add "body", [
+            {
+                label   : 'コピー',
+                role    : 'copy'
+            }
+        ]
+
         app.onDidChangeChannel =>
             @_didChangeChannel()
 

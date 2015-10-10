@@ -25,13 +25,6 @@ class CommentCollectionView extends Marionette.View
         app.command.on "comments:clear", =>
             @$el.empty()
 
-        app.contextMenu.add "body", [
-             {
-                label   : 'コピー',
-                role    : 'copy'
-            }
-        ]
-
 
     scrollToBottom  : ->
         #@$el.
