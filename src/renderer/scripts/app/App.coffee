@@ -103,6 +103,11 @@ class App extends Application
             "shell:notify"  : (title, options) =>
                 new Notification(title, options).open()
 
+            "shell:dialog:save" : (options, callback) =>
+                Remote.require("dialog").showSaveDialog(null, options, callback)
+                return
+
+
             "session:relogin" : (callback) =>
                 console.info "%cRelogin...", Colors.text.info, @_session
 
@@ -146,6 +151,7 @@ class App extends Application
         s.push new (require "services/Player/Player")
         s.push new (require "services/Speech/Speech")
         s.push new (require "services/Comment/Comment")
+        s.push new (require "services/Logger/Logger")
 
 
     #

@@ -3,8 +3,22 @@ class CommentCollectionView extends Marionette.View
     tagName     : "ul"
     className   : "NcoComments"
 
+    _contextMenu : [
+        {
+            label   : "ログを保存"
+            command : "service:logger:export"
+            enabled : false
+        }
+    ]
+
 
     initialize  : ->
+        app.contextMenu.add ".NcoComments", @_contextMenu
+
+        app.nsenStream.onDidChangeStream =>
+            # Enable "Save log" menu when stream initialized
+            @_contextMenu[0].enabled = true
+
         app.command.on "comments:add", (content, classList = []) =>
             @_addComment {content, classList}
 
