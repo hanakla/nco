@@ -57,7 +57,9 @@ class App extends Application
                 app.command.dispatch "shell:open-url", @href
                 false
 
-            $("body").append require("views/nco/view.jade")()
+            $("body")
+            .addClass "platform-#{process.platform}"
+            .append require("views/nco/view.jade")()
             @region = new RegionManager
 
             @emit "did-initialize"

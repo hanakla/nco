@@ -92,7 +92,8 @@
         margin 0 auto 4px
         border none
 
-        font-size 12px
+        font-size $fsz_sm
+        font-family inherit
         text-align center
 
         background-color $color_primary
@@ -116,3 +117,7 @@
 
         &.show
             display block
+
+body.platform-win32
+    .NcoMylist_btnAdd
+        font-weight bold
