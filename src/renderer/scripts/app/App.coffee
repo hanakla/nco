@@ -69,7 +69,14 @@ class App extends Application
 
 
     _handleEvents : ->
-        Application::handleEvents.apply(@)
+        window.addEventListener "contextmenu", (e) =>
+            setTimeout =>
+                # Why use setTimeout???
+                # event.path is buggy, execute `event.path` immediately,
+                # e.path is broken... (array is only `window`)
+                # WebKit has an bug?
+                @contextMenu.showForElementPath e.path.reverse()
+            , 0
 
         window.addEventListener "online", =>
             @emit "did-change-network-state", true
@@ -79,6 +86,10 @@ class App extends Application
 
         window.addEventListener "beforeunload", =>
             app.config.set "nco.window.bounds", @currentWindow.getBounds()
+            return
+
+        @contextMenu.onDidClickCommandItem (command, el) =>
+            @command.dispatch command, el
             return
 
         @onDidChangeNetworkState (isOnLine) =>
