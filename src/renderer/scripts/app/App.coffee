@@ -89,7 +89,7 @@ class App extends Application
             return
 
         @contextMenu.onDidClickCommandItem (command, el) =>
-            @command.dispatch command, el
+            @command.dispatch command
             return
 
         @onDidChangeNetworkState (isOnLine) =>
