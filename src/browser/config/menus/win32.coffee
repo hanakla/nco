@@ -11,6 +11,11 @@ module.exports = (options) ->
         label: packageJson.productName
         submenu: [
             {
+                label       : "Save Log"
+                command     : "service:logger:export"
+                accelerator : "CmdOrCtrl+S"
+            }
+            {
                 label       : "Close Window"
                 command     : "window:close"
                 accelerator : "CmdOrCtrl+W"

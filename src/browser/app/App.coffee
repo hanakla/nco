@@ -2,7 +2,8 @@ app = require "app"
 path = require "path"
 
 ElectronKit = require "electron-kit"
-{Application, WindowManager, CommandManager, MenuManager} = ElectronKit.Browser
+{Application, WindowManager, MenuManager} = ElectronKit.Browser
+AppCommandManager = require "./AppCommandManager"
 
 module.exports =
 class App extends Application
@@ -11,7 +12,7 @@ class App extends Application
 
     initializeModules : ->
         @windows = new WindowManager(@options)
-        @command = new CommandManager(@options)
+        @command = new AppCommandManager(@options)
         @menu = new MenuManager
             defaultTemplate : require("../config/menus/#{process.platform}")({
                 devMode : @options.devMode
