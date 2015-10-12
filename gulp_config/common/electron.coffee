@@ -10,7 +10,7 @@ module.exports =
     version     : "0.33.4"
 
     out                 : "publish/"
-    icon                : null
+    icon                : "icon/nco.icns"
     "app-bundle-id"     : null
     "app-version"       : pjson.version
     "helper-bundle-id"  : null
@@ -18,12 +18,12 @@ module.exports =
     prune               : true
     overwrite           : true
     asar                : true
-    "sign"              : null
+    "sign"              : false
     "version-string"    :
         CompanyName         : pjson.author
-        LegalCopyright      : null
-        FileDescription     : null
-        OriginalFilename    : null
+        LegalCopyright      : "Copyright (c) 2015 Ragg"
+        FileDescription     : "Nsen用コメントビューワ Nco"
+        OriginalFilename    : "nco.exe"
         FileVersion         : pjson.version
         ProductVersion      : pjson.version
         ProductName         : pjson.productName
