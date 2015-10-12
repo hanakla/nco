@@ -8,5 +8,5 @@ class AppCommandManager extends CommandManager
 
         window = BrowserWindow.getFocusedWindow()
         window?.webContents.send "command", command, args...
-        @emitter.emit "did-send", {window, command, args}
+        @_emitter.emit "did-send", {window, command, args}
         return

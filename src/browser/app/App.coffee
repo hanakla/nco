@@ -10,7 +10,7 @@ class App extends Application
     constructor : ->
         super
 
-    initializeModules : ->
+    _initializeModules : ->
         @windows = new WindowManager(@options)
         @command = new AppCommandManager(@options)
         @menu = new MenuManager
@@ -19,7 +19,7 @@ class App extends Application
             })
         return
 
-    handleEvents : ->
+    _handleEvents : ->
 
         # MenuManager events
         @windows.onDidAddWindow (window) =>
@@ -32,7 +32,7 @@ class App extends Application
             @command.dispatch command
 
 
-    handleCommands : ->
+    _handleCommands : ->
         @command.on
             # Application commands
             "app:new-window" : =>
