@@ -1,21 +1,29 @@
-NsenChannels = require "./NsenChannels"
-
+Remote = require "remote"
+PowerMonitor = Remote.require "power-monitor"
 {Emitter} = global.require "electron-kit"
 {CompositeDisposable} = global.require "event-kit"
-
 Colors = require "colors"
+NsenChannels = require "./NsenChannels"
+
+CONFIG_LAST_SELECT_CHANNEL = "nco.nsen.lastSelectChannel"
 
 module.exports =
 class ChannelManager extends Emitter
     constructor : ->
         super
 
-        @_channelId = app.config.get("nco.lastSelectChannel")
+        @_channelId = app.config.get(CONFIG_LAST_SELECT_CHANNEL)
         @_activeStream = null
 
-        # @_handleEvents()
+        @_handleEvents()
         @_handleCommands()
 
+    _handleEvents : ->
+        PowerMonitor.on "resume", =>
+            @_activeStream?.commentProvider().reconnect().then =>
+                console.info "%c[NsenStream] Computer resumed. CommentProvider reconnected successful.", Colors.text.primary
+            return
+        return
 
     _handleCommands : ->
         app.command.on
@@ -82,7 +90,7 @@ class ChannelManager extends Emitter
         console.info "%c[NsenStream] Channel changing to #{channel}", Colors.text.info
 
         @_channelId = channel
-        app.config.set "nco.lastSelectChannel", channel
+        app.config.set CONFIG_LAST_SELECT_CHANNEL, channel
 
         @_session.live.getNsenChannelHandlerFor(@_channelId)
         .then (nsenCh) =>

@@ -40,13 +40,12 @@ do ->
     args = parseCommandLine()
 
     app.on "window-all-closed", ->
-        app.quit() if process.platform isnt "darwin"
+        app.quit()
         return
 
     app.on "ready", ->
         global.app = new App
             devMode : args.devMode
-            defaultTemplate : require "./config/menus/#{process.platform}"
         global.app.command.dispatch "app:new-window"
 
     return

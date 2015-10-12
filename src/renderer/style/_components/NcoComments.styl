@@ -9,12 +9,19 @@
 
     margin 0
     padding 48px 0 0
-
     overflow auto
 
     font-size 14px
-
     list-style none
+
+    &::-webkit-scrollbar
+        width 8px
+        height 8px
+        overflow hidden
+        background #eee
+
+    &::-webkit-scrollbar-thumb
+        background #444
 
     &::before
         content ""
@@ -66,8 +73,9 @@
             margin-top 4px
             float left
 
-            line-height 1
+            line-height 1.2
             font-family inherit
+            word-wrap break-word
 
     &_user
         &_name

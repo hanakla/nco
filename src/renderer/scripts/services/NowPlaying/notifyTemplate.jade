@@ -1,0 +1,10 @@
+if withHeader
+    .NcoNowPlaying_header 再生中の動画
+img.NcoNowPlaying_thumb(src=attr("thumbnail"))
+.NcoNowPlaying_detail
+    a.NcoNowPlaying_detail_title(href="http://www.nicovideo.jp/watch/#{attr('id')}")=attr("title")
+        i.fa.fa-external-link
+    .NcoNowPlaying_detail_user 投稿: #{attr("user.name")}
+    .NcoNowPlaying_detail_views 再生数: #{format(attr("count.view"))}
+    .NcoNowPlaying_detail_comments コメント数: #{format(attr("count.comments"))}
+    .NcoNowPlaying_detail_mylist マイリスト数: #{format(attr("count.mylist"))}

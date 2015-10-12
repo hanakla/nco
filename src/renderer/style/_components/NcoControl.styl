@@ -1,5 +1,9 @@
+@import "nib"
+
 .NcoControl
     position relative
+
+    user-select none
 
     &_mylist
     &_request
@@ -51,6 +55,9 @@
                 text-shadow 0 0 20px $color_warn
                 transform scale(1.3)
                 color $color_warn
+
+            &.preference
+                float right
 
             &.openNsen
                 float right
@@ -131,6 +138,7 @@
 
             resize none
             outline none
+            user-select none
 
             &::-webkit-input-placeholder
                 color rgba(85, 85, 85, .5)

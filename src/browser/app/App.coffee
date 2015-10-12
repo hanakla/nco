@@ -2,23 +2,24 @@ app = require "app"
 path = require "path"
 
 ElectronKit = require "electron-kit"
-{Application, WindowManager, CommandManager, MenuManager} = ElectronKit.Browser
+{Application, WindowManager, MenuManager} = ElectronKit.Browser
+AppCommandManager = require "./AppCommandManager"
 
 module.exports =
 class App extends Application
     constructor : ->
         super
 
-    initializeModules : ->
+    _initializeModules : ->
         @windows = new WindowManager(@options)
-        @command = new CommandManager(@options)
+        @command = new AppCommandManager(@options)
         @menu = new MenuManager
             defaultTemplate : require("../config/menus/#{process.platform}")({
                 devMode : @options.devMode
             })
         return
 
-    handleEvents : ->
+    _handleEvents : ->
 
         # MenuManager events
         @windows.onDidAddWindow (window) =>
@@ -31,7 +32,7 @@ class App extends Application
             @command.dispatch command
 
 
-    handleCommands : ->
+    _handleCommands : ->
         @command.on
             # Application commands
             "app:new-window" : =>
@@ -39,6 +40,11 @@ class App extends Application
 
                 window = @windows.openWindow(config)
                 window.loadUrl("file://" + path.join(__dirname, "../../renderer/index.html"))
+
+            "app:show-settings" : =>
+                return unless (window = @windows.lastFocusedWindow())?
+                @command.dispatchToWindow window, "app:show-settings"
+                return
 
             "app:quit" : =>
                 app.quit()

@@ -1,0 +1,80 @@
+.NcoForm
+    padding 8px
+
+    &_message
+        display block
+
+    &_group
+        clearfix()
+        margin-bottom 16px
+
+    &_label
+        display inline-block
+
+        width 14em
+        padding 8px 0
+
+        font-size $fsz_sm
+
+        &.container
+            width auto
+
+    &_input
+        width 60%
+        padding 8px 4px
+        border 1px solid #ddd
+
+        font-size $fsz_nm
+        font-family 'mplus-2p'
+
+        box-shadow none
+
+        outline none
+        transition box-shadow .3s ease
+
+        &:focus
+            box-shadow 0 0 10px $color_main
+
+        &[type="range"]
+            width 40%
+            height 16px
+            padding 8px 0
+            margin 0
+
+            vertical-align middle
+
+
+        &[type="checkbox"]
+            width auto
+
+    &_value
+        padding 8px 0
+        margin-left 16px
+
+        vertical-align middle
+
+    &_anotate
+        display block
+
+        font-size $fsz_sm
+        color #666
+
+        &::before
+            content '※'
+
+    &_submit
+        width 10em
+        padding 12px 16px
+        border none
+
+        font-size $fsz_sm
+        font-family 'mplus-2p'
+        line-height 1
+
+        color white
+        background-color $color_primary
+
+        outline none
+
+        &:hover
+            background-color darken($color_primary, 10%)

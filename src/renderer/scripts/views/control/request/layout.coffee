@@ -62,6 +62,8 @@ class RequestLayoutView extends Marionette.LayoutView
             $(".NcoComments").addClass "NcoComments-request-opened"
             @$el.addClass "show"
 
+        @mylistItems.currentView.index()
+
         return
 
 

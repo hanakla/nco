@@ -17,7 +17,7 @@ module.exports = (options) ->
             }
             { type: "separator" }
             {
-                label       : "Preferences..."
+                label       : "Preferences"
                 command     : "app:show-settings"
                 accelerator : "Command+,"
             }
@@ -38,9 +38,9 @@ module.exports = (options) ->
         label: "File"
         submenu: [
             {
-                label       : "New Window"
-                command     : "app:new-window"
-                accelerator : "CmdOrCtrl+N"
+                label       : "Save Log"
+                command     : "service:logger:export"
+                accelerator : "CmdOrCtrl+S"
             }
             {
                 label       : "Close Window"

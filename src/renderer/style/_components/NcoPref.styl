@@ -1,0 +1,234 @@
+.NcoPref
+    position fixed
+    top 0
+    left 0
+
+    width 100%
+    height 100%
+
+    opacity 0
+
+    transform translateY(-100%)
+
+    transition .3s ease-out
+    transition-property transform, opacity
+
+    &.show
+        transform translateY(0%)
+        opacity 1
+
+        .NcoPref_modal
+            animation NcoModalShow .3s ease-out
+
+    &_backface
+        width 100%
+        height 100%
+        padding 0 10%
+        background-color rgba(40, 40, 40, 0.8)
+        overflow auto
+
+        &::-webkit-scrollbar
+            width 8px
+            height 8px
+            overflow hidden
+            background transparent
+
+        &::-webkit-scrollbar-thumb
+            background rgba(#eee, .5)
+
+    &_modal
+        margin-top 64px
+        margin-bottom 16px
+        overflow hidden
+
+        background-color rgb(250, 250, 250)
+
+        h1
+            margin 0 0 24px 0
+            padding 24px 16px
+            border-bottom 1px solid #ddd
+
+            font-family "mplus-2p-thin"
+            font-size $fsz_lg2
+            line-height 1
+
+        &_footer
+            clearfix()
+
+            border-top 1px solid #ddd
+            padding 16px
+            margin-top 24px
+
+    &_section
+        margin 16px 32px 0
+
+        &-collapse
+            height 40px
+            overflow hidden
+
+            transition height .2s
+
+            &.open
+                height 100%
+
+                .NcoPref_section_header::before
+                    content '▼'
+                    margin-right 1em
+
+            .NcoPref_section_header
+                height ($fsz_nm + 8px)
+                padding 0
+
+                cursor pointer
+
+                &::before
+                    content '▶'
+                    margin-right 1em
+
+                    font-size 8px
+                    line-height 24px
+                    vertical-align text-top
+
+                    opacity .5
+
+
+        &_header
+            padding 0 0 8px
+            border-bottom 1px solid #ddd
+
+            font-size $fsz_nm
+            line-height 1
+
+    &_form
+        padding 8px
+
+        &_group
+            clearfix()
+            margin-bottom 16px
+
+        &_label
+            display inline-block
+
+            width 14em
+            padding 8px 0
+
+            font-size $fsz_sm
+
+            &.container
+                width auto
+
+        &_input
+            width 60%
+            padding 8px 0
+            border 1px solid #ddd
+
+            font-size $fsz_nm
+            font-family 'mplus-2p'
+
+            box-shadow none
+
+            outline none
+            transition box-shadow .3s ease
+
+            // &:focus
+            //     box-shadow 0 0 10px $color_main
+
+            &[type="range"]
+                width 40%
+                height 16px
+                padding 8px 0
+                margin 0
+
+                vertical-align middle
+
+
+            &[type="checkbox"]
+                width auto
+
+        &_value
+            padding 8px 0
+            margin-left 16px
+
+            vertical-align middle
+
+        &_anotate
+            display block
+
+            font-size $fsz_sm
+            color #666
+
+            &::before
+                content '※'
+
+        &_submit
+            width 10em
+            padding 12px 16px
+            border none
+            float right
+
+            font-size $fsz_sm
+            font-family 'mplus-2p'
+            line-height 1
+
+            color white
+            background-color $color_primary
+
+            outline none
+
+    &_address
+        clearfix()
+        margin 0
+        padding 0 8px 0
+
+        font-size $fsz_sm
+
+        dt
+            width 12em
+            float left
+
+        dd
+            margin-left 12em
+            margin-bottom 16px
+
+            a
+                text-decoration none
+
+                &:hover
+                    text-decoration underline
+
+    &_licenses
+        clearfix()
+        padding 0 8px
+
+        li
+            margin-right 1em
+            margin-bottom 8px
+            float left
+
+            list-style none
+
+    &_error
+        display none
+        padding 16px 8px
+
+        border 1px solid $color_danger
+        color white
+        background-color lighten($color_danger, 50%)
+
+
+// @media (max-width: 600px)
+//     .NcoPref_modal_footer
+//         padding 8px
+//
+//     .NcoPref_form_input
+//         width 100%
+//
+//     .NcoPref_form_submit
+//         width 100%
+
+@media (max-width: 600px)
+    .NcoPref_backface
+        padding 0
+
+    .NcoPref_section
+        margin 16px 8px 0

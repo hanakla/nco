@@ -5,25 +5,25 @@ pjson   = require path.join(__dirname, "../../package.json")
 module.exports =
     dir         : config.buildDir
     name        : pjson.name
-    platform    : "darwin"
+    platform    : "darwin,win32"
     arch        : "all"
     version     : "0.33.4"
 
     out                 : "publish/"
-    icon                : null
+    icon                : "icon/nco.icns"
     "app-bundle-id"     : null
     "app-version"       : pjson.version
     "helper-bundle-id"  : null
     ignore              : null
     prune               : true
     overwrite           : true
-    asar                : false
-    "sign"              : null
+    asar                : true
+    "sign"              : false
     "version-string"    :
         CompanyName         : pjson.author
-        LegalCopyright      : null
-        FileDescription     : null
-        OriginalFilename    : null
+        LegalCopyright      : "Copyright (c) 2015 Ragg"
+        FileDescription     : "Nsen用コメントビューワ Nco"
+        OriginalFilename    : "nco.exe"
         FileVersion         : pjson.version
         ProductVersion      : pjson.version
         ProductName         : pjson.productName

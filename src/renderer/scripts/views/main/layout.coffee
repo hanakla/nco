@@ -1,7 +1,7 @@
 Marionette  = require "marionette"
 
 CommentCollectionView   = require "./comment/collectionView"
-PlayingNotifierView     = require "./nowPlaying/nowPlayingView"
+NotifyView = require "./notify/NotifyView"
 
 module.exports =
 class NcoMainLayout extends Marionette.LayoutView
@@ -17,4 +17,4 @@ class NcoMainLayout extends Marionette.LayoutView
 
     onShow      : ->
         @comment.show new CommentCollectionView
-        @notify.show new PlayingNotifierView
+        @notify.show new NotifyView

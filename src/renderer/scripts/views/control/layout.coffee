@@ -9,6 +9,8 @@ Marionette  = require "marionette"
 RequestLayoutView       = require "./request/layout"
 MylistSelectionView     = require "./mylist/listSelectionView"
 
+CONFIG_POST_AS_ANONYMOUS = "nco.nsen.postAsAnonymous"
+
 module.exports =
 class NcoControlLayout extends Marionette.LayoutView
     template    : require "./view.jade"
@@ -19,10 +21,13 @@ class NcoControlLayout extends Marionette.LayoutView
         good        : ".good"
         mylist      : ".mylist"
         request     : ".request"
+        preference  : ".preference"
         openNsen    : ".openNsen"
         reload      : ".reload"
+
         alert       : ".NcoControl_comment_alert"
         commentArea : ".NcoControl_comment"
+        anonyOpt    : "[name='comment_184']"
         input       : ".NcoControl_comment_input"
 
     events      :
@@ -31,10 +36,12 @@ class NcoControlLayout extends Marionette.LayoutView
         "blur @ui.input"    : "_hideOption"
         "click [name='comment_184']": "_memory184State"
         "click @ui.commentArea": "_keepFocusInInput"
+
         "click @ui.skip"    : "_onClickSkip"
         "click @ui.good"    : "_onClickGood"
         "click @ui.mylist"  : "_onClickMylist"
         "click @ui.request" : "_onClickRequest"
+        "click @ui.preference" : "_onClickPreference"
         "click @ui.openNsen": "_onClickOpenNsen"
         "click @ui.reload"  : "_onClickReload"
 
@@ -66,8 +73,10 @@ class NcoControlLayout extends Marionette.LayoutView
         @requestSelection.show new RequestLayoutView
         @mylistSelection.show new MylistSelectionView
 
+        @$(".NcoControl_actions [title]").powerTip({placement: "s"})
+
         # フォーム状態を復元
-        @$el.find("[name='comment_184']")[0]?.checked = app.config.get("nco.comment.postAsAnonymous")
+        @$el.find("[name='comment_184']")[0]?.checked = app.config.get(CONFIG_POST_AS_ANONYMOUS)
 
 
     _showError      : do ->
@@ -90,13 +99,15 @@ class NcoControlLayout extends Marionette.LayoutView
 
 
     _memory184State  : ->
-        app.config.set "nco.comment.postAsAnonymous", @ui.commentArea.find("[name='comment_184']")[0]?.checked
+        app.config.set CONFIG_POST_AS_ANONYMOUS, @ui.commentArea.find("[name='comment_184']")[0]?.checked
 
     _onSubmitComment : (e) ->
         # keyCode 13 = Enter
         return true if e.keyCode isnt 13 or e.shiftKey is true
 
-        app.nsenStream.getStream()?.postComment @ui.input.val()
+        option = if @ui.anonyOpt[0].checked then "184" else ""
+
+        app.nsenStream.getStream()?.postComment @ui.input.val(), option
         .catch (e) => @_showError e.message
         .then => @ui.input.val ""
 
@@ -124,6 +135,10 @@ class NcoControlLayout extends Marionette.LayoutView
     _onClickMylist   : ->
         view = @mylistSelection.currentView
         if view.isOpened() then view.close() else view.open()
+
+    _onClickPreference : ->
+        app.command.dispatch "app:show-settings"
+        return
 
     _showOption      : ->
         @ui.commentArea.addClass "focus"

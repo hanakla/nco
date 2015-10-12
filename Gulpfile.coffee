@@ -107,7 +107,7 @@ g.task "styles", ->
 # Jade Task
 #
 g.task "jade", ->
-    g.src genPaths("", "jade", ["!#{gulpOption.sourceDir}/scripts/**/*.jade"])
+    g.src genPaths("", "jade", ["!#{gulpOption.sourceDir}/renderer/scripts/**/*.jade"])
         .pipe $.plumber()
         .pipe $.changed("#{gulpOption.buildDir}/renderer/")
         .pipe $.jade()
@@ -123,6 +123,10 @@ g.task "images", ->
         .pipe $.changed("#{gulpOption.buildDir}/renderer/images/")
         .pipe $.imagemin(envRequireConfig("imagemin.coffee"))
         .pipe g.dest("#{gulpOption.buildDir}/renderer/images/")
+
+g.task "assets", ->
+    g.src "#{gulpOption.sourceDir}/assets/**"
+        .pipe g.dest("#{gulpOption.buildDir}/assets/")
 
 #
 # package.json copy Task
@@ -183,12 +187,17 @@ g.task "watch", ->
     $.watch [
         "package.json"
     ], ->
-        g.start ["package-json"]
+        g.start ["package-json", "production_npm"]
 
     $.watch [
         "#{rendererSrcRoot}/images/**/*.{png,jpg,jpeg,gif}"
     ], ->
         g.start ["images"]
+
+    $.watch [
+        "#{rendererSrcRoot}/assets/**"
+    ], ->
+        g.start ["assets"]
 
 
 g.task "packaging", (cb) ->
@@ -267,7 +276,7 @@ g.task "electron-dev", do ->
 #
 # Define default
 #
-g.task "build", ["webpack", "styles", "jade", "images", "fonts", "copy-browser-files", "package-json"]
+g.task "build", ["webpack", "styles", "jade", "images", "fonts", "copy-browser-files", "assets", "package-json"]
 g.task "publish", ["production"]
 g.task "dev", ["build", "watch"]
 g.task "default", ["self-watch", "electron-dev"]

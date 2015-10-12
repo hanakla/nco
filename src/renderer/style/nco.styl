@@ -48,8 +48,14 @@ html, body
     background-color $color_bg
     overflow hidden
 
-    font normal $fsz_nm/1 'mplus-2p'
+    font-weight normal
+    font-size $fsz_nm
+    line-height 1
+    font-family 'mplus-2p'
     cursor default
+
+body.platform-win32
+    font-weight bold
 
 #nco-container
     display flex
@@ -88,14 +94,26 @@ html, body
     left 0
     z-index 1000
 
+#nco-preference
+    position fixed
+    top 0
+    left 0
+    z-index 1001
+
+#powerTip
+    padding 8px
+    font-size 12px
 
 @import "_animations"
+@import "_classes"
 
+@import "_components/NcoForm"
 @import "_components/NcoControl"
 @import "_components/NcoShell"
 @import "_components/NcoComments"
 @import "_components/NcoNotifier"
 @import "_components/NcoLogin"
+@import "_components/NcoPref"
 @import "_components/NcoRequest"
 @import "_components/NcoMylist"
 @import "_components/NcoNowPlaying"

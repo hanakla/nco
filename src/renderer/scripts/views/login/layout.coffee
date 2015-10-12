@@ -18,7 +18,6 @@ class LoginView extends Marionette.ItemView
 
     _initState  : ->
         @ui.form.find("input").val ""
-        console.log @ui.inputEmail
         @ui.inputEmail.val app.config.get("nco.auth.user")
         @ui.error.text ""
 
@@ -31,7 +30,7 @@ class LoginView extends Marionette.ItemView
 
         app.command.dispatch "session:login", input.email, input.password, (err) =>
             if err?
-                @_showError "ログインに失敗しました。(#{err.message})"
+                @_showError "ログインに失敗しました。(#{err.message ? err})"
             else
                 app.config.set "nco.auth.user", input.email if input.memory is "on"
                 @close()

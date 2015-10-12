@@ -83,12 +83,13 @@
 
         &_item
             display block
-            padding 4px 8px  // below + above = 8px
+            padding 8px 8px  // below + above = 8px
             padding-right 4px
             overflow hidden
             border-right 4px solid transparent
 
-            font-size 16px
+            font-size 14px
+            line-height 1
             white-space nowrap
             text-overflow ellipsis
 
@@ -102,6 +103,10 @@
             &:hover, &.selected
                 padding-right 4px
                 border-color #444
+                background-color #ccc
+
+            &-inputMovieId
+                background-color #eee
 
 
     &_movies
@@ -147,7 +152,8 @@
                     padding 4px
 
                     color white
-                    font normal normal normal 14px/1 FontAwesome
+                    font-size  14px
+                    font-family FontAwesome, 'mplus-2p'
 
                     background-color rgba($color_static, .9)
 
@@ -159,9 +165,23 @@
                     padding 4px
 
                     color white
-                    font normal normal normal 14px/1 FontAwesome
+                    font-size  14px
+                    font-family FontAwesome, 'mplus-2p'
 
                     background-color rgba($color_success, .9)
+
+            &.alreadyRequested
+                &::before
+                    content "\f00c リクエスト中です！"
+
+                    position absolute
+                    padding 4px
+
+                    color white
+                    font-size  14px
+                    font-family FontAwesome, 'mplus-2p'
+
+                    background-color rgba($color_warn, .9)
 
             &.requesting
                 &::before
@@ -171,7 +191,8 @@
                     padding 4px
 
                     color white
-                    font normal normal normal 14px/1 FontAwesome
+                    font-size  14px
+                    font-family FontAwesome, 'mplus-2p'
 
                     background-color rgba($color_primary, .9)
 
@@ -182,3 +203,57 @@
 
             &_title
                 font-size 14px
+
+    &_requesting
+        padding-left 8px
+
+        .NcoForm
+            padding 0
+
+        &_header
+            margin-top 0
+            margin-bottom 16px
+
+            font-size 16px
+            font-weight normal
+
+        &_body
+            padding-left 130px
+
+        &_thumb
+            margin-left -130px
+            margin-right 8px
+            float left
+
+            vertical-align top
+
+        &_title
+            margin-bottom 8px
+            font-weight bold
+
+        &_id
+            color #aaa
+
+    &_putMovieId
+        padding 0 8px
+
+        &_header
+            margin-top 0
+            margin-bottom 16px
+
+            font-size 16px
+            font-weight normal
+
+        &_message
+            padding 12px 0
+            margin-left 16px
+
+            color $color_warn
+
+body.platform-win32
+    .NcoRequest
+        &_requesting_header
+            font-weight bold
+
+        &_putMovieId_header
+            font-weight bold
