@@ -1,5 +1,7 @@
 Request = global.require "request-promise"
 
+BREAK_TIME_PLAYING_MOVIE = "sm13848574"
+
 CONFIG_PLAYER_ENABLED = "nco.services.player.enabled"
 CONFIG_PLAYER_VOLUME = "nco.services.player.volume"
 
@@ -38,13 +40,22 @@ class Player
 
         channel.onDidChangeMovie (movie) =>
             return if app.config.get(CONFIG_PLAYER_ENABLED, no) is no
-            @_loadMovie()
+
+            if movie?
+                @_loadMovie(false, movie)
+                return
+
+            # Play break time movie
+            app.getSession().video.getVideoInfo(BREAK_TIME_PLAYING_MOVIE)
+            .then (movie) => @_loadMovie(false, movie)
+
+        return
 
 
-    _loadMovie : (fadeIn = false)->
+    _loadMovie : (fadeIn = false, movie = null) ->
         nicoSession = app.getSession()
         channel = app.nsenStream.getStream()
-        movie = channel?.getCurrentVideo()
+        movie ?= channel.getCurrentVideo()
         live = channel?.getLiveInfo()
 
         return if false in [nicoSession?, channel?, movie?]
@@ -53,9 +64,10 @@ class Player
         # 動画を取得（再生する）するための`nicohistory`クッキーを取得するために
         # 動画ページへアクセスする
         Request.get
-            resolveWithFullResponse : true
-            url : "http://www.nicovideo.jp/watch/#{movie.id}"
-            jar : nicoSession.cookie
+                resolveWithFullResponse : true
+                url : "http://www.nicovideo.jp/watch/#{movie.id}"
+                jar : nicoSession.cookie
+
         .then (res) =>
             browserSession = app.currentWindow.browserWindow.webContents.session
             cookies = @_translateToughCookieToElectronSettable(nicoSession.cookie.getCookies("http://www.nicovideo.jp/"))
@@ -72,6 +84,13 @@ class Player
             playContent = live.get("stream.contents.0")
             elapsedFromStart = (Date.now() - playContent.startTime) / 1000 | 0
 
+            # Exception process for break time.
+            if movie.id is BREAK_TIME_PLAYING_MOVIE
+                elapsedFromStart = 0
+                @_mp4player.loop = true
+            else
+                @_mp4player.loop = false
+
             if @_mp4player.src is "" or fadeIn
                 volume = app.config.get(CONFIG_PLAYER_VOLUME)
                 @_mp4player.volume = 0
@@ -79,7 +98,6 @@ class Player
 
             @_mp4player.src = result.url
             @_mp4player.currentTime = elapsedFromStart
-            @_mp4player.play()
 
         .catch =>
             console.log arguments
